@@ -1,0 +1,56 @@
+.feed-grid {
+    display: grid;
+    grid-template-columns: 47.5% 47.5%;
+    height: 100%;
+    overflow-y: scroll;
+    grid-auto-rows: 60%;
+    align-items: stretch;
+    column-gap: 5%;
+    row-gap: 30px;
+    grid-auto-flow: dense;
+}
+
+.feed-post {
+    height: 100%
+}
+
+.feed-grid.one {
+    display: grid;
+    grid-template-columns: 100%;
+    align-items: stretch;
+    column-gap: 5%;
+    row-gap: 30px;
+    --is-one: true;
+}
+
+@keyframes grow {
+    0% {
+        width: 50%;
+    }
+    100% {
+        width: 100%;
+    }
+}
+
+.feed-post.active {
+    grid-column: 1 / span 2;
+    grid-row-end: span 2;
+    animation: grow 0.5s ease-out backwards;
+    
+}
+
+
+/* switch to one row if bulma desktop is enabled. Since the value
+    is hard coded, if somehow the bulma desktop size is changed, 
+    this will have to be changed too. */
+@media screen and (max-width: 1023px) {
+    .feed-grid {
+        grid-template-columns: 100%;
+        --is-one: true;
+    }
+
+    .feed-post.active {
+        grid-column: unset;
+        animation: unset;
+    }
+}

@@ -29,7 +29,7 @@ from py4web import action, request, abort, redirect, URL
 from yatl.helpers import A
 from .common import db, session, T, cache, auth, logger, authenticated, unauthenticated, flash
 from py4web.utils.url_signer import URLSigner
-from .models import get_user_email
+from .models import get_user_email, add_fake_data
 
 url_signer = URLSigner(session)
 
@@ -38,3 +38,28 @@ url_signer = URLSigner(session)
 def index():
     print("User:", get_user_email())
     return dict()
+
+
+@action('feed')
+@action.uses('feed.html', db, auth)
+def feed():
+    return dict(
+        load_posts_url=URL('feed','load') #should this be signed ???
+    )
+
+@action('clear')
+@action.uses(db)
+def clear():
+    db(db.posts).delete()
+    redirect(URL('feed'))
+
+@action('feed/load')
+@action.uses(db, auth)
+def feed_load():
+    posts = db().select(db.posts.ALL).as_list()
+    if not posts:
+        add_fake_data(db, 50)
+        redirect(URL('feed'))
+    return dict(
+        posts=posts
+    )

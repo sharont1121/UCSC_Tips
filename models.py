@@ -2,6 +2,7 @@
 This file defines the database models
 """
 
+from random import choice, randint
 import datetime
 from .common import db, Field, auth
 from pydal.validators import *
@@ -48,5 +49,34 @@ db.define_table(
     Field('lat_coord'),
     Field('lon_coord'),
 )
+
+def generate_garbage_word(num_chars: int):
+    LETTERS = [ a for a in "abcdefghijklmnopqrstuvwxyz"]
+    res= ""
+    for _ in range(num_chars):
+        res += choice(LETTERS)
+    return res
+def generate_garbage_text(num_words: int, max_chars = None):
+    WORD_LEN_FREQ = [1,2,3,3,4,4,4,5,5,5,5,6,6,7,7,8,9]
+    res = ""
+    for _ in range(num_words):
+        res += generate_garbage_word(choice(WORD_LEN_FREQ)) 
+        res += " "
+    if max_chars and len(res) > max_chars:
+        return res[0:max_chars]
+    return res
+
+
+def add_fake_data(db, num:int):
+
+    max_id = db().select(db.posts.id, orderby=~db.posts.id).first()
+    if not max_id:
+        max_id = 0
+    for i in range(max_id+1, num+max_id+1):
+        db.posts.insert(
+            title= f"fake title {i}",
+            body= generate_garbage_text(randint(0, 100))
+        )
+
 
 db.commit()

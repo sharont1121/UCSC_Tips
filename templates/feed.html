@@ -1,0 +1,23 @@
+[[extend 'layout.html']]
+
+[[block page_head]]
+    <link rel="stylesheet" href="css/posts.css">
+[[end]]
+
+<style>
+    [v-cloak] {
+         display: none;
+    }
+</style>    
+
+<div class="section" id="vue-target" v-cloak>
+        <feed v-bind:posts="posts" v-bind:activeid="1"></feed>
+</div>
+
+
+[[block page_scripts]]
+   <script>
+      const LOAD_POSTS_URL = "[[=XML(load_posts_url) ]]";
+   </script>
+   <script src="js/feed.js"></script>
+[[end]]
