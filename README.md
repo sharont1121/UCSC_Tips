@@ -1,2 +1,2 @@
-# UCSC_Tips
-Project for CSE 183
+# UCSC-Tips
+Project for CSE183

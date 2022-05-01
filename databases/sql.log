@@ -1,0 +1,67 @@
+timestamp: 2022-04-21T19:01:47.285473
+CREATE TABLE "py4web_session"(
+    "id" INTEGER PRIMARY KEY AUTOINCREMENT,
+    "rkey" CHAR(512),
+    "rvalue" TEXT,
+    "expiration" INTEGER,
+    "created_on" TIMESTAMP,
+    "expires_on" TIMESTAMP
+);
+success!
+timestamp: 2022-04-21T19:01:47.288992
+CREATE TABLE "auth_user"(
+    "id" INTEGER PRIMARY KEY AUTOINCREMENT,
+    "email" CHAR(512) UNIQUE,
+    "password" CHAR(512),
+    "first_name" CHAR(512),
+    "last_name" CHAR(512),
+    "sso_id" CHAR(512),
+    "action_token" CHAR(512),
+    "last_password_change" TIMESTAMP,
+    "past_passwords_hash" TEXT
+);
+success!
+timestamp: 2022-04-21T19:01:47.291060
+CREATE TABLE "auth_user_tag_groups"(
+    "id" INTEGER PRIMARY KEY AUTOINCREMENT,
+    "tagpath" CHAR(512),
+    "record_id" INTEGER REFERENCES "auth_user" ("id") ON DELETE CASCADE  
+);
+success!
+timestamp: 2022-04-21T19:01:47.295297
+CREATE TABLE "user"(
+    "id" INTEGER PRIMARY KEY AUTOINCREMENT,
+    "user_email" CHAR(512),
+    "first_name" CHAR(512),
+    "last_name" DOUBLE
+);
+success!
+timestamp: 2022-04-21T19:04:45.489881
+CREATE TABLE "posts"(
+    "id" INTEGER PRIMARY KEY AUTOINCREMENT,
+    "title" CHAR(512),
+    "body" TEXT,
+    "created_by" INTEGER REFERENCES "user" ("id") ON DELETE CASCADE  ,
+    "created_on" TIMESTAMP,
+    "image_url" CHAR(512),
+    "rating" INTEGER,
+    "lat_coord" CHAR(512),
+    "lon_coord" CHAR(512)
+);
+success!
+timestamp: 2022-04-21T19:04:45.492081
+CREATE TABLE "tags"(
+    "id" INTEGER PRIMARY KEY AUTOINCREMENT,
+    "tag_name" CHAR(512),
+    "color" CHAR(512),
+    "uses" INTEGER
+);
+success!
+timestamp: 2022-04-21T19:06:54.053165
+ALTER TABLE "posts" ADD "tag1" INTEGER REFERENCES "tags" ("id") ON DELETE CASCADE  ;
+success!
+timestamp: 2022-04-21T19:08:48.728357
+ALTER TABLE "posts" ADD "tag2" INTEGER REFERENCES "tags" ("id") ON DELETE CASCADE  ;
+timestamp: 2022-04-21T19:08:48.729928
+ALTER TABLE "posts" ADD "tag3" INTEGER REFERENCES "tags" ("id") ON DELETE CASCADE  ;
+success!
