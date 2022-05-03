@@ -10,8 +10,10 @@
     }
 </style>    
 
-<div class="section" id="vue-target" v-cloak>
+<div id="vue-target" style="height: calc(100%);">
+    <div style="height: 100%;">
         <feed v-bind:posts="posts" v-bind:activeid="1"></feed>
+    </div>
 </div>
 
 
@@ -19,5 +21,8 @@
    <script>
       const LOAD_POSTS_URL = "[[=XML(load_posts_url) ]]";
    </script>
-   <script src="js/feed.js"></script>
+   <script src="js/components/tag.js"></script>
+   <script src="js/components/post.js"></script>
+   <script src="js/components/feed.js"></script>
+   <script src="js/pages/feed.js"></script>
 [[end]]

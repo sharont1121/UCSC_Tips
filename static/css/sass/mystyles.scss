@@ -1,0 +1,22 @@
+@charset "utf-8";
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@100;300;500&display=swap');
+
+
+$purple-dark: #2f2942;
+$purple-blue: #5d5fef;
+$baby-blue: #8691ed;
+$white: #ffffff;
+
+$grey-dark: #313131;
+$grey: #6c6c6c;
+$grey-light: #cacaca;
+
+$family-sans-serif: "Inter", "Roboto", sans-serif;
+
+$body-background-color: $purple-dark;
+$divider-background-color: $white;
+$divider-margin-inner-size: 0px;
+
+@import "../bulma/bulma.sass";
+@import "../extensions/divider.sass";

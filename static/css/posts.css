@@ -1,25 +1,22 @@
 .feed-grid {
     display: grid;
     grid-template-columns: 47.5% 47.5%;
-    height: 100%;
     overflow-y: scroll;
     grid-auto-rows: 60%;
     align-items: stretch;
     column-gap: 5%;
     row-gap: 30px;
     grid-auto-flow: dense;
+    height: 100%; 
+
 }
 
 .feed-post {
     height: 100%
 }
 
-.feed-grid.one {
-    display: grid;
+.feed-grid.is-one {
     grid-template-columns: 100%;
-    align-items: stretch;
-    column-gap: 5%;
-    row-gap: 30px;
     --is-one: true;
 }
 
