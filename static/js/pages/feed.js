@@ -39,10 +39,7 @@ function init(app) {
     // We form the dictionary of all methods, so we can assign them
     // to the Vue app in a single blow.
     app.methods = {
-        disapearModal: function() {
-            console.log(this);
-            this.missing = false;
-        }
+        
     };
     // This creates the Vue instance.
     app.vue = new Vue({
@@ -56,15 +53,7 @@ function init(app) {
     // load the data.
     // For the moment, we 'load' the data from a string.
     app.init = () => {
-        console.log("hi");
-        get_starting_posts()
-            .then((res) => {
-                app.vue.data = res.data.data;
-                console.log(res.data);
-                app.vue.selectedid = res.data.selectedid;
-                app.vue.missing = res.data.missing;
-            })
-            .catch(console.log)
+        
     };
 
     // Call to the initializer.

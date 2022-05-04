@@ -12,18 +12,12 @@
 
 <div id="vue-target" style="height: 100%;">
     <div style="height: 100%;">
-        <div v-if="missing" v-on:postActive="disapearModal()" class="box has-background-danger">
-            <p class="content">could not find post!</p>
-        </div>
-        <feed v-bind:data="data" v-bind:selectedid="selectedid"></feed>
+        <feed loadurl="[[=XML(load_posts_url)]]"></feed>
     </div>
 </div>
 
 
 [[block page_scripts]]
-   <script>
-      const LOAD_POSTS_URL = "[[=XML(load_posts_url) ]]";
-   </script>
    <script src="js/components/tag.js"></script>
    <script src="js/components/post.js"></script>
    <script src="js/components/feed.js"></script>
