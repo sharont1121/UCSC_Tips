@@ -34,8 +34,6 @@ from .models import get_user_email, add_fake_data
 
 url_signer = URLSigner(session)
 
-from py4web.utils.param import Param
-
 
 class ParamParser:
     def __init__(self, params: "dict(str,str)", param_types: "dict(str, type)", *, default=None):
@@ -46,18 +44,18 @@ class ParamParser:
                 val = param_types[name](value_str)
                 self.dict[name] = val
             except (ValueError,  KeyError) as e:
-                print(e)
+                print(e, file=stderr)
                 continue
+
     def __getattr__(self, key: str):
         return self.dict.get(key, self.default)
 
-    def __getitem__(self, key:str):
+    def __getitem__(self, key: str):
         return self.dict.get(key, self.default)
 
-    def __str__(self) -> str:
-        return self.dict.__str__() + f" default= {self.default}"
     def __repr__(self) -> str:
-        return self.__str__()
+        return f"params: {self.dict.__repr__()} default= {self.default}"
+
 
 @action('index')
 @action.uses(db, auth, 'index.html')
@@ -79,21 +77,28 @@ def clear():
     db(db.posts).delete()
     redirect(URL('feed'))
 
-
-
-
+DEFAULT_POST_COUNT = 10
 
 @action('feed/load/')
 @action.uses(db, auth)
 def feed_load():
-    expected_param_types = {'min': int, 'max': int, 'include': int}
+    expected_param_types = {'min': int, 'max': int, 'selected_id': int}
     params = ParamParser(request.params, expected_param_types)
+    min_post = params.min or 0
+    max_post = params.max or (params.min + DEFAULT_POST_COUNT)
+    
+    posts = db(db.posts.id != params.selected_id).select(db.posts.ALL, orderby=~db.posts.rating, limitby=(min_post, max_post)).as_list()
 
-    posts = db().select(db.posts.ALL, orderby=~db.posts.rating, limitby=(params.min, params.max)).as_list()
+    if params.selected_id:
+        post = db.posts[params.selected_id]
+        if post:
+            posts.insert(0, post)
+
     if not posts:
         add_fake_data(db, 50)
         redirect(URL('feed'))
 
     return dict(
-        posts=posts        
+        posts= posts,
+        selected_id= params.selected_id
     )

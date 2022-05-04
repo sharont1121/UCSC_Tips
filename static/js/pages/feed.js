@@ -1,6 +1,6 @@
 
 function get_starting_posts() {
-    return axios.get(LOAD_POSTS_URL, {params: {min: 0, max: 10}})
+    return axios.get(LOAD_POSTS_URL, {params: {min: 0, max: 10, selected_id: 156} })
 }
 
 function get_more_posts(min, max) {
@@ -21,6 +21,7 @@ function init(app) {
         posts: [],
         min: 0,
         max: 10,
+        activeid: null,
     };
 
     app.enumerate = (a) => {
@@ -29,12 +30,7 @@ function init(app) {
         a.map((e) => {e._idx = k++;});
         return a;
     };
-    app.split_posts = (num, col) => {
-        return app.vue.data.posts.some((e,i)=>{
-            i % num == col
-        });
 
-    }
     // We form the dictionary of all methods, so we can assign them
     // to the Vue app in a single blow.
     app.methods = {
@@ -55,6 +51,7 @@ function init(app) {
         get_starting_posts()
             .then((res) => {
                 app.vue.posts.push(...app.enumerate(res.data.posts));
+                app.vue.activeid = res.data.selected_id;
             })
     };
 

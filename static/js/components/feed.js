@@ -1,3 +1,5 @@
+// how to get this to scroll without a fixed height
+
 Vue.component( 'feed', {
     props: ['posts', "activeid"],
     data: function() {
@@ -30,7 +32,7 @@ Vue.component( 'feed', {
             <div class="feed-grid" >
                 <post 
                     v-for="p in posts" 
-                    v-bind:isActive="p.id === activeID" 
+                    v-bind:isActive="p.id === activeid" 
                     v-bind:key="p.id"
                     v-on:postActive="handlePostClick($event)" 
                     v-bind:post="p" >
