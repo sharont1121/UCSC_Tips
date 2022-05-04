@@ -1,6 +1,10 @@
 
 function get_starting_posts() {
-    axios.get(LOAD_POSTS_URL)
+    return axios.get(LOAD_POSTS_URL, {params: {min: 0, max: 10}})
+}
+
+function get_more_posts(min, max) {
+    return axios.get(LOAD_POSTS_URL, {params: {min: min, max: max}})
 }
 
 // This will be the object that will contain the Vue attributes
@@ -15,6 +19,8 @@ function init(app) {
     // This is the Vue data.
     app.data = {
         posts: [],
+        min: 0,
+        max: 10,
     };
 
     app.enumerate = (a) => {
@@ -46,7 +52,7 @@ function init(app) {
     // load the data.
     // For the moment, we 'load' the data from a string.
     app.init = () => {
-        axios.get(LOAD_POSTS_URL)
+        get_starting_posts()
             .then((res) => {
                 app.vue.posts.push(...app.enumerate(res.data.posts));
             })

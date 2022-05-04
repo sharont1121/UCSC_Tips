@@ -18,5 +18,9 @@ $body-background-color: $purple-dark;
 $divider-background-color: $white;
 $divider-margin-inner-size: 0px;
 
+.is-round{
+    border-radius: 1000px !important;
+}
+
 @import "../bulma/bulma.sass";
 @import "../extensions/divider.sass";
