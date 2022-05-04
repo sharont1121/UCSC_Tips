@@ -1,7 +1,7 @@
 .feed-grid {
     display: grid;
     grid-template-columns: 47.5% 47.5%;
-    overflow-y: scroll;
+    overflow-x: hidden;
     grid-auto-rows: min(50vh, max-conent);
     align-items: stretch;
     column-gap: 5%;

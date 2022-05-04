@@ -1,6 +1,10 @@
 
 function get_starting_posts() {
-    return axios.get(LOAD_POSTS_URL, {params: {min: 0, max: 10, selected_id: 156} })
+    return axios.get(LOAD_POSTS_URL)
+}
+
+function get_specific_post(post_id) {
+    return axios.get( LOAD_POSTS_URL, {params: {selectedid: post_id} });
 }
 
 function get_more_posts(min, max) {
@@ -18,10 +22,10 @@ function init(app) {
 
     // This is the Vue data.
     app.data = {
-        posts: [],
+        data: [],
         min: 0,
         max: 10,
-        activeid: null,
+        selectedid: null,
     };
 
     app.enumerate = (a) => {
@@ -48,11 +52,13 @@ function init(app) {
     // load the data.
     // For the moment, we 'load' the data from a string.
     app.init = () => {
+        console.log("hi");
         get_starting_posts()
             .then((res) => {
-                app.vue.posts.push(...app.enumerate(res.data.posts));
-                app.vue.activeid = res.data.selected_id;
+                app.vue.data.push(...res.data.data);
+                app.vue.selectedid = res.data.selectedid;
             })
+            .catch(console.log)
     };
 
     // Call to the initializer.

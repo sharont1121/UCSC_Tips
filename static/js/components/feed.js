@@ -1,18 +1,21 @@
 // how to get this to scroll without a fixed height
 
 Vue.component( 'feed', {
-    props: ['posts', "activeid"],
+    props: ['data', "selectedid"],
+
     data: function() {
         return {
-            activeID: this.activeid
+            activeID: null
         }
     },
+
     methods: {
         handlePostClick: function(id) {
+            //shouldnt happen because active posts aren't 'clickable'
+            if (this.activeID === id){
+                return;
+            }
             this.activeID = id;
-            is_one = getComputedStyle(this.$el).getPropertyValue("--is-one");
-            console.log(is_one)
-            if (is_one == false) {
                 setTimeout( () => {
                     const e = document.getElementById(id);
                     const h = e.offsetTop - this.$el.offsetTop - 20;
@@ -21,9 +24,7 @@ Vue.component( 'feed', {
                         left: 0,
                         behavior: "auto",
                     });
-                }, 1)
-            }
-            
+                }, 1)            
         },
     },
     template: `
@@ -31,11 +32,11 @@ Vue.component( 'feed', {
         <div class="section">
             <div class="feed-grid" >
                 <post 
-                    v-for="p in posts" 
-                    v-bind:isActive="p.id === activeid" 
-                    v-bind:key="p.id"
+                    v-for="p in data" 
+                    v-bind:isActive="p.posts.id === (activeID == null ? selectedid : activeID)" 
+                    v-bind:key="p.posts.id"
                     v-on:postActive="handlePostClick($event)" 
-                    v-bind:post="p" >
+                    v-bind:data="p" >
                 </post>
             </div>
         </div>

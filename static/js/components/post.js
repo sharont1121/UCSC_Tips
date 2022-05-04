@@ -1,8 +1,13 @@
 
 Vue.component(
     'post', {
-        props: ['post', 'isActive'],
-
+        props: ['data', 'isActive'],
+        data: function() {
+            return {
+                post: this.data.posts,
+                tags: [this.data.tag1, this.data.tag2, this.data.tag3].filter(e=>Boolean(e.id))
+        }
+        },
         methods: {
             handleClick: function(id) {
                 if (this.isActive === false) {
@@ -14,14 +19,8 @@ Vue.component(
         <div class="feed-post" v-bind:class="{active: isActive}" v-bind:id="post.id">
             <div class="box has-background-grey-dark" v-on:click="handleClick(post.id)">
                 <div class="columns">
-                    <div class="column">
-                        <tag name="tag 0" color="red"></tag>
-                    </div>
-                    <div class="column">
-                        <tag name="tag 0" color="red"></tag>
-                    </div>
-                    <div class="column">
-                        <tag name="tag 0" color="red"></tag>
+                    <div class="column" v-for="t in tags">
+                        <tag :name="t.tag_name" :color="'#' + t.color"></tag>
                     </div>
                     <div class="column is-6 columns" v-if="isActive">
                         <div class="column">
@@ -32,7 +31,7 @@ Vue.component(
                                 <span class="has-text-warning">
                                     <i class="fa fa-lg fa-star"></i>
                                 </span>
-                                <span class="has-text-white">&times 26</span>
+                                <span class="has-text-white">&times {{post.rating}}</span>
                             </div>
                         </div>
                     </div>

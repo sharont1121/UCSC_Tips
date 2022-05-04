@@ -2,7 +2,7 @@
 This file defines the database models
 """
 
-from random import choice, randint
+from random import choice, randint, random
 import datetime
 from .common import db, Field, auth
 from pydal.validators import *
@@ -69,14 +69,28 @@ def generate_garbage_text(num_words: int, max_chars = None):
 
 def add_fake_data(db, num:int):
 
+    tag_ids = [ x['id'] for x in db().select(db.tags.id).as_list()]
+    post_tags = [None, None, None]
+
+    ntags = 0
+    while ntags < len(post_tags):
+        post_tags[ntags] = choice(tag_ids)
+        ntags += 1
+        if random() > 0.5:
+            break
+
     max_id = db().select(db.posts.id, orderby=~db.posts.id).first()
     if not max_id:
         max_id = 0
+
     for i in range(max_id+1, num+max_id+1):
         db.posts.insert(
             title= f"fake title {i}",
-            body= generate_garbage_text(randint(0, 100))
+            body= generate_garbage_text(randint(0, 100)),
+            tag1= post_tags[0],
+            tag2= post_tags[1],
+            tag3= post_tags[2],
+            rating= randint(1,1000),
         )
-
 
 db.commit()

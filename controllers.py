@@ -68,7 +68,7 @@ def index():
 @action.uses('feed.html', db, auth)
 def feed():
     return dict(
-        load_posts_url=URL('feed','load') # should this be signed ???
+        load_posts_url=URL('feed','load', vars=request.params)
     )
 
 @action('clear')
@@ -79,26 +79,54 @@ def clear():
 
 DEFAULT_POST_COUNT = 10
 
+def get_posts(db, query, **kwargs):
+
+    tag1 = db.tags.with_alias('tag1')
+    tag2 = db.tags.with_alias('tag2')
+    tag3 = db.tags.with_alias('tag3')
+    return db(query).select(
+        db.posts.ALL,
+        db.posts.tag1,
+        db.posts.tag2,
+        db.posts.tag3,
+        tag1.ALL,
+        tag2.ALL,
+        tag3.ALL,
+        **kwargs,
+        left=[
+            tag1.on(db.posts.tag1 == tag1.id),
+            tag2.on(db.posts.tag2 == tag2.id),
+            tag3.on(db.posts.tag3 == tag3.id),
+        ],
+    )
 @action('feed/load/')
 @action.uses(db, auth)
 def feed_load():
-    expected_param_types = {'min': int, 'max': int, 'selected_id': int}
+
+    expected_param_types = {'min': int, 'max': int, 'selectedid': int}
     params = ParamParser(request.params, expected_param_types)
+    print(params)
     min_post = params.min or 0
-    max_post = params.max or (params.min + DEFAULT_POST_COUNT)
+    max_post = params.max or (min_post + DEFAULT_POST_COUNT)
     
-    posts = db(db.posts.id != params.selected_id).select(db.posts.ALL, orderby=~db.posts.rating, limitby=(min_post, max_post)).as_list()
+    
+    data = get_posts(
+        db, 
+        query=db.posts.id != params.selectedid, 
+        orderby=~db.posts.rating, 
+        limitby=(min_post, max_post)
+    ).as_list()
 
-    if params.selected_id:
-        post = db.posts[params.selected_id]
-        if post:
-            posts.insert(0, post)
+    post = get_posts(db, query=db.posts.id == params.selectedid, limitby=(0,1)).first()
+    
+    if post:
+        data.insert(0, post)
 
-    if not posts:
+    if not data:
         add_fake_data(db, 50)
         redirect(URL('feed'))
 
     return dict(
-        posts= posts,
-        selected_id= params.selected_id
+        data= data,
+        selectedid= params.selectedid,
     )
