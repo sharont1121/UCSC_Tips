@@ -26,6 +26,7 @@ function init(app) {
         min: 0,
         max: 10,
         selectedid: null,
+        missing: false,
     };
 
     app.enumerate = (a) => {
@@ -38,7 +39,10 @@ function init(app) {
     // We form the dictionary of all methods, so we can assign them
     // to the Vue app in a single blow.
     app.methods = {
-        
+        disapearModal: function() {
+            console.log(this);
+            this.missing = false;
+        }
     };
     // This creates the Vue instance.
     app.vue = new Vue({
@@ -55,8 +59,10 @@ function init(app) {
         console.log("hi");
         get_starting_posts()
             .then((res) => {
-                app.vue.data.push(...res.data.data);
+                app.vue.data = res.data.data;
+                console.log(res.data);
                 app.vue.selectedid = res.data.selectedid;
+                app.vue.missing = res.data.missing;
             })
             .catch(console.log)
     };

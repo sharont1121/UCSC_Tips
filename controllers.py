@@ -36,12 +36,12 @@ url_signer = URLSigner(session)
 
 
 class ParamParser:
-    def __init__(self, params: "dict(str,str)", param_types: "dict(str, type)", *, default=None):
+    def __init__(self, params: "dict(str,str)", param_types: "dict(str, type)", *, default=None, default_type=str):
         self.dict = {}
         self.default = default
         for name, value_str in params.items():
             try:
-                val = param_types[name](value_str)
+                val = param_types.get(name,str)(value_str)
                 self.dict[name] = val
             except (ValueError,  KeyError) as e:
                 print(e, file=stderr)
@@ -67,8 +67,11 @@ def index():
 @action('feed')
 @action.uses('feed.html', db, auth)
 def feed():
+    expected_param_types = {"missing": lambda x: x.lower().strip() == "true"} #missing: bool
+    params = ParamParser(request.params, expected_param_types)
+    print(params)
     return dict(
-        load_posts_url=URL('feed','load', vars=request.params)
+        load_posts_url=URL('feed','load', vars={"selectedid": params.selectedid})
     )
 
 @action('clear')
@@ -105,7 +108,6 @@ def feed_load():
 
     expected_param_types = {'min': int, 'max': int, 'selectedid': int}
     params = ParamParser(request.params, expected_param_types)
-    print(params)
     min_post = params.min or 0
     max_post = params.max or (min_post + DEFAULT_POST_COUNT)
     
@@ -119,9 +121,12 @@ def feed_load():
 
     post = get_posts(db, query=db.posts.id == params.selectedid, limitby=(0,1)).first()
     
+    missing=False
     if post:
         data.insert(0, post)
-
+    elif bool(params.selectedid):
+        missing=True
+        
     if not data:
         add_fake_data(db, 50)
         redirect(URL('feed'))
@@ -129,4 +134,5 @@ def feed_load():
     return dict(
         data= data,
         selectedid= params.selectedid,
+        missing= missing
     )

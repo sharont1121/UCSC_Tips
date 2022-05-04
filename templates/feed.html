@@ -12,6 +12,9 @@
 
 <div id="vue-target" style="height: 100%;">
     <div style="height: 100%;">
+        <div v-if="missing" v-on:postActive="disapearModal()" class="box has-background-danger">
+            <p class="content">could not find post!</p>
+        </div>
         <feed v-bind:data="data" v-bind:selectedid="selectedid"></feed>
     </div>
 </div>
