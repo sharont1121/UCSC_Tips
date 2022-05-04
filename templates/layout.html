@@ -11,10 +11,10 @@
   </head>
   <body style="height: 100vh;">
     <!-- Navigation bar -->
-    <nav class="navbar is-dark" role="navigation" aria-label="main navigation">
+    <nav class="navbar has-background-link" role="navigation" aria-label="main navigation">
       <div class="navbar-brand">
-        <a class="navbar-item" href="[[=URL('index')]]">
-          Learn py4web
+        <a class="navbar-item" href="[[=URL('feed')]]"> <!-- We need to choose whether the feed or the map will be the home/default page -->
+          <span class="title is-3 has-text-white">UCSC TIPS</span>
           <!-- <img class="logo" width="150" src="images/site_icon.png"> -->
         </a>
 
@@ -48,8 +48,8 @@
                   </div>
                 </div>
               [[else:]]
-                <a class="button is-link" href="[[=URL('auth/register')]]">Sign up</a>
-                <a class="button is-success" href="[[=URL('auth/login')]]">Log in</a>
+                <a class="button is-dark" href="[[=URL('auth/login')]]">Log in</a>
+                <a class="button is-link has-background-link-dark" href="[[=URL('auth/register')]]">Sign up</a>
               [[pass]]
             </div>
           </div>
@@ -61,7 +61,7 @@
       [[include]]
     </div>
     <!-- end of HTML inserted by extending template -->
-    
+
     <!-- no footer!
     <footer class="footer">
       <div class="content has-text-centered">
