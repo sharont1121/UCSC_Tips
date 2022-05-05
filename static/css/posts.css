@@ -15,11 +15,6 @@
     height: 100%
 }
 
-.feed-grid.is-one {
-    grid-template-columns: 100%;
-    --is-one: true;
-}
-
 @keyframes grow {
     0% {
         width: 50%;
@@ -36,18 +31,12 @@
     
 }
 
+.feed-grid.is-one {
+    grid-template-columns: 100%;
+    --is-one: true;
+}
 
-/* switch to one row if bulma desktop is enabled. Since the value
-    is hard coded, if somehow the bulma desktop size is changed, 
-    this will have to be changed too. */
-@media screen and (max-width: 1023px) {
-    .feed-grid {
-        grid-template-columns: 100%;
-        --is-one: true;
-    }
-
-    .feed-post.active {
-        grid-column: unset;
-        animation: unset;
-    }
+.feed-grid.is-one .feed-post.active {
+    grid-column: unset;
+    animation: unset;
 }

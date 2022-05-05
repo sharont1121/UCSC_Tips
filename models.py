@@ -2,11 +2,10 @@
 This file defines the database models
 """
 
-from random import choice, randint, random
 import datetime
 from .common import db, Field, auth
 from pydal.validators import *
-
+from .random_data import int_to_color
 
 def get_user_email():
     return auth.current_user.get('email') if auth.current_user else None
@@ -34,6 +33,12 @@ db.define_table(
     Field('uses', 'integer', default=0),
 )
 
+def add_random_color(tag, id):
+    db(db.tags.id == id and db.tags.color == None).update(color=int_to_color(id))
+
+db.tags._after_insert.append(add_random_color)
+
+
 db.define_table(
     'posts',
     Field('title', default=IS_NOT_EMPTY()),
@@ -50,47 +55,14 @@ db.define_table(
     Field('lon_coord'),
 )
 
-def generate_garbage_word(num_chars: int):
-    LETTERS = [ a for a in "abcdefghijklmnopqrstuvwxyz"]
-    res= ""
-    for _ in range(num_chars):
-        res += choice(LETTERS)
-    return res
-def generate_garbage_text(num_words: int, max_chars = None):
-    WORD_LEN_FREQ = [1,2,3,3,4,4,4,5,5,5,5,6,6,7,7,8,9]
-    res = ""
-    for _ in range(num_words):
-        res += generate_garbage_word(choice(WORD_LEN_FREQ)) 
-        res += " "
-    if max_chars and len(res) > max_chars:
-        return res[0:max_chars]
-    return res
+def update_tag_usages(post, i):
+    db(
+        db.tags.id == post.tag1 or 
+        db.tags.id == post.tag2 or 
+        db.tags.id == post.tag3
+    ).update(uses=db.tags.uses + 1)
 
+db.posts._after_insert.append(update_tag_usages)
 
-def add_fake_data(db, num:int):
-
-    tag_ids = [ x['id'] for x in db().select(db.tags.id).as_list()]
-    post_tags = [None, None, None]
-
-    ntags = 0
-    while ntags < len(post_tags):
-        post_tags[ntags] = choice(tag_ids)
-        ntags += 1
-        if random() > 0.5:
-            break
-
-    max_id = db().select(db.posts.id, orderby=~db.posts.id).first()
-    if not max_id:
-        max_id = 0
-
-    for i in range(max_id+1, num+max_id+1):
-        db.posts.insert(
-            title= f"fake title {i}",
-            body= generate_garbage_text(randint(0, 100)),
-            tag1= post_tags[0],
-            tag2= post_tags[1],
-            tag3= post_tags[2],
-            rating= randint(1,1000),
-        )
 
 db.commit()

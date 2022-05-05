@@ -9,6 +9,9 @@ Vue.component( 'feed', {
             selectedid: null,
             activeID: null,
             missing: false,
+            mapurl: null,
+            profileurl: null,
+            isOne: false,
         }
     },
     created: function () {
@@ -17,8 +20,17 @@ Vue.component( 'feed', {
                 this.data = res.data.data;
                 this.selectedid = res.data.selectedid;
                 this.missing = res.data.missing;
+                this.mapurl = res.data.mapurl;
+                this.profileurl = res.data.profileurl;
             })
             .catch(console.log);
+    },
+    mounted: function() {
+        this.handleResize();
+        window.addEventListener('resize', this.handleResize);
+    },
+    unmounted: function() {
+        window.removeEventListener('resize',this.handleResize);
     },
     methods: {
         handlePostClick: function(id) {
@@ -38,6 +50,10 @@ Vue.component( 'feed', {
                     });
                 }, 1)            
         },
+        handleResize: function() {
+            console.log(this.$el.offsetWidth);
+            this.isOne = this.$el.offsetWidth < 1024;
+        }
     },
     template: `
     <div style="height: 100%; overflow-y: scroll;">
@@ -45,7 +61,7 @@ Vue.component( 'feed', {
             <div v-if="missing" class="box has-background-danger">
                 <p class="content">could not find post!</p>
             </div>
-            <div class="feed-grid" >
+            <div class="feed-grid" v-bind:class="{'is-one': isOne}">
                 <post 
                     v-for="p in data" 
                     v-bind:isActive="p.posts.id === (activeID == null ? selectedid : activeID)" 

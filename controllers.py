@@ -25,36 +25,15 @@ session, db, T, auth, and tempates are examples of Fixtures.
 Warning: Fixtures MUST be declared with @action.uses({fixtures}) else your app will result in undefined behavior
 """
 
-from sys import stderr
 from py4web import action, request, abort, redirect, URL
 from yatl.helpers import A
 from .common import db, session, T, cache, auth, logger, authenticated, unauthenticated, flash
 from py4web.utils.url_signer import URLSigner
-from .models import get_user_email, add_fake_data
+from .models import get_user_email
+from .param_parser import ParamParser, BoolParam
+from .random_data import add_fake_data
 
 url_signer = URLSigner(session)
-
-
-class ParamParser:
-    def __init__(self, params: "dict(str,str)", param_types: "dict(str, type)", *, default=None, default_type=str):
-        self.dict = {}
-        self.default = default
-        for name, value_str in params.items():
-            try:
-                val = param_types.get(name,str)(value_str)
-                self.dict[name] = val
-            except (ValueError,  KeyError) as e:
-                print(e, file=stderr)
-                continue
-
-    def __getattr__(self, key: str):
-        return self.dict.get(key, self.default)
-
-    def __getitem__(self, key: str):
-        return self.dict.get(key, self.default)
-
-    def __repr__(self) -> str:
-        return f"params: {self.dict.__repr__()} default= {self.default}"
 
 
 @action('index')
@@ -67,17 +46,17 @@ def index():
 @action('feed')
 @action.uses('feed.html', db, auth)
 def feed():
-    expected_param_types = {"missing": lambda x: x.lower().strip() == "true"} #missing: bool
+    expected_param_types = {"missing": BoolParam} #missing: bool
     params = ParamParser(request.params, expected_param_types)
-    print(params)
     return dict(
-        load_posts_url=URL('feed','load', vars={"selectedid": params.selectedid})
+        load_posts_url=URL('feed','load', vars=params.dict_of(["selectedid"])),
     )
 
 @action('clear')
 @action.uses(db)
 def clear():
     db(db.posts).delete()
+    db(db.tags).delete()
     redirect(URL('feed'))
 
 DEFAULT_POST_COUNT = 10
@@ -135,4 +114,6 @@ def feed_load():
         data= data,
         selectedid= params.selectedid,
         missing= missing,
+        mapurl=URL('map'),
+        profileurl=URL('profiles'),
     )

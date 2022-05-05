@@ -18,20 +18,20 @@ Vue.component(
         template: `
         <div class="feed-post" v-bind:class="{active: isActive}" v-bind:id="post.id">
             <div class="box has-background-grey-dark" v-on:click="handleClick(post.id)">
-                <div class="columns">
+                <div class="columns is-vcentered">
                     <div class="column" v-for="t in tags">
-                        <tag :name="t.tag_name" :color="'#' + t.color"></tag>
+                        <tag :name="t.tag_name" :color="t.color"></tag>
                     </div>
                     <div class="column is-6 columns" v-if="isActive">
                         <div class="column">
-                            <a class="button is-round has-background-grey has-text-white has-text-weight-semibold">map</a>
+                            <a class="button is-round has-background-grey has-text-white has-text-weight-semibold" href="TODO!">map</a>
                         </div>
                         <div class="column">
                             <div class="icon-text">
-                                <span class="has-text-warning">
+                                <span class="has-text-warning has-text-right">
                                     <i class="fa fa-lg fa-star"></i>
                                 </span>
-                                <span class="has-text-white">&times {{post.rating}}</span>
+                                <span class="has-text-white has-text-right">&times {{post.rating}}</span>
                             </div>
                         </div>
                     </div>
