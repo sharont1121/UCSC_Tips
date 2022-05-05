@@ -1,4 +1,3 @@
-
 // This will be the object that will contain the Vue attributes
 // and be used to initialize it.
 const app = {};
@@ -6,15 +5,16 @@ const app = {};
 
 // Given an empty app object, initializes it filling its attributes,
 // creates a Vue instance, and then initializes the Vue instance.
-function init(app) {
+let init = (app) => {
 
     // This is the Vue data.
     app.data = {
-        data: [],
-        min: 0,
-        max: 10,
-        selectedid: null,
-        missing: false,
+        add_title: "",
+        add_body: "",
+        selected_tag1: '',
+        selected_tag2: '',
+        selected_tag3: '',
+
     };
 
     app.enumerate = (a) => {
@@ -24,16 +24,43 @@ function init(app) {
         return a;
     };
 
+    app.add_tip = function () {
+        axios.post(add_tip_url,
+            {
+                title: app.vue.add_title,
+                body: app.vue.add_body,
+                tag1_str: app.vue.selected_tag1,
+                tag2_str: app.vue.selected_tag2,
+                tag3_str: app.vue.selected_tag3,
+
+
+            }).then(function (response) {
+            console.log(response.data.id);
+            app.reset_form();
+        });
+    };
+
+    app.reset_form = function () {
+        app.vue.add_title = "";
+        app.vue.add_body = "";
+        app.vue.selected_tag1 = "";
+        app.vue.selected_tag2 = "";
+        app.vue.selected_tag3 = "";
+    };
+
+
+
     // We form the dictionary of all methods, so we can assign them
     // to the Vue app in a single blow.
     app.methods = {
-        
+        add_tip: app.add_tip,
     };
+
     // This creates the Vue instance.
     app.vue = new Vue({
         el: "#vue-target",
         data: app.data,
-        methods: app.methods,
+        methods: app.methods
     });
 
     // And this initializes it.
@@ -41,7 +68,7 @@ function init(app) {
     // load the data.
     // For the moment, we 'load' the data from a string.
     app.init = () => {
-        
+
     };
 
     // Call to the initializer.

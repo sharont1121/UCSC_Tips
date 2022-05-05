@@ -29,6 +29,7 @@ def pick_random_tags(tag_ids):
         ntags += 1
         if random() < 0.3:
             break
+
     return post_tags
 
 def add_fake_tags(db, num):

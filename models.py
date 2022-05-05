@@ -53,6 +53,9 @@ db.define_table(
     Field('tag3', 'reference tags'),
     Field('lat_coord'),
     Field('lon_coord'),
+    Field('tag1_str'), #tags when creating posts use these string fields for now
+    Field('tag2_str'),
+    Field('tag3_str'),
 )
 
 def update_tag_usages(post, i):
@@ -62,7 +65,7 @@ def update_tag_usages(post, i):
         db.tags.id == post.tag3
     ).update(uses=db.tags.uses + 1)
 
-db.posts._after_insert.append(update_tag_usages)
+#db.posts._after_insert.append(update_tag_usages)
 
 
 db.commit()

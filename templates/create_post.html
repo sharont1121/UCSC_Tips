@@ -1,0 +1,109 @@
+[[extend 'layout.html']]
+<style>
+[v-cloak] {
+     display: none;
+}
+</style>
+
+<div class="navbar-item">
+         <div class="buttons">
+               <a class="button navbar-item" href="[[=URL('feed')]]">View Feed</a>
+         </div>
+</div>
+
+<div class="section" id="vue-target">
+
+  <div class="container block">
+    <div class="title has-text-white">Add a Campus Tip</div>
+    <div class="form">
+
+      <!-- This looks like a form, but is not.  We just need the inputs. -->
+      <div class="field">
+        <label class="label has-text-white">Title:</label>
+        <div class="control">
+          <input type="text" v-model="add_title" class="input">
+        </div>
+      </div>
+      <div class="field">
+        <label class="label has-text-white">Description:</label>
+        <div class="control">
+          <input type="text" v-model="add_body" class="input">
+        </div>
+      </div>
+
+      <label class="label has-text-white">Select tags:</label>
+      <select v-model="selected_tag1">
+        <option disabled value="">Please select one</option>
+        <option>Other</option>
+        <option>Study spot</option>
+        <option>Food recommendation</option>
+        <option>Wilderness</option>
+        <option>Hiking trails</option>
+        <option>College Nine</option>
+        <option>Cowell College</option>
+        <option>Crown College</option>
+        <option>John R. Lewis College</option>
+        <option>Kresge College</option>
+        <option>Merrill College</option>
+        <option>Oakes College</option>
+        <option>Porter College</option>
+        <option>Rachel Carson College</option>
+        <option>Stevenson College</option>
+      </select>
+
+
+      <select v-model="selected_tag2">
+        <option disabled value="">Please select one</option>
+        <option>Other</option>
+        <option>Study spot</option>
+        <option>Food recommendation</option>
+        <option>Wilderness</option>
+        <option>Hiking trails</option>
+        <option>College Nine</option>
+        <option>Cowell College</option>
+        <option>Crown College</option>
+        <option>John R. Lewis College</option>
+        <option>Kresge College</option>
+        <option>Merrill College</option>
+        <option>Oakes College</option>
+        <option>Porter College</option>
+        <option>Rachel Carson College</option>
+        <option>Stevenson College</option>
+      </select>
+
+      <select v-model="selected_tag3">
+        <option disabled value="">Please select one</option>
+        <option>Other</option>
+        <option>Study spot</option>
+        <option>Food recommendation</option>
+        <option>Wilderness</option>
+        <option>Hiking trails</option>
+        <option>College Nine</option>
+        <option>Cowell College</option>
+        <option>Crown College</option>
+        <option>John R. Lewis College</option>
+        <option>Kresge College</option>
+        <option>Merrill College</option>
+        <option>Oakes College</option>
+        <option>Porter College</option>
+        <option>Rachel Carson College</option>
+        <option>Stevenson College</option>
+      </select>
+    </div>
+
+    <button @click="add_tip" class="button is-primary mt-4">
+      <i class="fa fa-plus fa-fw"></i> Create
+    </button>
+
+  </div>
+
+</div>
+
+
+[[block page_scripts]]
+<!-- Loads the index-specific js for Vue -->
+<script>
+  let add_tip_url = "[[=XML(add_tip_url)]]";
+</script>
+<script src="js/pages/create_post.js"></script>
+[[end]]

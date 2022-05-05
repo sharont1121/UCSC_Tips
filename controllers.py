@@ -129,3 +129,23 @@ def map():
 @action('profile/<uid:int>')
 def profile(uid):
     redirect(URL('index'))
+
+
+@action('create_post')
+@action.uses('create_post.html', url_signer, auth.user)
+def create_post():
+    return dict(
+        add_tip_url=URL('add_tip', signer=url_signer),
+    )
+
+@action('add_tip', method="POST")
+@action.uses(url_signer.verify(), db)
+def add_tip():
+    id = db.posts.insert(
+        title=request.json.get('title'),
+        body=request.json.get('body'),
+        tag1_str=request.json.get('tag1_str'),
+        tag2_str=request.json.get('tag2_str'),
+        tag3_str=request.json.get('tag3_str'),
+    )
+    return dict(id=id)
