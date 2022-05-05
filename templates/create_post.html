@@ -7,7 +7,9 @@
 
 <div class="navbar-item">
          <div class="buttons">
-               <a class="button navbar-item" href="[[=URL('feed')]]">View Feed</a>
+               <a class="button is-primary navbar-item" href="[[=URL('feed')]]">
+                    <span class="icon"><i  class="fa fa-eye"></i></span><span>View Feed</span>
+               </a>
          </div>
 </div>
 
@@ -91,7 +93,7 @@
       </select>
     </div>
 
-    <button @click="add_tip" class="button is-primary mt-4">
+    <button @click="add_tip" class="button is-success mt-4">
       <i class="fa fa-plus fa-fw"></i> Create
     </button>
 
