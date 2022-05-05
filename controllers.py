@@ -27,7 +27,7 @@ Warning: Fixtures MUST be declared with @action.uses({fixtures}) else your app w
 
 from py4web import action, request, abort, redirect, URL
 from yatl.helpers import A
-from .common import db, session, T, cache, auth, logger, authenticated, unauthenticated, flash
+from .common import db, session, T, cache, auth, logger, authenticated, unauthenticated
 from py4web.utils.url_signer import URLSigner
 from .models import get_user_email
 from .param_parser import ParamParser, BoolParam
@@ -59,13 +59,12 @@ def clear():
     db(db.tags).delete()
     redirect(URL('feed'))
 
-DEFAULT_POST_COUNT = 10
 
 def get_posts(db, query, **kwargs):
-
     tag1 = db.tags.with_alias('tag1')
     tag2 = db.tags.with_alias('tag2')
     tag3 = db.tags.with_alias('tag3')
+    user = db.user
     return db(query).select(
         db.posts.ALL,
         db.posts.tag1,
@@ -74,13 +73,18 @@ def get_posts(db, query, **kwargs):
         tag1.ALL,
         tag2.ALL,
         tag3.ALL,
+        user.id,
+        user.first_name,
         **kwargs,
         left=[
             tag1.on(db.posts.tag1 == tag1.id),
             tag2.on(db.posts.tag2 == tag2.id),
             tag3.on(db.posts.tag3 == tag3.id),
+            user.on(db.posts.created_by == user.id)
         ],
     )
+
+DEFAULT_POST_COUNT = 10
 @action('feed/load/')
 @action.uses(db, auth)
 def feed_load():
@@ -115,5 +119,13 @@ def feed_load():
         selectedid= params.selectedid,
         missing= missing,
         mapurl=URL('map'),
-        profileurl=URL('profiles'),
+        profileurl=URL('profile'),
     )
+
+@action('map')
+def map():
+    redirect(URL('index'))
+
+@action('profile/<uid:int>')
+def profile(uid):
+    redirect(URL('index'))

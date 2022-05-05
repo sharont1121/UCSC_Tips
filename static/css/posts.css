@@ -28,7 +28,6 @@
     grid-column: 1 / span 2;
     grid-row-end: span 2;
     animation: grow 0.5s ease-out backwards;
-    
 }
 
 .feed-grid.is-one {
@@ -39,4 +38,5 @@
 .feed-grid.is-one .feed-post.active {
     grid-column: unset;
     animation: unset;
+    transition: height 0.5s ease-out;
 }

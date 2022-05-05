@@ -18,8 +18,19 @@ $body-background-color: $purple-dark;
 $divider-background-color: $white;
 $divider-margin-inner-size: 0px;
 
+$custom-colors: ("purple-blue": ($purple-blue, $purple-blue));
+
 .is-round{
     border-radius: 1000px !important;
+}
+
+.is-flex-centered{
+    display: flex !important;
+    justify-content: center !important;
+}
+
+img {
+    object-fit: cover;
 }
 
 @import "../bulma/bulma.sass";

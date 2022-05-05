@@ -43,7 +43,7 @@ db.define_table(
     'posts',
     Field('title', default=IS_NOT_EMPTY()),
     Field('body', 'text', requires=IS_NOT_EMPTY()),
-    Field('created_by', 'reference user'),
+    Field('created_by', 'reference user', notnull=True),
     Field('created_on', 'datetime'),
     # Figure out what to store for images later, for now string
     Field('image_url'),
