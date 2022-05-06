@@ -19,12 +19,6 @@ def get_time():
 # db.define_table('thing', Field('name'))
 #
 ## always commit your models to avoid problems later
-db.define_table(
-    'user',
-    Field('user_email', default=get_user_email),
-    Field('first_name', requires=IS_NOT_EMPTY()),
-    Field('last_name', 'float', default=0.),
-)
 
 db.define_table(
     'tags',
@@ -43,7 +37,7 @@ db.define_table(
     'posts',
     Field('title', default=IS_NOT_EMPTY()),
     Field('body', 'text', requires=IS_NOT_EMPTY()),
-    Field('created_by', 'reference user', notnull=True),
+    Field('created_by', 'reference auth_user', notnull=True),
     Field('created_on', 'datetime', default=get_time),
     # Figure out what to store for images later, for now string
     Field('image_url'),

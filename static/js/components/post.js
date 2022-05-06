@@ -6,7 +6,7 @@ Vue.component(
             return {
                 post: this.data.posts,
                 tags: [this.data.tag1, this.data.tag2, this.data.tag3].filter(e=>Boolean(e.id)),
-                user: this.data.user,
+                user: this.data.auth_user,
         }
         },
         methods: {
@@ -27,7 +27,11 @@ Vue.component(
             },
             getMapUrl: function() {
                 return "todo!";
-            }
+            },
+            postRated: function() {
+                console.log("how do we do this!!!");
+                //axios.post()
+            },
         },
         computed: {
             mapurl: function() {
@@ -58,14 +62,18 @@ Vue.component(
                             <a class="button is-round has-background-purple-blue has-text-white has-text-weight-semibold" :href="mapurl">map</a>
                         </div>
                         <div class="column is-flex-centered">
-                            <a :href="profileurl" class="image is-48x48">
-                                <img class="is-rounded" src=img/gambit.png>
-                                <p class="content">{{user.first_name}}</p>
+                            <a :href="profileurl" class="has-text-white">
+                                <div class="columns is-mobile p-0 m-0">
+                                    <div class="image is-48x48 p-0">
+                                        <img class="column is-rounded p-0" src="img/gambit.png">
+                                    </div>
+                                    <p class="column content">{{user.first_name}}</p>
+                                </div>
                             </a>
                         </div>
                         <div class="column is-flex-centered">
                             <div class="icon-text">
-                                <span class="has-text-warning has-text-right">
+                                <span class="has-text-white has-text-right" v-on:click="postRated()">
                                     <i class="fa fa-lg fa-star"></i>
                                 </span>
                                 <span class="has-text-white has-text-right">&times {{post.rating}}</span>
@@ -87,7 +95,7 @@ Vue.component(
                         <div class="column is-6-mobile is-offset-3-mobile p-0"">
                             <div class="box is-shadowless is-clipped p-0 m-2">
                                 <div class="image is-square">
-                                    <img class="has-background-grey-dark" src="img/roman.jpg">
+                                    <img class="has-fit-cover has-background-grey-dark" src="img/roman.jpg">
                                 </div>
                             </div>
                         </div>

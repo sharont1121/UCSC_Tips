@@ -30,7 +30,7 @@ $custom-colors: ("purple-blue": ($purple-blue, $purple-blue), );
     justify-content: center !important;
 }
 
-img {
+img.has-fit-cover {
     object-fit: cover;
 }
 

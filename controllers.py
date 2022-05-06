@@ -64,7 +64,7 @@ def get_posts(db, query, **kwargs):
     tag1 = db.tags.with_alias('tag1')
     tag2 = db.tags.with_alias('tag2')
     tag3 = db.tags.with_alias('tag3')
-    user = db.user
+    user = db.auth_user
     return db(query).select(
         db.posts.ALL,
         db.posts.tag1,
