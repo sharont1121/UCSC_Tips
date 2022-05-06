@@ -42,7 +42,7 @@ Vue.component( 'feed', {
             this.activeID = id;
                 setTimeout( () => {
                     const e = document.getElementById(id);
-                    const h = e.offsetTop - this.$el.offsetTop - 20;
+                    const h = e.offsetTop - this.$el.offsetTop - 5;
                     this.$el.scroll({
                         top: h,
                         left: 0,
@@ -56,7 +56,7 @@ Vue.component( 'feed', {
     },
     template: `
     <div style="height: 100%; overflow-y: scroll;">
-        <div class="section">
+        <div class="section py-0">
             <div v-if="missing" class="box has-background-danger">
                 <p class="content">could not find post!</p>
             </div>

@@ -10,17 +10,21 @@
     }
 </style>
 
+[[block page_brand_items]]
 <div class="navbar-item">
-         <div class="buttons">
-               <a class="button is-primary navbar-item" href="[[=URL('create_post')]]">
-                    <span class="icon"><i class="fa fa-fw fa-pencil"></i></span> <span>Create Post</span>
-               </a>
-         </div>
+    <a class="button is-primary navbar-item" href="[[=URL('create_post')]]">
+         <span class="icon">
+            <i class="fa fa-plus"></i>
+        </span> 
+        <span>Add Tip</span>
+    </a>
 </div>
-
+[[end]]
 <div id="vue-target" style="height: 100%;">
     <div style="height: 100%;">
+        <searchbar></searchbar>
         <feed loadurl="[[=XML(load_posts_url)]]"></feed>
+
     </div>
 </div>
 
@@ -28,6 +32,7 @@
 [[block page_scripts]]
    <script src="js/components/tag.js"></script>
    <script src="js/components/post.js"></script>
+   <script src="js/components/searchbar.js"></script>
    <script src="js/components/feed.js"></script>
    <script src="js/pages/feed.js"></script>
 [[end]]
