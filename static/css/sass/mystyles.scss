@@ -8,6 +8,7 @@ $purple-blue: #5d5fef;
 $baby-blue: #8691ed;
 $white: #ffffff;
 
+//
 $grey-dark: #313131;
 $grey: #6c6c6c;
 $grey-light: #cacaca;
@@ -18,7 +19,7 @@ $body-background-color: $purple-dark;
 $divider-background-color: $white;
 $divider-margin-inner-size: 0px;
 
-$custom-colors: ("purple-blue": ($purple-blue, $purple-blue));
+$custom-colors: ("purple-blue": ($purple-blue, $purple-blue), );
 
 .is-round{
     border-radius: 1000px !important;

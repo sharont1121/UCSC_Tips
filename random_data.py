@@ -44,16 +44,21 @@ def add_fake_data(db, num:int):
     if not max_id:
         max_id = 0
     tag_ids = [ x['id'] for x in db().select(db.tags.id).as_list()]
+    users = db().select(db.user.id).as_list()
     for i in range(max_id+1, num+max_id+1):
         tags = pick_random_tags(tag_ids)
+        user = choice(users)
         db.posts.insert(
             title= f"fake title {i}",
             body= generate_garbage_text(randint(0, 100)),
+            created_by= user,
             tag1= tags[0],
             tag2= tags[1],
             tag3= tags[2],
             rating= randint(1,1000),
         )
+    return
+
 # 0<=h<360, 0<=s,v<=1.0
 def hsv_to_rgb(h,s,v) -> str:
     C = v * s

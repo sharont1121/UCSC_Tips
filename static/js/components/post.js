@@ -12,11 +12,20 @@ Vue.component(
         methods: {
             handleClick: function(id) {
                 if (this.isActive === false) {
+                    // ---- this chunk of code replaces
+                    let vars = window.location.search.replaceAll(/[&]?selectedid=[\d]+/g, "");
+                    console.log(vars);
+                    if(vars && vars !== '?'){
+                        vars = vars + '&';
+                    }
+                    else{
+                        vars = '?';
+                    }
+                    window.history.replaceState({},"", `${window.location.pathname}${vars}selectedid=${id}`)
                     this.$emit('postActive', id);
                 }
             },
             getMapUrl: function() {
-                console.log(this);
                 return "todo!";
             }
         },
@@ -32,7 +41,9 @@ Vue.component(
                 if(this.isActive || this.post.body.length <= 247){
                     return this.post.body;
                 }
-                return this.post.body.slice(0,247) + "...";
+                space = this.post.body.lastIndexOf(' ', 247);
+                space = Math.max(0,space);
+                return this.post.body.slice(0,space) + "...";
             }
         },
         template: `
@@ -74,7 +85,7 @@ Vue.component(
                             </p>
                         </div>
                         <div class="column is-6-mobile is-offset-3-mobile p-0"">
-                            <div class="box is-shadowless is-clipped p-0">
+                            <div class="box is-shadowless is-clipped p-0 m-2">
                                 <div class="image is-square">
                                     <img class="has-background-grey-dark" src="img/roman.jpg">
                                 </div>

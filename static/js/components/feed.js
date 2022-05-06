@@ -51,7 +51,6 @@ Vue.component( 'feed', {
                 }, 1)            
         },
         handleResize: function() {
-            console.log(this.$el.offsetWidth);
             this.isOne = this.$el.offsetWidth < 1024;
         }
     },
