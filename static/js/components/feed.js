@@ -6,16 +6,20 @@ Vue.component( 'feed', {
     data: function() {
         return {
             data: [],
+            min_post: 0,
             selectedid: null,
             activeID: null,
             missing: false,
             isOne: false,
+            search: STARTING_SEARCH,
+            locked: false,
         }
     },
     created: function () {
-        axios.get(this.loadurl)
+        axios.get(this.loadurl, {params: {min: this.min_post, max: this.min_post+10, search: this.search}})
             .then((res) => {
                 this.data = res.data.data;
+                this.min_post += this.data.length;
                 this.selectedid = res.data.selectedid;
                 this.missing = res.data.missing;
             })
@@ -29,6 +33,19 @@ Vue.component( 'feed', {
         window.removeEventListener('resize',this.handleResize);
     },
     methods: {
+        load_more_posts: function() {
+            axios.get(LOAD_POSTS_BASE_URL, {params: {min: this.min_post, max: this.min_post+10, search: this.search}})
+            .then((res) => {
+                this.data.push(...res.data.data);
+                this.min_post += res.data.data.length;
+                this.selectedid = res.data.selectedid;
+                this.missing = res.data.missing;
+                if (res.data.data.length === 0) {
+                    this.locked = true;
+                }
+            })
+            .catch(console.log);
+        },
         handlePostClick: function(id) {
             //shouldnt happen because active posts aren't 'clickable'
             if (this.activeID === id){
@@ -54,11 +71,15 @@ Vue.component( 'feed', {
             if (search_text == false){
                 search_text = null;
             }
-            axios.get(LOAD_POSTS_BASE_URL, {params: {search: search_obj.text}})
+            if(this.search === search_text){
+                return
+            }
+            axios.get(LOAD_POSTS_BASE_URL, {params: {min: this.min_post, max: this.min_post + 10, search: search_text}})
             .then((res) => {
-                this.data = res.data.data;
+                this.data.push(...res.data.data);
                 this.selectedid = res.data.selectedid;
                 this.missing = res.data.missing;
+                this.search = search_text;
                 new_url = new URL(`${window.location.origin}${window.location.pathname}`)
                 if(search_text){
                     console.log(search_text)
@@ -68,9 +89,18 @@ Vue.component( 'feed', {
             })
             .catch(console.log)
         },
+        handleScroll: function({target: {scrollTop, scrollTopMax}}) {
+            if (scrollTop + 300 > scrollTopMax){
+                if(this.locked === false){
+                    this.load_more_posts();
+                    this.locked = true;
+                    setTimeout(()=>{this.locked = false}, 300);
+                }
+            }
+        }
     },
     template: `
-    <div style="height: 100%; overflow-y: scroll;">
+    <div @scroll="handleScroll" style="height: 100%; overflow-y: scroll;">
         <div class="section py-3">
             <searchbar v-on:search="handleSearch($event)" > </searchbar>
         </div>

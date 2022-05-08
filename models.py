@@ -3,6 +3,9 @@ This file defines the database models
 """
 
 import datetime
+import re
+from collections import Counter
+
 from .common import db, Field, auth
 from pydal.validators import *
 from .random_data import int_to_color
@@ -52,14 +55,48 @@ db.define_table(
     Field('tag3_str'),
 )
 
-def update_tag_usages(post, i):
+def get_terms_from_str(body:str):
+    seps = re.sub(r'[^\w\s]'," ", body).split() #replace non-letters with spaces
+    words = [w[:MAX_TERM_LEN].lower() for w in seps] #lowercase and max 12 letters
+    return Counter(words)
+
+MAX_TERM_LEN = 12
+def after_post_insert(post, i):
+    #update tag usages stats
     db(
         db.tags.id == post.tag1 or 
         db.tags.id == post.tag2 or 
         db.tags.id == post.tag3
     ).update(uses=db.tags.uses + 1)
 
-db.posts._after_insert.append(update_tag_usages)
+    #update terms and term freq
+    freq = get_terms_from_str(post.body)
+    for term, count in freq.items():
+        t = db(db.terms.term == term).select(db.terms.id).first()
+        id = None
+        if not t:
+            id = db.terms.insert(term=term, freq=1)
+        else:
+            id = t.id
+            db(db.terms.id == id).update(freq=db.terms.freq + 1)
+        db.term_freq.insert(term=id, post=i, freq=count)
+
+db.posts._after_insert.append(after_post_insert)
+
+#todo: decriment on post delete
+db.define_table(
+    'terms',
+    Field('term', length=MAX_TERM_LEN, unique=True),
+    Field('freq', 'double'), #number of posts that contain the word at least once
+)
+
+db.define_table(
+    'term_freq',
+    Field('post', 'reference posts'),
+    Field('term', 'reference terms'),
+    Field('freq', 'double'), #frequency of the term in the post
+)
+
 
 
 db.commit()

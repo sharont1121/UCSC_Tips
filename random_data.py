@@ -1,4 +1,18 @@
-from random import choice, randint, random
+import pathlib
+from random import choice, choices, randint, random
+
+from .settings import APP_FOLDER
+BOOK = []
+
+def generate_shelly_text(n):
+    if not BOOK:
+        print()
+        with open(pathlib.Path(APP_FOLDER).joinpath('frankenstein.txt'), 'r') as book:
+            full_text = book.read()
+            for word in full_text.split():
+                BOOK.append(word)
+    return " ".join(choices(BOOK,k=n))
+
 
 def generate_garbage_word(num_chars: int):
     LETTERS = [ a for a in "abcdefghijklmnopqrstuvwxyz"]
@@ -52,7 +66,7 @@ def add_fake_data(db, num:int):
         user = choice(users)
         db.posts.insert(
             title= f"fake title {i}",
-            body= generate_garbage_text(randint(0, 100)),
+            body= generate_shelly_text(randint(0, 100)),
             created_by= user['id'],
             tag1= tags[0],
             tag2= tags[1],
