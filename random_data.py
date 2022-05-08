@@ -57,8 +57,10 @@ def add_fake_data(db, num:int):
     max_id = db().select(db.posts.id, orderby=~db.posts.id).first()
     if not max_id:
         max_id = 0
-    tag_ids = [ x['id'] for x in db().select(db.tags.id).as_list()]
+    else:
+        max_id = max_id.id
 
+    tag_ids = [ x['id'] for x in db().select(db.tags.id).as_list()]
     users = db().select(db.auth_user.id).as_list()
     
     for i in range(max_id+1, num+max_id+1):

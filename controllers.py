@@ -98,8 +98,12 @@ def search_posts(db, search_terms, limitby=None, exclude=[]):
     tag3 = db.tags.with_alias('tag3')
     user = db.auth_user
     num_posts = db(db.posts).count()
-    div = ((db.term_freq.freq * num_posts) / db.terms.freq).sum()
-    relvent_terms = db(db.terms.term.belongs(search_terms) and ~db.posts.id.belongs(exclude)).select(
+    div = ( (db.term_freq.post_freq * db.posts.inverse_max_freq * num_posts) / db.terms.doc_freq)
+    relvent_terms = db( 
+        db.terms.term.belongs(search_terms) & 
+        ~db.posts.id.belongs(exclude)
+        ).select(
+        div,
         db.posts.ALL,
         tag1.ALL,
         tag2.ALL,
@@ -108,9 +112,10 @@ def search_posts(db, search_terms, limitby=None, exclude=[]):
         user.first_name,
         orderby=~div, 
         groupby=db.posts.id,
+        having= div > 0.0,
         limitby=limitby,
         left=[
-            db.term_freq.on(db.term_freq.term == db.terms.id), 
+            db.terms.on(db.term_freq.term == db.terms.id), 
             db.posts.on(db.posts.id == db.term_freq.post),
             tag1.on(db.posts.tag1 == tag1.id),
             tag2.on(db.posts.tag2 == tag2.id),
@@ -118,6 +123,7 @@ def search_posts(db, search_terms, limitby=None, exclude=[]):
             user.on(db.posts.created_by == user.id)
             ]
         ).as_list()
+
     return relvent_terms
 
 
@@ -141,21 +147,29 @@ def feed_load():
     elif bool(params.selectedid):
         missing=True
 
+
     if params.search:
-        query = query and (db.posts.title.like(f"%{params.search}%"))
-    data.extend(get_posts(
+        query = query and db.posts.title.ilike(f"%{params.search} %") or db.posts.title.ilike(f"% {params.search}%")
+    
+    data.extend( get_posts(
         db, 
         query=query, 
         orderby=~db.posts.rating, 
         limitby=(min_post, max_post)
-    ).as_list())
-    if params.search and len(data) + min_post < max_post:
-        ids = [r.id for r in db(query).select(db.posts.id, orderby=~db.posts.rating, limitby=(0,max_post))]
-        terms = [k for k in get_terms_from_str(params.search).keys()]
-        data.extend( search_posts(db, terms, (len(data) + min_post, max_post), exclude=ids))
+        ).as_list())
 
-    
-    
+    if params.search and len(data) + min_post < max_post:
+        ids = [
+            r.id for r in db(query).select(
+                db.posts.id, 
+                orderby=~db.posts.rating, 
+                limitby=(0,max_post)
+                )
+            ]
+        if params.selectedid:
+            ids.append(params.selectedid)
+        terms = [k for k in get_terms_from_str(params.search)]
+        data.extend( search_posts(db, terms, (len(data) + min_post, max_post), exclude=ids))
 
     return dict(
         data= data,

@@ -1,5 +1,7 @@
 // how to get this to scroll without a fixed height
 
+const POSTS_PER_LOAD = 10;
+
 Vue.component( 'feed', {
     props: ['loadurl'],
 
@@ -16,7 +18,7 @@ Vue.component( 'feed', {
         }
     },
     created: function () {
-        axios.get(this.loadurl, {params: {min: this.min_post, max: this.min_post+10, search: this.search}})
+        axios.get(this.loadurl, {params: {min: this.min_post, max: this.min_post+POSTS_PER_LOAD}})
             .then((res) => {
                 this.data = res.data.data;
                 this.min_post += this.data.length;
@@ -33,15 +35,25 @@ Vue.component( 'feed', {
         window.removeEventListener('resize',this.handleResize);
     },
     methods: {
+        filter_duplicates: function(data){
+            ids = {}
+            for (let i of this.data){
+                ids[i.posts.id] = true;
+            }
+            return data.filter((e)=>{
+                return !(e.posts.id in ids);
+            })
+        },
         load_more_posts: function() {
-            axios.get(LOAD_POSTS_BASE_URL, {params: {min: this.min_post, max: this.min_post+10, search: this.search}})
+            axios.get(LOAD_POSTS_BASE_URL, {params: {min: this.min_post, max: this.min_post+POSTS_PER_LOAD, search: this.search}})
             .then((res) => {
-                this.data.push(...res.data.data);
+                filtered = this.filter_duplicates(res.data.data);
+                this.data.push(...filtered);
                 this.min_post += res.data.data.length;
                 this.selectedid = res.data.selectedid;
                 this.missing = res.data.missing;
-                if (res.data.data.length === 0) {
-                    this.locked = true;
+                if (filtered.length !== 0) {
+                    this.locked = false;
                 }
             })
             .catch(console.log);
@@ -72,17 +84,25 @@ Vue.component( 'feed', {
                 search_text = null;
             }
             if(this.search === search_text){
-                return
+                return;
             }
-            axios.get(LOAD_POSTS_BASE_URL, {params: {min: this.min_post, max: this.min_post + 10, search: search_text}})
+            this.min_post = 0;
+            this.data = [];
+            //maybe some sort of loading thingy?
+            axios.get(LOAD_POSTS_BASE_URL, { params: {
+                min: this.min_post, 
+                max: this.min_post + POSTS_PER_LOAD, 
+                search: search_text
+            }})
             .then((res) => {
-                this.data.push(...res.data.data);
+                this.$el.scroll({top: 0, left: 0});
+                this.data = res.data.data;
                 this.selectedid = res.data.selectedid;
                 this.missing = res.data.missing;
                 this.search = search_text;
+                this.min_post += res.data.data.length;
                 new_url = new URL(`${window.location.origin}${window.location.pathname}`)
                 if(search_text){
-                    console.log(search_text)
                     new_url.searchParams.append("search", search_text);
                 }
                 window.history.pushState({},"", new_url);
@@ -92,9 +112,8 @@ Vue.component( 'feed', {
         handleScroll: function({target: {scrollTop, scrollTopMax}}) {
             if (scrollTop + 300 > scrollTopMax){
                 if(this.locked === false){
-                    this.load_more_posts();
                     this.locked = true;
-                    setTimeout(()=>{this.locked = false}, 300);
+                    this.load_more_posts();
                 }
             }
         }
