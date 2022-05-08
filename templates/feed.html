@@ -1,22 +1,30 @@
 [[extend 'layout.html']]
 
 [[block page_head]]
-    <link rel="stylesheet" href="css/posts.css">
+<link rel="stylesheet" href="css/posts.css">
 [[end]]
 
 <style>
     [v-cloak] {
-         display: none;
+        display: none;
     }
 </style>
 
 [[block page_brand_items]]
 <div class="navbar-item">
     <a class="button is-primary navbar-item" href="[[=URL('create_post')]]">
-         <span class="icon">
+        <span class="icon">
             <i class="fa fa-plus"></i>
-        </span> 
+        </span>
         <span>Add Tip</span>
+    </a>
+</div>
+<div class="navbar-item">
+    <a class="button is-info navbar-item" href="[[=URL('map')]]">
+        <span class="icon">
+            <i class="fa fa-map"></i>
+        </span>
+        <span>View Map</span>
     </a>
 </div>
 [[end]]
@@ -31,15 +39,15 @@
 
 
 [[block page_scripts]]
-    <script>
-        LOAD_POSTS_BASE_URL = "[[=XML(base_load_posts_url)]]"
-        MAP_PAGE_BASE_URL = "[[=XML(map_url)]]";
-        PROFILE_PAGE_BASE_URL = "[[=XML(profile_url)]]";
-        STARTING_SEARCH = "[[=starting_search]]"
-    </script>
-    <script src="js/components/tag.js"></script>
-    <script src="js/components/post.js"></script>
-    <script src="js/components/searchbar.js"></script>
-    <script src="js/components/feed.js"></script>
-    <script src="js/pages/feed.js"></script>
+<script>
+    LOAD_POSTS_BASE_URL = "[[=XML(base_load_posts_url)]]"
+    MAP_PAGE_BASE_URL = "[[=XML(map_url)]]";
+    PROFILE_PAGE_BASE_URL = "[[=XML(profile_url)]]";
+    STARTING_SEARCH = "[[=starting_search]]"
+</script>
+<script src="js/components/tag.js"></script>
+<script src="js/components/post.js"></script>
+<script src="js/components/searchbar.js"></script>
+<script src="js/components/feed.js"></script>
+<script src="js/pages/feed.js"></script>
 [[end]]

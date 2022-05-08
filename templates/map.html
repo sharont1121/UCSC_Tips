@@ -1,0 +1,23 @@
+[[extend 'layout.html']]
+
+[[block page_brand_items]]
+<div class="navbar-item">
+   <a class="button is-primary navbar-item" href="[[=URL('create_post')]]">
+      <span class="icon">
+         <i class="fa fa-plus"></i>
+      </span>
+      <span>Add Tip</span>
+   </a>
+</div>
+<div class="navbar-item">
+   <div class="buttons">
+      <a class="button is-primary navbar-item" href="[[=URL('feed')]]">
+         <span class="icon"><i class="fa fa-eye"></i></span><span>View Feed</span>
+      </a>
+   </div>
+</div>
+[[end]]
+
+<div class="section has-text-white">
+   <p>A map should be here</p>
+</div>
