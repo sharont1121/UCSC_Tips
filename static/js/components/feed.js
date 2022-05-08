@@ -9,8 +9,6 @@ Vue.component( 'feed', {
             selectedid: null,
             activeID: null,
             missing: false,
-            mapurl: null,
-            profileurl: null,
             isOne: false,
         }
     },
@@ -20,8 +18,6 @@ Vue.component( 'feed', {
                 this.data = res.data.data;
                 this.selectedid = res.data.selectedid;
                 this.missing = res.data.missing;
-                this.mapurl = res.data.mapurl;
-                this.profileurl = res.data.profileurl;
             })
             .catch(console.log);
     },
@@ -50,12 +46,34 @@ Vue.component( 'feed', {
                     });
                 }, 1)            
         },
-        handleResize: function() {
+        handleResize: function () {
             this.isOne = this.$el.offsetWidth < 1024;
-        }
+        },
+        handleSearch: function(search_obj) {
+            let search_text = search_obj.text;
+            if (search_text == false){
+                search_text = null;
+            }
+            axios.get(LOAD_POSTS_BASE_URL, {params: {search: search_obj.text}})
+            .then((res) => {
+                this.data = res.data.data;
+                this.selectedid = res.data.selectedid;
+                this.missing = res.data.missing;
+                new_url = new URL(`${window.location.origin}${window.location.pathname}`)
+                if(search_text){
+                    console.log(search_text)
+                    new_url.searchParams.append("search", search_text);
+                }
+                window.history.pushState({},"", new_url);
+            })
+            .catch(console.log)
+        },
     },
     template: `
     <div style="height: 100%; overflow-y: scroll;">
+        <div class="section py-3">
+            <searchbar v-on:search="handleSearch($event)" > </searchbar>
+        </div>
         <div class="section py-0">
             <div v-if="missing" class="box has-background-danger">
                 <p class="content">could not find post!</p>

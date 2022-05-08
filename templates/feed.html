@@ -22,17 +22,24 @@
 [[end]]
 <div id="vue-target" style="height: 100%;">
     <div style="height: 100%;">
-        <searchbar></searchbar>
-        <feed loadurl="[[=XML(load_posts_url)]]"></feed>
+        <div style="height: calc(100% - 60px)">
+            <feed loadurl="[[=XML(load_posts_url)]]"></feed>
+        </div>
 
     </div>
 </div>
 
 
 [[block page_scripts]]
-   <script src="js/components/tag.js"></script>
-   <script src="js/components/post.js"></script>
-   <script src="js/components/searchbar.js"></script>
-   <script src="js/components/feed.js"></script>
-   <script src="js/pages/feed.js"></script>
+    <script>
+        LOAD_POSTS_BASE_URL = "[[=XML(base_load_posts_url)]]"
+        MAP_PAGE_BASE_URL = "[[=XML(map_url)]]";
+        PROFILE_PAGE_BASE_URL = "[[=XML(profile_url)]]";
+        STARTING_SEARCH = "[[=starting_search]]"
+    </script>
+    <script src="js/components/tag.js"></script>
+    <script src="js/components/post.js"></script>
+    <script src="js/components/searchbar.js"></script>
+    <script src="js/components/feed.js"></script>
+    <script src="js/pages/feed.js"></script>
 [[end]]

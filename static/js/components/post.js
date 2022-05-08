@@ -25,9 +25,6 @@ Vue.component(
                     this.$emit('postActive', id);
                 }
             },
-            getMapUrl: function() {
-                return "todo!";
-            },
             postRated: function() {
                 console.log("how do we do this!!!");
                 //axios.post()
@@ -35,10 +32,10 @@ Vue.component(
         },
         computed: {
             mapurl: function() {
-                return this.$parent.mapurl;
+                return MAP_PAGE_BASE_URL;
             },
             profileurl: function() {
-                return this.$parent.profileurl + "/" + this.user.id;
+                return PROFILE_PAGE_BASE_URL + "/" + this.user.id;
             },
             trimbodytext: function() {
                 
@@ -59,7 +56,7 @@ Vue.component(
                     </div>
                     <div class="column is-6 columns is-vcentered is-mobile" v-if="isActive">
                         <div class="column is-flex-centered">
-                            <a class="button is-round has-background-purple-blue has-text-white has-text-weight-semibold" :href="mapurl">map</a>
+                            <a :href="mapurl" class="button is-round has-background-purple-blue has-text-white has-text-weight-semibold" >map</a>
                         </div>
                         <div class="column is-flex-centered">
                             <a :href="profileurl" class="has-text-white">

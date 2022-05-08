@@ -46,10 +46,15 @@ def index():
 @action('feed')
 @action.uses('feed.html', db, auth)
 def feed():
-    expected_param_types = {"missing": BoolParam} #missing: bool
+    expected_param_types = {"missing": BoolParam} #exludes string types
     params = ParamParser(request.params, expected_param_types)
     return dict(
-        load_posts_url=URL('feed','load', vars=params.dict_of(["selectedid"])),
+        base_load_posts_url=URL('feed', 'load'),
+        load_posts_url=URL('feed','load', vars=params.dict_of(["selectedid", "search"])),
+        create_post_url=URL('create_post'),
+        map_url= URL('map'),
+        profile_url= URL('profile'),
+        starting_search= params.search or "",
     )
 
 @action('clear')
@@ -59,6 +64,12 @@ def clear():
     db(db.tags).delete()
     redirect(URL('feed'))
 
+
+@action('fake')
+@action.uses(db)
+def add_data():
+    add_fake_data(db, 50)
+    redirect(URL('feed'))
 
 def get_posts(db, query, **kwargs):
     tag1 = db.tags.with_alias('tag1')
@@ -89,15 +100,20 @@ DEFAULT_POST_COUNT = 10
 @action.uses(db, auth)
 def feed_load():
 
-    expected_param_types = {'min': int, 'max': int, 'selectedid': int}
+    expected_param_types = {'min': int, 'max': int, 'selectedid': int, 'search': str}
     params = ParamParser(request.params, expected_param_types)
     min_post = params.min or 0
     max_post = params.max or (min_post + DEFAULT_POST_COUNT)
     
-    
+    query = (db.posts.id != params.selectedid)
+
+    if params.search:
+        print(params.search)
+        query = query and (db.posts.title.like(f"%{params.search}%"))
+
     data = get_posts(
         db, 
-        query=db.posts.id != params.selectedid, 
+        query=query, 
         orderby=~db.posts.rating, 
         limitby=(min_post, max_post)
     ).as_list()
@@ -110,16 +126,12 @@ def feed_load():
     elif bool(params.selectedid):
         missing=True
         
-    if not data:
-        add_fake_data(db, 50)
-        redirect(URL('feed'))
+
 
     return dict(
         data= data,
         selectedid= params.selectedid,
         missing= missing,
-        mapurl=URL('map'),
-        profileurl=URL('profile'),
     )
 
 @action('map')

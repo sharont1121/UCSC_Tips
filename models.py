@@ -59,7 +59,7 @@ def update_tag_usages(post, i):
         db.tags.id == post.tag3
     ).update(uses=db.tags.uses + 1)
 
-# db.posts._after_insert.append(update_tag_usages)
+db.posts._after_insert.append(update_tag_usages)
 
 
 db.commit()
