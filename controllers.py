@@ -64,13 +64,7 @@ def feed():
     params = ParamParser(request.params, expected_param_types)
     return dict(
         base_load_posts_url=URL('feed', 'load'),
-        load_posts_url=URL('feed','load', vars=params.dict_of(["selectedid", "search"])),
-        create_post_url=URL('create_post'),
-        map_url= URL('map'),
-        profile_url= URL('profile'),
         profile=user_profile_url(),
-        starting_search= params.search or "",
-        base_load_posts_url=URL("feed", "load"),
         load_posts_url=URL(
             "feed", "load", vars=params.dict_of(["selectedid", "search"])
         ),
