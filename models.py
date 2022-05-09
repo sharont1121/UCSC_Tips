@@ -28,7 +28,7 @@ db.define_table(
 
 db.define_table(
     'tags',
-    Field('tag_name'),
+    Field('tag_name', unique=True),
     Field('color'),
     Field('uses', 'integer', default=0),
 )
