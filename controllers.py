@@ -53,7 +53,6 @@ def user_profile_url():
 def index():
     print("User:", get_user_email())
     return dict(
-        profile= user_profile_url()
     )
 
 
@@ -64,7 +63,6 @@ def feed():
     params = ParamParser(request.params, expected_param_types)
     return dict(
         base_load_posts_url=URL('feed', 'load'),
-        profile=user_profile_url(),
         load_posts_url=URL(
             "feed", "load", vars=params.dict_of(["selectedid", "search"])
         ),
@@ -221,7 +219,6 @@ def profile(uid):
 def create_post():
     return dict(
         add_tip_url=URL('add_tip', signer=url_signer),
-        profile=user_profile_url()
     )
 
 @action("add_tip", method="POST")
