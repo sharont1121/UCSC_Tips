@@ -56,7 +56,7 @@ Vue.component(
                     </div>
                     <div class="column is-6 columns is-vcentered is-mobile" v-if="isActive">
                         <div class="column is-flex-centered">
-                            <a :href="mapurl" class="button is-round has-background-purple-blue has-text-white has-text-weight-semibold" >map</a>
+                            <a :href="mapurl" class="button is-round has-background-purple-blue has-text-white is-purple-blue  has-text-weight-semibold" >map</a>
                         </div>
                         <div class="column is-flex-centered">
                             <a :href="profileurl" class="has-text-white">

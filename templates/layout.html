@@ -11,7 +11,7 @@
   </head>
   <body style="height: 100vh;">
     <!-- Navigation bar -->
-    <nav class="navbar has-background-link" role="navigation" aria-label="main navigation">
+    <nav class="navbar has-background-baby-blue" role="navigation" aria-label="main navigation">
       <div class="navbar-brand">
         <a class="navbar-item" href="[[=URL('feed')]]"> <!-- We need to choose whether the feed or the map will be the home/default page -->
           <!-- <img class="logo" width="150" src="images/site_icon.png"> -->
@@ -40,7 +40,6 @@
         <div class="navbar-end">
           <div class="navbar-item">
             <div class="buttons">
-
               [[if globals().get('user'):]]
                 <div class="navbar-item has-dropdown is-hoverable">
                   <a class="navbar-link is-primary">
@@ -48,14 +47,14 @@
                   </a>
                   <div class="navbar-dropdown">
                     <a class="navbar-item" href="[[=URL('auth/logout')]]">Logout</a>
-                    <a class="navbar-item" href="[[=URL('auth/profile')]]">Profile</a>
+                    <a class="navbar-item" href="[[=XML(profile)]]">Profile</a>
                     <a class="navbar-item" href="[[=URL('auth/change_password')]]">Change Password</a></li>
 
                   </div>
                 </div>
               [[else:]]
-                <a class="button is-dark" href="[[=URL('auth/login')]]">Log in</a>
-                <a class="button is-link has-background-link-dark" href="[[=URL('auth/register')]]">Sign up</a>
+                <a class="button has-background-baby-blue has-text-white is-baby-blue" href="[[=URL('auth/login')]]">Log in</a>
+                <a class="button has-background-purple-blue has-text-white is-baby-blue" href="[[=URL('auth/register')]]">Sign up</a>
               [[pass]]
             </div>
           </div>

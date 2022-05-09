@@ -29,18 +29,22 @@ from py4web import action, request, abort, redirect, URL
 from yatl.helpers import A
 from .common import db, session, T, cache, auth, logger, authenticated, unauthenticated, Field
 from py4web.utils.url_signer import URLSigner
-from .models import get_user_email, get_terms_from_str
+from .models import get_user_email, get_user_id, get_terms_from_str
 from .param_parser import ParamParser, BoolParam
 from .random_data import add_fake_data
 
 url_signer = URLSigner(session)
 
+def user_profile_url():
+    return URL('profile', get_user_id())
 
 @action('index')
-@action.uses(db, auth, 'index.html')
+@action.uses('index.html', db, auth)
 def index():
     print("User:", get_user_email())
-    return dict()
+    return dict(
+        profile= user_profile_url()
+    )
 
 
 @action('feed')
@@ -54,6 +58,7 @@ def feed():
         create_post_url=URL('create_post'),
         map_url= URL('map'),
         profile_url= URL('profile'),
+        profile=user_profile_url(),
         starting_search= params.search or "",
     )
 
@@ -191,6 +196,7 @@ def profile(uid):
 def create_post():
     return dict(
         add_tip_url=URL('add_tip', signer=url_signer),
+        profile=user_profile_url()
     )
 
 @action('add_tip', method="POST")

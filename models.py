@@ -12,7 +12,8 @@ from .random_data import int_to_color
 
 def get_user_email():
     return auth.current_user.get('email') if auth.current_user else None
-
+def get_user_id():
+    return auth.current_user.get('id') if auth.current_user else None
 def get_time():
     return datetime.datetime.utcnow()
 
@@ -104,6 +105,6 @@ db.define_table(
     Field('post_freq', 'double'), #frequency of the term in the post
 )
 
-
+db.executesql('CREATE INDEX IF NOT EXISTS byterm ON term_freq (term, post);')
 
 db.commit()
