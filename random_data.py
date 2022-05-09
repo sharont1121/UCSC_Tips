@@ -1,4 +1,18 @@
-from random import choice, randint, random
+import pathlib
+from random import choice, choices, randint, random
+
+from .settings import APP_FOLDER
+BOOK = []
+
+def generate_shelly_text(n):
+    if not BOOK:
+        print()
+        with open(pathlib.Path(APP_FOLDER).joinpath('frankenstein.txt'), 'r') as book:
+            full_text = book.read()
+            for word in full_text.split():
+                BOOK.append(word)
+    return " ".join(choices(BOOK,k=n))
+
 
 def generate_garbage_word(num_chars: int):
     LETTERS = [ a for a in "abcdefghijklmnopqrstuvwxyz"]
@@ -43,17 +57,26 @@ def add_fake_data(db, num:int):
     max_id = db().select(db.posts.id, orderby=~db.posts.id).first()
     if not max_id:
         max_id = 0
+    else:
+        max_id = max_id.id
+
     tag_ids = [ x['id'] for x in db().select(db.tags.id).as_list()]
+    users = db().select(db.auth_user.id).as_list()
+    
     for i in range(max_id+1, num+max_id+1):
         tags = pick_random_tags(tag_ids)
+        user = choice(users)
         db.posts.insert(
             title= f"fake title {i}",
-            body= generate_garbage_text(randint(0, 100)),
+            body= generate_shelly_text(randint(0, 100)),
+            created_by= user['id'],
             tag1= tags[0],
             tag2= tags[1],
             tag3= tags[2],
             rating= randint(1,1000),
         )
+    return
+
 # 0<=h<360, 0<=s,v<=1.0
 def hsv_to_rgb(h,s,v) -> str:
     C = v * s

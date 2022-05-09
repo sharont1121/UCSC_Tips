@@ -8,7 +8,7 @@
     row-gap: 30px;
     grid-auto-flow: dense;
     height: 100%; 
-
+    padding-bottom: 25%;
 }
 
 .feed-post {

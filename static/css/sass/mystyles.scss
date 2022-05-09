@@ -7,10 +7,29 @@ $purple-dark: #2f2942;
 $purple-blue: #5d5fef;
 $baby-blue: #8691ed;
 $white: #ffffff;
+$black: #000;
 
 $grey-dark: #313131;
 $grey: #6c6c6c;
-$grey-light: #cacaca;
+$grey-light: #c1c1c1;
+$grey-lighter: #dedede;
+
+$text: $white;
+$input-color: $grey-lighter;
+$label-color: $white;
+$input-background-color: $grey-dark;
+$input-border-color: $grey;
+$input-focus-border-color: $purple-blue;
+$input-placeholder-color: $grey-light;
+
+$navbar-dropdown-background-color: $grey-dark;
+$navbar-dropdown-item-hover-background-color: $grey-lighter;
+$navbar-dropdown-item-active-color: $black;
+$navbar-item-hover-background-color: $grey-dark;
+$background: #ff0000;
+
+$primary: $purple-blue;
+$success: $baby-blue;
 
 $family-sans-serif: "Inter", "Roboto", sans-serif;
 
@@ -18,7 +37,14 @@ $body-background-color: $purple-dark;
 $divider-background-color: $white;
 $divider-margin-inner-size: 0px;
 
-$custom-colors: ("purple-blue": ($purple-blue, $purple-blue));
+$custom-colors: (
+    "baby-blue": ($baby-blue, $baby-blue),
+    "purple-blue": ($purple-blue, $purple-blue), 
+    "grey": ($grey, $grey), 
+    "grey-dark": ($grey-dark, $grey-dark),
+    "grey-light": ($grey-light, $grey-light),
+    "grey-lighter": ($grey-lighter, $grey-lighter),
+    );
 
 .is-round{
     border-radius: 1000px !important;
@@ -29,8 +55,12 @@ $custom-colors: ("purple-blue": ($purple-blue, $purple-blue));
     justify-content: center !important;
 }
 
-img {
+img.has-fit-cover {
     object-fit: cover;
+}
+
+.control>.button.is-primary+.button.is-primary {
+    background-color: $baby-blue;
 }
 
 @import "../bulma/bulma.sass";
