@@ -41,7 +41,9 @@ from .common import (
 from py4web.utils.url_signer import URLSigner
 from .models import get_user_email, get_user_id, get_terms_from_str
 from .param_parser import ParamParser, BoolParam
-from .random_data import add_fake_data
+from .random_data import add_fake_data, int_to_color
+
+import random
 
 url_signer = URLSigner(session)
 
@@ -224,11 +226,32 @@ def create_post():
 @action("add_tip", method="POST")
 @action.uses(url_signer.verify(), db)
 def add_tip():
-    id = db.posts.insert(
-        title=request.json.get("title"),
-        body=request.json.get("body"),
-        tag1_str=request.json.get("tag1_str"),
-        tag2_str=request.json.get("tag2_str"),
-        tag3_str=request.json.get("tag3_str"),
+
+    tag1_id = db.tags.insert(
+        tag_name=request.json.get("tag1_name"),
+        color=int_to_color(random.randint(0, 100)),
+        uses=1
     )
+
+    tag2_id = db.tags.insert(
+        tag_name=request.json.get("tag2_name"),
+        color=int_to_color(random.randint(0, 100)),
+        uses=1
+    )
+
+    tag3_id = db.tags.insert(
+        tag_name=request.json.get("tag3_name"),
+        color=int_to_color(random.randint(0, 100)),
+        uses=1
+    )
+
+
+    id = db.posts.insert(
+       title=request.json.get("title"),
+       body=request.json.get("body"),
+       tag1=tag1_id,
+       tag2=tag2_id,
+       tag3=tag3_id,
+    )
+    print("ID of the post created: ", id)
     return dict(id=id)
