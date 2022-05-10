@@ -5,13 +5,23 @@
 }
 </style>
 
+[[block page_brand_items]]
 <div class="navbar-item">
-         <div class="buttons">
-               <a class="button is-primary navbar-item" href="[[=URL('feed')]]">
-                    <span class="icon"><i  class="fa fa-eye"></i></span><span>View Feed</span>
-               </a>
-         </div>
+    <a class="button is-info navbar-item" href="[[=URL('map')]]">
+        <span class="icon">
+            <i class="fa fa-map"></i>
+        </span>
+        <span>View Map</span>
+    </a>
 </div>
+<div class="navbar-item">
+   <div class="buttons">
+      <a class="button is-primary navbar-item" href="[[=URL('feed')]]">
+         <span class="icon"><i class="fa fa-eye"></i></span><span>View Feed</span>
+      </a>
+   </div>
+</div>
+[[end]]
 
 <div class="section" id="vue-target">
 
@@ -32,66 +42,26 @@
           <input type="text" v-model="add_body" class="input">
         </div>
       </div>
-
-      <label class="label has-text-white">Select tags:</label>
-      <select v-model="selected_tag1">
-        <option disabled value="">Please select one</option>
-        <option>Other</option>
-        <option>Study spot</option>
-        <option>Food recommendation</option>
-        <option>Wilderness</option>
-        <option>Hiking trails</option>
-        <option>College Nine</option>
-        <option>Cowell College</option>
-        <option>Crown College</option>
-        <option>John R. Lewis College</option>
-        <option>Kresge College</option>
-        <option>Merrill College</option>
-        <option>Oakes College</option>
-        <option>Porter College</option>
-        <option>Rachel Carson College</option>
-        <option>Stevenson College</option>
-      </select>
+      <div class="field">
+        <label class="label has-text-white">Tag 1</label>
+        <div class="control">
+          <input type="text" v-model="selected_tag1" class="input">
+        </div>
+      </div>
+      <div class="field">
+        <label class="label has-text-white">Tag 2</label>
+        <div class="control">
+          <input type="text" v-model="selected_tag1" class="input">
+        </div>
+      </div>
+      <div class="field">
+        <label class="label has-text-white">Tag 3</label>
+        <div class="control">
+          <input type="text" v-model="selected_tag3" class="input">
+        </div>
+      </div>
 
 
-      <select v-model="selected_tag2">
-        <option disabled value="">Please select one</option>
-        <option>Other</option>
-        <option>Study spot</option>
-        <option>Food recommendation</option>
-        <option>Wilderness</option>
-        <option>Hiking trails</option>
-        <option>College Nine</option>
-        <option>Cowell College</option>
-        <option>Crown College</option>
-        <option>John R. Lewis College</option>
-        <option>Kresge College</option>
-        <option>Merrill College</option>
-        <option>Oakes College</option>
-        <option>Porter College</option>
-        <option>Rachel Carson College</option>
-        <option>Stevenson College</option>
-      </select>
-
-      <select v-model="selected_tag3">
-        <option disabled value="">Please select one</option>
-        <option>Other</option>
-        <option>Study spot</option>
-        <option>Food recommendation</option>
-        <option>Wilderness</option>
-        <option>Hiking trails</option>
-        <option>College Nine</option>
-        <option>Cowell College</option>
-        <option>Crown College</option>
-        <option>John R. Lewis College</option>
-        <option>Kresge College</option>
-        <option>Merrill College</option>
-        <option>Oakes College</option>
-        <option>Porter College</option>
-        <option>Rachel Carson College</option>
-        <option>Stevenson College</option>
-      </select>
-    </div>
 
     <button @click="add_tip" class="button is-success mt-4">
       <i class="fa fa-plus fa-fw"></i> Create
