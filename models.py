@@ -97,6 +97,6 @@ db.define_table(
     Field('post_freq', 'double'), #frequency of the term in the post
 )
 
-db.executesql('CREATE INDEX IF NOT EXISTS byterm ON term_freq (term, post);')
+db.executesql('CREATE INDEX IF NOT EXISTS byterm ON term_freq (term, post);') #sketchy
 
 db.commit()

@@ -6,6 +6,9 @@ Vue.component( 'feed', {
     props: ['loadurl'],
 
     data: function() {
+        params = Q.get_query();
+        STARTING_SEARCH = params["search"];
+        STARTING_TAGS = params["tags"];
         return {
             data: [],
             min_post: 0,
@@ -14,18 +17,22 @@ Vue.component( 'feed', {
             missing: false,
             isOne: false,
             search: STARTING_SEARCH,
+            tags: STARTING_TAGS,
             locked: false,
         }
     },
     created: function () {
-        axios.get(this.loadurl, {params: {min: this.min_post, max: this.min_post+POSTS_PER_LOAD}})
-            .then((res) => {
-                this.data = res.data.data;
-                this.min_post += this.data.length;
-                this.selectedid = res.data.selectedid;
-                this.missing = res.data.missing;
-            })
-            .catch(console.log);
+        axios.get(this.loadurl, {params: {
+            min: this.min_post, 
+            max: this.min_post+POSTS_PER_LOAD,
+        }})
+        .then((res) => {
+            this.data = res.data.data;
+            this.min_post += this.data.length;
+            this.selectedid = res.data.selectedid;
+            this.missing = res.data.missing;
+        })
+        .catch(console.log);
     },
     mounted: function() {
         this.handleResize();
@@ -45,7 +52,12 @@ Vue.component( 'feed', {
             })
         },
         load_more_posts: function() {
-            axios.get(LOAD_POSTS_BASE_URL, {params: {min: this.min_post, max: this.min_post+POSTS_PER_LOAD, search: this.search}})
+            axios.get(LOAD_POSTS_BASE_URL, {params: {
+                min: this.min_post, 
+                max: this.min_post+POSTS_PER_LOAD, 
+                search: this.search ? this.search : null,
+                tags: this.tags
+            }})
             .then((res) => {
                 filtered = this.filter_duplicates(res.data.data);
                 this.data.push(...filtered);
@@ -80,19 +92,20 @@ Vue.component( 'feed', {
         },
         handleSearch: function(search_obj) {
             let search_text = search_obj.text;
-            if (search_text == false){
-                search_text = null;
+            let tags = JSON.stringify(search_obj.tags);
+            if (tags == false) {
+                tags = null;
             }
-            if(this.search === search_text){
-                return;
-            }
+
             this.min_post = 0;
             this.data = [];
-            //maybe some sort of loading thingy?
+
+            //maybe some sort of loading thingy
             axios.get(LOAD_POSTS_BASE_URL, { params: {
                 min: this.min_post, 
                 max: this.min_post + POSTS_PER_LOAD, 
-                search: search_text
+                search: search_text ? search_text : null,
+                tags: tags,
             }})
             .then((res) => {
                 this.$el.scroll({top: 0, left: 0});
@@ -101,9 +114,12 @@ Vue.component( 'feed', {
                 this.missing = res.data.missing;
                 this.search = search_text;
                 this.min_post += res.data.data.length;
-                new_url = new URL(`${window.location.origin}${window.location.pathname}`)
+                new_url = new URL(`${window.location.origin}${window.location.pathname}`) //construct url without any params
                 if(search_text){
                     new_url.searchParams.append("search", search_text);
+                }
+                if(tags){
+                    new_url.searchParams.append("tags", tags)
                 }
                 window.history.pushState({},"", new_url);
             })

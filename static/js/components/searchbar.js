@@ -12,7 +12,7 @@ Vue.component('searchbar',{
         submit: function() {
             this.focus = false;
             search = this.search_text.trim();
-            this.$emit('search', {text: search});
+            this.$emit('search', {text: search, tags: this.selected_tags});
         },
         reset: function() {
             this.focus = false;

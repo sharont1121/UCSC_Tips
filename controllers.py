@@ -25,6 +25,7 @@ session, db, T, auth, and tempates are examples of Fixtures.
 Warning: Fixtures MUST be declared with @action.uses({fixtures}) else your app will result in undefined behavior
 """
 
+from json import loads as JSON
 from py4web import action, request, abort, redirect, URL
 from yatl.helpers import A
 from .common import (
@@ -66,7 +67,7 @@ def feed():
     return dict(
         base_load_posts_url=URL('feed', 'load'),
         load_posts_url=URL(
-            "feed", "load", vars=params.dict_of(["selectedid", "search"])
+            "feed", "load", vars=params.dict_of(["selectedid", "search", "tags"])
         ),
         create_post_url=URL("create_post"),
         map_url=URL("map"),
@@ -91,12 +92,18 @@ def add_data():
     redirect(URL("feed"))
 
 
-def get_posts(db, query, **kwargs):
+def get_posts(db, query, tags = None, **kwargs):
     tag1 = db.tags.with_alias("tag1")
     tag2 = db.tags.with_alias("tag2")
     tag3 = db.tags.with_alias("tag3")
     user = db.auth_user
-    return db(query).select(
+    if tags:
+        query = query & (
+            tag1.tag_name.belongs(tags) |
+            tag2.tag_name.belongs(tags) |
+            tag3.tag_name.belongs(tags)
+        )
+    res = db(query).select(
         db.posts.ALL,
         tag1.ALL,
         tag2.ALL,
@@ -111,20 +118,30 @@ def get_posts(db, query, **kwargs):
             user.on(db.posts.created_by == user.id),
         ],
     )
+    print(res)
+    return res
 
 
-def search_posts(db, search_terms, limitby=None, exclude=[]):
+def search_posts(db, search_terms, tags=None, limitby=None, exclude=[]):
+
     tag1 = db.tags.with_alias("tag1")
     tag2 = db.tags.with_alias("tag2")
     tag3 = db.tags.with_alias("tag3")
     user = db.auth_user
+
     num_posts = db(db.posts).count()
-    div = (
-        db.term_freq.post_freq * db.posts.inverse_max_freq * num_posts
-    ) / db.terms.doc_freq
-    relvent_terms = (
-        db(db.terms.term.belongs(search_terms) & ~db.posts.id.belongs(exclude))
-        .select(
+
+    div = ((db.term_freq.post_freq * db.posts.inverse_max_freq * num_posts) / db.terms.doc_freq)
+
+    query = (db.terms.term.belongs(search_terms) & ~db.posts.id.belongs(exclude) )
+    
+    if tags:
+        query = query & (
+            tag1.tag_name.belongs(tags) |
+            tag2.tag_name.belongs(tags) |
+            tag3.tag_name.belongs(tags)
+        )
+    relevent_terms = db(query).select(
             div,
             db.posts.ALL,
             tag1.ALL,
@@ -134,7 +151,7 @@ def search_posts(db, search_terms, limitby=None, exclude=[]):
             user.first_name,
             orderby=~div,
             groupby=db.posts.id,
-            having=div > 0.0,
+            having= (div > 0.0),
             limitby=limitby,
             left=[
                 db.terms.on(db.term_freq.term == db.terms.id),
@@ -145,10 +162,7 @@ def search_posts(db, search_terms, limitby=None, exclude=[]):
                 user.on(db.posts.created_by == user.id),
             ],
         )
-        .as_list()
-    )
-
-    return relvent_terms
+    return relevent_terms
 
 
 DEFAULT_POST_COUNT = 10
@@ -157,50 +171,55 @@ DEFAULT_POST_COUNT = 10
 @action("feed/load/")
 @action.uses(db, auth)
 def feed_load():
-
-    expected_param_types = {"min": int, "max": int, "selectedid": int, "search": str}
+    expected_param_types = {
+        "min": int, 
+        "max": int, 
+        "selectedid": int, 
+        "search": str, 
+        "tags": JSON,
+        "userid": int,
+    }
     params = ParamParser(request.params, expected_param_types)
+
     min_post = params.min or 0
     max_post = params.max or (min_post + DEFAULT_POST_COUNT)
 
-    query = db.posts.id != params.selectedid
+    query = (db.posts.id != params.selectedid)
     data = []
 
-    post = get_posts(db, query=db.posts.id == params.selectedid, limitby=(0, 1)).first()
+    post = get_posts(db, query=db.posts.id == params.selectedid, limitby=(0, 1))
     missing = False
     if post:
-        data.append(post)
+        data.extend(post)
     elif bool(params.selectedid):
         missing = True
 
     if params.search:
-        query = (
-            query
-            and db.posts.title.ilike(f"%{params.search} %")
-            or db.posts.title.ilike(f"% {params.search}%")
+        query = query & db.posts.title.ilike(f"%{params.search}%")
+
+    posts = get_posts(
+            db, query=query, tags=params.tags, orderby=~db.posts.rating, limitby=(min_post, max_post)
         )
 
     data.extend(
-        get_posts(
-            db, query=query, orderby=~db.posts.rating, limitby=(min_post, max_post)
-        ).as_list()
+        posts
     )
 
-    if params.search and len(data) + min_post < max_post:
+    if params.search and (len(data) + min_post) < max_post:
         ids = [
-            r.id
-            for r in db(query).select(
+            r.id for r in db(query).select(
                 db.posts.id, orderby=~db.posts.rating, limitby=(0, max_post)
             )
         ]
         if params.selectedid:
             ids.append(params.selectedid)
         terms = [k for k in get_terms_from_str(params.search)]
+
         data.extend(
-            search_posts(db, terms, (len(data) + min_post, max_post), exclude=ids)
+            search_posts(db, terms, tags=params.tags, limitby=(len(data) + min_post, max_post), exclude=ids)
         )
 
-    return dict(data=data, selectedid=params.selectedid, missing=missing,)
+    return dict(data=data, selectedid=params.selectedid, missing=missing)
 
 
 @action("map")
