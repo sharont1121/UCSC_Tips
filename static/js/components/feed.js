@@ -65,15 +65,15 @@ Vue.component( 'feed', {
             }
             this.missing = false;
             this.activeID = id;
-                setTimeout( () => {
-                    const e = document.getElementById(id);
-                    const h = e.offsetTop - this.$el.offsetTop - 5;
-                    this.$el.scroll({
-                        top: h,
-                        left: 0,
-                        behavior: "auto",
-                    });
-                }, 1)            
+            setTimeout( () => {
+                const e = document.getElementById(id);
+                const h = e.offsetTop - this.$el.offsetTop - 5;
+                this.$el.scroll({
+                    top: h,
+                    left: 0,
+                    behavior: "auto",
+                });
+            }, 1)            
         },
         handleResize: function () {
             this.isOne = this.$el.offsetWidth < 1024;
