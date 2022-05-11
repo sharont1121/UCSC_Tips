@@ -232,7 +232,6 @@ def add_tip():
     if len(t1) == 0:
         tag1_id = db.tags.insert(
             tag_name=request.json.get("tag1_name"),
-            color=int_to_color(random.randint(0, 100)),
             uses=1
         )
     # Otherwise increment its 'uses' field
@@ -248,7 +247,6 @@ def add_tip():
     if len(t2) == 0:
         tag2_id = db.tags.insert(
             tag_name=request.json.get("tag2_name"),
-            color=int_to_color(random.randint(0, 100)),
             uses=1
         )
     # Otherwise increment its 'uses' field
@@ -264,7 +262,6 @@ def add_tip():
     if len(t3) == 0:
         tag3_id = db.tags.insert(
             tag_name=request.json.get("tag3_name"),
-            color=int_to_color(random.randint(0, 100)),
             uses=1
         )
     # Otherwise increment its 'uses' field
@@ -280,6 +277,7 @@ def add_tip():
     id = db.posts.insert(
        title=request.json.get("title"),
        body=request.json.get("body"),
+       created_by=get_user_id(),
        tag1=tag1_id,
        tag2=tag2_id,
        tag3=tag3_id,

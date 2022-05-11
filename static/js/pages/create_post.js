@@ -25,6 +25,8 @@ let init = (app) => {
     };
 
     app.add_tip = function () {
+
+
         axios.post(add_tip_url,
             {
                 title: app.vue.add_title,

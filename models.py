@@ -39,7 +39,7 @@ db.tags._after_insert.append(add_random_color)
 
 db.define_table(
     'posts',
-    Field('title', default=IS_NOT_EMPTY()),
+    Field('title', requires=IS_NOT_EMPTY()),
     Field('body', 'text', requires=IS_NOT_EMPTY()),
     Field('created_by', 'reference auth_user', notnull=True),
     Field('created_on', 'datetime', default=get_time),
