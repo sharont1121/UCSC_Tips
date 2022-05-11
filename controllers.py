@@ -229,7 +229,9 @@ def add_tip():
 
     # If tag1 doesnt exist in the db, insert it and set uses to 1
     t1 = db(db.tags.tag_name == request.json.get("tag1_name")).select().as_list()
-    if len(t1) == 0:
+    if request.json.get("tag1_name") == "":
+        tag1_id = None
+    elif len(t1) == 0:
         tag1_id = db.tags.insert(
             tag_name=request.json.get("tag1_name"),
             uses=1
@@ -244,7 +246,9 @@ def add_tip():
 
     # If tag2 doesn't exist in the db, insert it and set uses to 1
     t2 = db(db.tags.tag_name == request.json.get("tag2_name")).select().as_list()
-    if len(t2) == 0:
+    if request.json.get("tag2_name") == "":
+        tag2_id = None
+    elif len(t2) == 0:
         tag2_id = db.tags.insert(
             tag_name=request.json.get("tag2_name"),
             uses=1
@@ -259,7 +263,9 @@ def add_tip():
 
     # If tag3 doesn't exist in the db, insert it and set uses to 1
     t3 = db(db.tags.tag_name == request.json.get("tag3_name")).select().as_list()
-    if len(t3) == 0:
+    if request.json.get("tag3_name") == "":
+        tag3_id = None
+    elif len(t3) == 0:
         tag3_id = db.tags.insert(
             tag_name=request.json.get("tag3_name"),
             uses=1
@@ -271,7 +277,6 @@ def add_tip():
         db(
             db.tags.id == tag3_id
         ).update(uses=tag3.uses + 1)
-
 
     # Using the ids of the tags, now insert the post into the db
     id = db.posts.insert(
