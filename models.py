@@ -51,9 +51,6 @@ db.define_table(
     Field('tag3', 'reference tags'),
     Field('lat_coord'),
     Field('lon_coord'),
-    Field('tag1_str'), #tags when creating posts use these string fields for now
-    Field('tag2_str'),
-    Field('tag3_str'),
     Field('inverse_max_freq','double', default=1.0)
 )
 
