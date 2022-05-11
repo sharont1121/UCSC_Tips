@@ -64,12 +64,7 @@ def get_terms_from_str(body:str):
 
 MAX_TERM_LEN = 12
 def after_post_insert(post, i):
-    #update tag usages stats
-    db(
-        db.tags.id == post.tag1 or 
-        db.tags.id == post.tag2 or 
-        db.tags.id == post.tag3
-    ).update(uses=db.tags.uses + 1)
+    #update tag usages stats (deleted this bc add_post takes care of this)
 
     #update terms and term freq
     freq = get_terms_from_str(post.body)
