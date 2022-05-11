@@ -11,9 +11,9 @@ let init = (app) => {
     app.data = {
         add_title: "",
         add_body: "",
-        selected_tag1: '',
-        selected_tag2: '',
-        selected_tag3: '',
+        add_tag1: '',
+        add_tag2: '',
+        add_tag3: '',
 
     };
 
@@ -29,13 +29,11 @@ let init = (app) => {
             {
                 title: app.vue.add_title,
                 body: app.vue.add_body,
-                tag1_str: app.vue.selected_tag1,
-                tag2_str: app.vue.selected_tag2,
-                tag3_str: app.vue.selected_tag3,
-
-
+                tag1_name: app.vue.add_tag1,
+                tag2_name: app.vue.add_tag2,
+                tag3_name: app.vue.add_tag3,
             }).then(function (response) {
-            console.log(response.data.id);
+            // console.log(response.data.id);
             app.reset_form();
         });
     };
@@ -43,11 +41,10 @@ let init = (app) => {
     app.reset_form = function () {
         app.vue.add_title = "";
         app.vue.add_body = "";
-        app.vue.selected_tag1 = "";
-        app.vue.selected_tag2 = "";
-        app.vue.selected_tag3 = "";
+        app.vue.add_tag1 = "";
+        app.vue.add_tag2 = "";
+        app.vue.add_tag3 = "";
     };
-
 
 
     // We form the dictionary of all methods, so we can assign them

@@ -41,7 +41,9 @@ from .common import (
 from py4web.utils.url_signer import URLSigner
 from .models import get_user_email, get_user_id, get_terms_from_str
 from .param_parser import ParamParser, BoolParam
-from .random_data import add_fake_data
+from .random_data import add_fake_data, int_to_color
+
+import random
 
 url_signer = URLSigner(session)
 
@@ -224,11 +226,64 @@ def create_post():
 @action("add_tip", method="POST")
 @action.uses(url_signer.verify(), db)
 def add_tip():
+
+    # If tag1 doesnt exist in the db, insert it and set uses to 1
+    t1 = db(db.tags.tag_name == request.json.get("tag1_name")).select().as_list()
+    if len(t1) == 0:
+        tag1_id = db.tags.insert(
+            tag_name=request.json.get("tag1_name"),
+            color=int_to_color(random.randint(0, 100)),
+            uses=1
+        )
+    # Otherwise increment its 'uses' field
+    else:
+        tag1_id = t1[0]["id"]
+        tag1 = db.tags[tag1_id]
+        db(
+            db.tags.id == tag1_id
+        ).update(uses=tag1.uses + 1)
+
+    # If tag2 doesn't exist in the db, insert it and set uses to 1
+    t2 = db(db.tags.tag_name == request.json.get("tag2_name")).select().as_list()
+    if len(t2) == 0:
+        tag2_id = db.tags.insert(
+            tag_name=request.json.get("tag2_name"),
+            color=int_to_color(random.randint(0, 100)),
+            uses=1
+        )
+    # Otherwise increment its 'uses' field
+    else:
+        tag2_id = t2[0]["id"]
+        tag2 = db.tags[tag2_id]
+        db(
+            db.tags.id == tag2_id
+        ).update(uses=tag2.uses + 1)
+
+    # If tag3 doesn't exist in the db, insert it and set uses to 1
+    t3 = db(db.tags.tag_name == request.json.get("tag3_name")).select().as_list()
+    if len(t3) == 0:
+        tag3_id = db.tags.insert(
+            tag_name=request.json.get("tag3_name"),
+            color=int_to_color(random.randint(0, 100)),
+            uses=1
+        )
+    # Otherwise increment its 'uses' field
+    else:
+        tag3_id = t3[0]["id"]
+        tag3 = db.tags[tag3_id]
+        db(
+            db.tags.id == tag3_id
+        ).update(uses=tag3.uses + 1)
+
+
+    # Using the ids of the tags, now insert the post into the db
     id = db.posts.insert(
-        title=request.json.get("title"),
-        body=request.json.get("body"),
-        tag1_str=request.json.get("tag1_str"),
-        tag2_str=request.json.get("tag2_str"),
-        tag3_str=request.json.get("tag3_str"),
+       title=request.json.get("title"),
+       body=request.json.get("body"),
+       tag1=tag1_id,
+       tag2=tag2_id,
+       tag3=tag3_id,
     )
+
+    print("ID of the post created: ", id)
     return dict(id=id)

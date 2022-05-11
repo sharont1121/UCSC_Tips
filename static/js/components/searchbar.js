@@ -26,10 +26,9 @@ Vue.component('searchbar',{
         loseFocus: function() {
             this.focus = false;
         },
-        handleTagSubmit: function(event) {
-            if (this.selected_tags.includes(this.tag_text)){
-                return;
-            }
+        handleTagSubmit: function() {
+            if (this.tag_text === "") {return}
+            if (this.selected_tags.includes(this.tag_text)){return}
             this.selected_tags.push(this.tag_text);
             this.tag_text = "";
         },
