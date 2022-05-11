@@ -1,5 +1,17 @@
 [[extend 'layout.html']]
 
+[[block page_head]]
+<!-- individual pages can customize header here -->
+
+<head>
+   <title>Map</title>
+   <script src="https://polyfill.io/v3/polyfill.min.js?features=default"></script>
+
+   <link rel="stylesheet" type="text/css" href="css/map.css" />
+   <script type="module" src="js/components/map.js"></script>
+</head>
+[[end]]
+
 [[block page_brand_items]]
 <div class="navbar-item">
    <a class="button is-primary navbar-item" href="[[=URL('create_post')]]">
@@ -21,3 +33,12 @@
 <div class="section has-text-white">
    <p>A map should be here</p>
 </div>
+
+<div id="map"></div>
+
+[[block page_scripts]]
+<!-- <script src="js/components/map.js"></script> -->
+<script async
+   src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBlu2BP4tVpaDbjYUHOS9EZDEpnjk5Qipc&callback=initMap">
+   </script>
+[[end]]
