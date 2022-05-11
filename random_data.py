@@ -7,7 +7,7 @@ BOOK = []
 def generate_shelly_text(n):
     if not BOOK:
         print()
-        with open(pathlib.Path(APP_FOLDER).joinpath('frankenstein.txt'), 'r') as book:
+        with open(pathlib.Path(APP_FOLDER).joinpath('frankenstein.txt'), 'r', encoding="utf-8") as book:
             full_text = book.read()
             for word in full_text.split():
                 BOOK.append(word)
