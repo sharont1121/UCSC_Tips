@@ -1,5 +1,5 @@
 // Initialize and add the map
-function initMap() {
+var initMap = function () {
     // The location of UCSC 36.98973133172732, -122.0593088463258
     const coord = { lat: 36.9927, lng: -122.0593 };
     // The map, centered at UCSC
