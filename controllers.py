@@ -179,12 +179,12 @@ def feed_load():
         "tags": JSON,
         "userid": int,
     }
+
     params = ParamParser(request.params, expected_param_types)
 
     min_post = params.min or 0
     max_post = params.max or (min_post + DEFAULT_POST_COUNT)
-
-    query = (db.posts.id != params.selectedid)
+    assert (max_post - min_post < 100)
     data = []
 
     post = get_posts(db, query=db.posts.id == params.selectedid, limitby=(0, 1))
@@ -194,17 +194,17 @@ def feed_load():
     elif bool(params.selectedid):
         missing = True
 
+    query = ( db.posts.id != params.selectedid )
     if params.search:
         query = query & db.posts.title.ilike(f"%{params.search}%")
 
     posts = get_posts(
-            db, query=query, tags=params.tags, orderby=~db.posts.rating, limitby=(min_post, max_post)
-        )
+        db, query=query, tags=params.tags, orderby=~db.posts.rating, limitby=(min_post, max_post)
+    )
 
     data.extend(
         posts
     )
-
     if params.search and (len(data) + min_post) < max_post:
         ids = [
             r.id for r in db(query).select(

@@ -22,11 +22,12 @@ Vue.component( 'feed', {
         }
     },
     created: function () {
-        axios.get(this.loadurl, {params: {
+        axios.get(this.loadurl, { params: {
             min: this.min_post, 
             max: this.min_post+POSTS_PER_LOAD,
         }})
         .then((res) => {
+            this.$el.scroll({top:0, left: 0})
             this.data = res.data.data;
             this.min_post += this.data.length;
             this.selectedid = res.data.selectedid;

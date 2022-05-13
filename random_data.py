@@ -48,7 +48,7 @@ def pick_random_tags(tag_ids):
 
 def add_fake_tags(db, num):
     for _ in range(num):
-        db.tags.insert(tag_name=generate_garbage_text(1))
+        db.tags.insert(tag_name=generate_shelly_text(1))
 
 def add_fake_data(db, num:int):
     if not db().select(db.tags.id).first():
