@@ -1,11 +1,11 @@
 Vue.component('searchbar',{
-    props: ["search"],
+    props: ["searchstr", "tagslist"],
     data: function() {
         return {
-            search_text: STARTING_SEARCH || "",
-            focus: false,
+            search_text: this.searchstr || "",
             tag_text: "",
-            selected_tags: [],
+            focus: false,
+            selected_tags: this.tagslist || [],
         }
     },
     methods: {

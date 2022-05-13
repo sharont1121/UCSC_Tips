@@ -3,34 +3,28 @@
 const POSTS_PER_LOAD = 10;
 
 Vue.component( 'feed', {
-    props: ['loadurl'],
+    props: ['loadurl', 'params', 'isone'],
 
     data: function() {
-        params = Q.get_query();
-        STARTING_SEARCH = params["search"];
-        STARTING_TAGS = params["tags"];
+        let parsed_params = JSON.parse(this.params);
+        console.log(parsed_params);
         return {
             data: [],
             min_post: 0,
-            selectedid: null,
-            activeID: null,
+            activeid: parsed_params["selectedid"],
             missing: false,
-            isOne: false,
-            search: STARTING_SEARCH,
-            tags: STARTING_TAGS,
+            search: parsed_params["search"],
+            tags: parsed_params["tags"],
+            userid: parsed_params["userid"],
             locked: false,
         }
     },
     created: function () {
-        axios.get(this.loadurl, { params: {
-            min: this.min_post, 
-            max: this.min_post+POSTS_PER_LOAD,
-        }})
-        .then((res) => {
+        this._get().then((res) => {
             this.$el.scroll({top:0, left: 0})
             this.data = res.data.data;
             this.min_post += this.data.length;
-            this.selectedid = res.data.selectedid;
+            this.selectedid = res.selectedid;
             this.missing = res.data.missing;
         })
         .catch(console.log);
@@ -52,14 +46,17 @@ Vue.component( 'feed', {
                 return !(e.posts.id in ids);
             })
         },
-        load_more_posts: function() {
-            axios.get(LOAD_POSTS_BASE_URL, {params: {
+        _get() {
+            return axios.get(this.loadurl, {params: {
                 min: this.min_post, 
                 max: this.min_post+POSTS_PER_LOAD, 
                 search: this.search ? this.search : null,
-                tags: this.tags
-            }})
-            .then((res) => {
+                userid: this.userid ? this.userid : null,
+                tags: this.tags ? JSON.stringify(this.tags) : null,
+            }});
+        },
+        load_more_posts: function() {
+            this._get().then((res) => {
                 filtered = this.filter_duplicates(res.data.data);
                 this.data.push(...filtered);
                 this.min_post += res.data.data.length;
@@ -76,8 +73,10 @@ Vue.component( 'feed', {
             if (this.activeID === id){
                 return;
             }
+
             this.missing = false;
             this.activeID = id;
+            this.$emit('newpostactive', id);
             setTimeout( () => {
                 const e = document.getElementById(id);
                 const h = e.offsetTop - this.$el.offsetTop - 5;
@@ -89,42 +88,27 @@ Vue.component( 'feed', {
             }, 1)            
         },
         handleResize: function () {
-            this.isOne = this.$el.offsetWidth < 1024;
+            this.is_one = this.$el.offsetWidth < 1024;
         },
         handleSearch: function(search_obj) {
-            let search_text = search_obj.text;
-            let tags = JSON.stringify(search_obj.tags);
-            if (tags == false) {
-                tags = null;
+            this.search = search_obj.text;
+            this.tags = search_obj.tags;
+            if (this.tags == false) {
+                this.tags = null;
             }
 
             this.min_post = 0;
             this.data = [];
 
             //maybe some sort of loading thingy
-            axios.get(LOAD_POSTS_BASE_URL, { params: {
-                min: this.min_post, 
-                max: this.min_post + POSTS_PER_LOAD, 
-                search: search_text ? search_text : null,
-                tags: tags,
-            }})
-            .then((res) => {
+            this._get().then((res) => {
                 this.$el.scroll({top: 0, left: 0});
                 this.data = res.data.data;
                 this.selectedid = res.data.selectedid;
                 this.missing = res.data.missing;
-                this.search = search_text;
                 this.min_post += res.data.data.length;
-                new_url = new URL(`${window.location.origin}${window.location.pathname}`) //construct url without any params
-                if(search_text){
-                    new_url.searchParams.append("search", search_text);
-                }
-                if(tags){
-                    new_url.searchParams.append("tags", tags)
-                }
-                window.history.pushState({},"", new_url);
+                this.$emit('newfeedloaded', {search_text: this.search, tags: this.tags})
             })
-            .catch(console.log)
         },
         handleScroll: function({target: {scrollTop, scrollTopMax}}) {
             if (scrollTop + 300 > scrollTopMax){
@@ -138,16 +122,16 @@ Vue.component( 'feed', {
     template: `
     <div @scroll="handleScroll" style="height: 100%; overflow-y: scroll;">
         <div class="section py-3">
-            <searchbar v-on:search="handleSearch($event)" > </searchbar>
+            <searchbar @search="handleSearch($event)" :searchstr="this.search" :tagslist="this.tags"> </searchbar>
         </div>
         <div class="section py-0">
-            <div v-if="missing" class="box has-background-danger">
+            <div v-if="this.missing" class="box has-background-danger">
                 <p class="content">could not find post!</p>
             </div>
-            <div class="feed-grid" v-bind:class="{'is-one': isOne}">
+            <div class="feed-grid" v-bind:class="{'is-one': isone == true}">
                 <post 
-                    v-for="p in data" 
-                    v-bind:isActive="p.posts.id === (activeID == null ? selectedid : activeID)" 
+                    v-for="p in this.data" 
+                    v-bind:isActive="p.posts.id === this.activeid" 
                     v-bind:key="p.posts.id"
                     v-on:postActive="handlePostClick($event)" 
                     v-bind:data="p" >

@@ -26,6 +26,7 @@ Warning: Fixtures MUST be declared with @action.uses({fixtures}) else your app w
 """
 
 from json import loads as JSON
+import json
 from py4web import action, request, abort, redirect, URL
 from yatl.helpers import A
 from .common import (
@@ -62,17 +63,18 @@ def index():
 @action("feed")
 @action.uses("feed.html", db, auth)
 def feed():
-    expected_param_types = {"missing": BoolParam}  # exludes string types
+    expected_param_types = {
+        "selectedid": int,
+        "search": str, 
+        "tags": JSON,
+        }  # exludes string types
     params = ParamParser(request.params, expected_param_types)
     return dict(
         base_load_posts_url=URL('feed', 'load'),
-        load_posts_url=URL(
-            "feed", "load", vars=params.dict_of(["selectedid", "search", "tags"])
-        ),
         create_post_url=URL("create_post"),
         map_url=URL("map"),
         profile_url=URL("profile"),
-        starting_search=params.search or "",
+        params=json.dumps(params.dict_of(['selectedid', 'search', 'tags']))
     )
 
 
@@ -118,11 +120,10 @@ def get_posts(db, query, tags = None, **kwargs):
             user.on(db.posts.created_by == user.id),
         ],
     )
-    print(res)
     return res
 
 
-def search_posts(db, search_terms, tags=None, limitby=None, exclude=[]):
+def search_posts(db, search_terms, tags=None, limitby=None, exclude=[], conditions=None):
 
     tag1 = db.tags.with_alias("tag1")
     tag2 = db.tags.with_alias("tag2")
@@ -131,10 +132,14 @@ def search_posts(db, search_terms, tags=None, limitby=None, exclude=[]):
 
     num_posts = db(db.posts).count()
 
+    # tf-idf
     div = ((db.term_freq.post_freq * db.posts.inverse_max_freq * num_posts) / db.terms.doc_freq)
 
     query = (db.terms.term.belongs(search_terms) & ~db.posts.id.belongs(exclude) )
-    
+
+    if conditions:
+        query = query & conditions
+
     if tags:
         query = query & (
             tag1.tag_name.belongs(tags) |
@@ -187,7 +192,10 @@ def feed_load():
     assert (max_post - min_post < 100)
     data = []
 
-    post = get_posts(db, query=db.posts.id == params.selectedid, limitby=(0, 1))
+    tinyquery = db.posts.id == params.selectedid
+    if params.userid:
+        tinyquery = db.posts.created_by == params.userid
+    post = get_posts(db, query=tinyquery, limitby=(0, 1))
     missing = False
     if post:
         data.extend(post)
@@ -198,6 +206,9 @@ def feed_load():
     if params.search:
         query = query & db.posts.title.ilike(f"%{params.search}%")
 
+    if params.userid:
+        query = query & (db.posts.created_by == params.userid)
+
     posts = get_posts(
         db, query=query, tags=params.tags, orderby=~db.posts.rating, limitby=(min_post, max_post)
     )
@@ -205,18 +216,25 @@ def feed_load():
     data.extend(
         posts
     )
+
     if params.search and (len(data) + min_post) < max_post:
+        terms = [k for k in get_terms_from_str(params.search)]
+
         ids = [
             r.id for r in db(query).select(
                 db.posts.id, orderby=~db.posts.rating, limitby=(0, max_post)
             )
         ]
+        
         if params.selectedid:
             ids.append(params.selectedid)
-        terms = [k for k in get_terms_from_str(params.search)]
+
+        query2 = None
+        if params.userid:
+            query2 = db.posts.created_by == params.userid
 
         data.extend(
-            search_posts(db, terms, tags=params.tags, limitby=(len(data) + min_post, max_post), exclude=ids)
+            search_posts(db, terms, tags=params.tags, limitby=(len(data) + min_post, max_post), exclude=ids, conditions=query2)
         )
 
     return dict(data=data, selectedid=params.selectedid, missing=missing)
