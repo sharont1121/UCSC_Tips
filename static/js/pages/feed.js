@@ -37,7 +37,7 @@ function init(app) {
             newfeedloaded: function( {search_text: search_text, tags: tags} ){
                 new_url = new URL(`${window.location.origin}${window.location.pathname}`) //construct url without any params
                 if(search_text){
-                    new_url.searchParams.append("searchstr", search_text);
+                    new_url.searchParams.append("search", search_text);
                 }
                 if(tags){
                     new_url.searchParams.append("tags", JSON.stringify(tags))
