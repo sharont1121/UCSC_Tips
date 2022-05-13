@@ -12,7 +12,7 @@ santa_cruz_lon = [-122.076839, -121.984772]
 def generate_random_coord():
     lat = uniform(santa_cruz_lat[0], santa_cruz_lat[1])
     lon = uniform(santa_cruz_lon[0], santa_cruz_lon[1])
-    print(lat, lon)
+    # print(lat, lon)
     return lat, lon
     # pass
 
@@ -86,6 +86,7 @@ def add_fake_data(db, num: int):
     for i in range(max_id + 1, num + max_id + 1):
         tags = pick_random_tags(tag_ids)
         user = choice(users)
+        coord = generate_random_coord()
         db.posts.insert(
             title=f"fake title {i}",
             body=generate_shelly_text(randint(0, 100)),
@@ -93,6 +94,8 @@ def add_fake_data(db, num: int):
             tag1=tags[0],
             tag2=tags[1],
             tag3=tags[2],
+            lat_coord=coord[0],
+            lon_coord=coord[1],
             rating=randint(1, 1000),
         )
     return

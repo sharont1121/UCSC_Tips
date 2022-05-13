@@ -65,7 +65,7 @@ def index():
 def feed():
     expected_param_types = {"missing": BoolParam}  # exludes string types
     params = ParamParser(request.params, expected_param_types)
-    print(generate_random_coord())
+    # print(generate_random_coord())
     return dict(
         base_load_posts_url=URL("feed", "load"),
         load_posts_url=URL(
