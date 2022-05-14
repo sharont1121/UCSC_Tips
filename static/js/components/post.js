@@ -12,7 +12,6 @@ Vue.component(
         methods: {
             handleClick: function(id) {
                 if (this.isActive === false) {
-                    
                     this.$emit('postActive', id);
                 }
             },
@@ -37,6 +36,9 @@ Vue.component(
                 space = Math.max(0,space);
                 return this.post.body.slice(0,space) + "...";
             }
+        },
+        updated: function() {
+            console.log("updated");
         },
         template: `
         <div class="feed-post" v-bind:class="{active: isActive}" v-bind:id="post.id">

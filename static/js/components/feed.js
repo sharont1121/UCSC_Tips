@@ -6,8 +6,7 @@ Vue.component( 'feed', {
     props: ['loadurl', 'params', 'isone'],
 
     data: function() {
-        let parsed_params = JSON.parse(this.params);
-        console.log(parsed_params);
+        const parsed_params = JSON.parse(this.params);
         return {
             data: [],
             min_post: 0,
@@ -24,7 +23,7 @@ Vue.component( 'feed', {
             this.$el.scroll({top:0, left: 0})
             this.data = res.data.data;
             this.min_post += this.data.length;
-            this.selectedid = res.selectedid;
+            this.activeid = res.data.selectedid;
             this.missing = res.data.missing;
         })
         .catch(console.log);
@@ -53,6 +52,7 @@ Vue.component( 'feed', {
                 search: this.search ? this.search : null,
                 userid: this.userid ? this.userid : null,
                 tags: this.tags ? JSON.stringify(this.tags) : null,
+                selectedid: this.activeid,
             }});
         },
         load_more_posts: function() {
@@ -60,7 +60,7 @@ Vue.component( 'feed', {
                 filtered = this.filter_duplicates(res.data.data);
                 this.data.push(...filtered);
                 this.min_post += res.data.data.length;
-                this.selectedid = res.data.selectedid;
+                this.activeid = res.data.selectedid;
                 this.missing = res.data.missing;
                 if (filtered.length !== 0) {
                     this.locked = false;
@@ -70,12 +70,12 @@ Vue.component( 'feed', {
         },
         handlePostClick: function(id) {
             //shouldnt happen because active posts aren't 'clickable'
-            if (this.activeID === id){
+            if (this.activeid === id){
                 return;
             }
-
             this.missing = false;
-            this.activeID = id;
+            this.activeid = id;
+            console.log(this.activeid);
             this.$emit('newpostactive', id);
             setTimeout( () => {
                 const e = document.getElementById(id);
@@ -104,7 +104,7 @@ Vue.component( 'feed', {
             this._get().then((res) => {
                 this.$el.scroll({top: 0, left: 0});
                 this.data = res.data.data;
-                this.selectedid = res.data.selectedid;
+                this.activeid = res.data.selectedid;
                 this.missing = res.data.missing;
                 this.min_post += res.data.data.length;
                 this.$emit('newfeedloaded', {search_text: this.search, tags: this.tags})
@@ -131,10 +131,11 @@ Vue.component( 'feed', {
             <div class="feed-grid" v-bind:class="{'is-one': isone == true}">
                 <post 
                     v-for="p in this.data" 
-                    v-bind:isActive="p.posts.id === this.activeid" 
-                    v-bind:key="p.posts.id"
-                    v-on:postActive="handlePostClick($event)" 
-                    v-bind:data="p" >
+                    :data="p" 
+                    :isActive="p.posts.id === activeid" 
+                    :key="p.posts.id"
+                    @postActive="handlePostClick($event)" 
+                    >
                 </post>
             </div>
         </div>

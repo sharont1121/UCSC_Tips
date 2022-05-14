@@ -32,7 +32,13 @@
 <div id="vue-target" style="height: 100%;">
     <div style="height: 100%;">
         <div style="height: calc(100% - 60px)">
-            <feed @newpostactive="newpostactive($event)" @newfeedloaded="newfeedloaded($event)" :loadurl="LOAD_URL" :params="PARAMS" isone="false"></feed>
+            <feed 
+                @newpostactive="newpostactive($event)" 
+                @newfeedloaded="newfeedloaded($event)" 
+                :loadurl="LOAD_URL" 
+                :params="PARAMS" 
+                :isone="false"
+            ></feed>
         </div>
 
     </div>

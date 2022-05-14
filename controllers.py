@@ -61,7 +61,7 @@ def index():
 
 
 @action("feed")
-@action.uses("feed.html", db, auth)
+@action.uses("feed.html", auth)
 def feed():
     expected_param_types = {
         "selectedid": int,
