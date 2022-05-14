@@ -47,7 +47,6 @@ let init = (app) => {
         app.vue.add_tag3 = "";
     };
 
-
     // We form the dictionary of all methods, so we can assign them
     // to the Vue app in a single blow.
     app.methods = {
