@@ -93,6 +93,7 @@ Vue.component( 'feed', {
         handleSearch: function(search_obj) {
             this.search = search_obj.text;
             this.tags = search_obj.tags;
+            this.activeid = null;
             if (this.tags == false) {
                 this.tags = null;
             }
