@@ -45,8 +45,6 @@ from .models import get_user_email, get_user_id, get_terms_from_str
 from .param_parser import ParamParser, BoolParam
 from .random_data import add_fake_data, int_to_color, generate_random_coord
 
-import random
-
 url_signer = URLSigner(session)
 
 
@@ -214,11 +212,7 @@ def feed_load():
     posts = get_posts(
         db, query=query, tags=params.tags, orderby=~db.posts.rating, limitby=(min_post, max_post)
     )
-
-    data.extend(
-        posts
-    )
-
+    
     data.extend(posts)
 
     if params.search and (len(data) + min_post) < max_post:
