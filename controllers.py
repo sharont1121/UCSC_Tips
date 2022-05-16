@@ -252,9 +252,28 @@ def map():
     return dict()
 
 
-@action("profile/<uid:int>")
-def profile(uid):
-    redirect(URL("index"))
+@action('profile/<uid:int>')
+@action.uses('profile.html', auth, db)
+def profile(uid=None):
+    assert uid is not None
+    #  assert(db(db.auth_user.id == uid).select().first() is not None), "There exists no User with this uid."
+    if db(db.auth_user.id == uid).select().first() is None:  # There is no existing user with this uid
+        person = False  # Consider making this redirect to another page instead
+    else:  # This is a user that does exist
+        person = db(db.auth_user.id == uid).select().first()
+
+    # Stuff for the feed
+    expected_param_types = {
+        "selectedid": int,
+        "search": str,
+        "tags": JSON,
+    }  # exludes string types
+    params = ParamParser(request.params, expected_param_types)
+
+    return dict(person=person,
+                base_load_posts_url=URL('feed', 'load'),
+                params=json.dumps(params.dict_of(['selectedid', 'search', 'tags'])))
+    # If, for some reason globals().get('user') is not longer working in profile.html, use: auth.get_user())
 
 
 @action("create_post")
