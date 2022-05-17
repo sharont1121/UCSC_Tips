@@ -64,17 +64,17 @@ def index():
 def feed():
     expected_param_types = {
         "selectedid": int,
-        "search": str, 
+        "search": str,
         "tags": JSON,
-        }  # exludes string types
+    }  # exludes string types
     params = ParamParser(request.params, expected_param_types)
     # print(generate_random_coord())
     return dict(
-        base_load_posts_url=URL('feed', 'load'),
+        base_load_posts_url=URL("feed", "load"),
         create_post_url=URL("create_post"),
         map_url=URL("map"),
         profile_url=URL("profile"),
-        params=json.dumps(params.dict_of(['selectedid', 'search', 'tags']))
+        params=json.dumps(params.dict_of(["selectedid", "search", "tags"])),
     )
 
 
@@ -123,7 +123,9 @@ def get_posts(db, query, tags=None, **kwargs):
     return res
 
 
-def search_posts(db, search_terms, tags=None, limitby=None, exclude=[], conditions=None):
+def search_posts(
+    db, search_terms, tags=None, limitby=None, exclude=[], conditions=None
+):
 
     tag1 = db.tags.with_alias("tag1")
     tag2 = db.tags.with_alias("tag2")
@@ -133,9 +135,11 @@ def search_posts(db, search_terms, tags=None, limitby=None, exclude=[], conditio
     num_posts = db(db.posts).count()
 
     # tf-idf
-    div = ((db.term_freq.post_freq * db.posts.inverse_max_freq * num_posts) / db.terms.doc_freq)
+    div = (
+        db.term_freq.post_freq * db.posts.inverse_max_freq * num_posts
+    ) / db.terms.doc_freq
 
-    query = (db.terms.term.belongs(search_terms) & ~db.posts.id.belongs(exclude) )
+    query = db.terms.term.belongs(search_terms) & ~db.posts.id.belongs(exclude)
 
     if conditions:
         query = query & conditions
@@ -189,7 +193,7 @@ def feed_load():
 
     min_post = params.min or 0
     max_post = params.max or (min_post + DEFAULT_POST_COUNT)
-    assert (max_post - min_post < 100)
+    assert max_post - min_post < 100
     data = []
 
     tinyquery = db.posts.id == params.selectedid
@@ -202,7 +206,7 @@ def feed_load():
     elif bool(params.selectedid):
         missing = True
 
-    query = ( db.posts.id != params.selectedid )
+    query = db.posts.id != params.selectedid
     if params.search:
         query = query & db.posts.title.ilike(f"%{params.search}%")
 
@@ -210,9 +214,13 @@ def feed_load():
         query = query & (db.posts.created_by == params.userid)
 
     posts = get_posts(
-        db, query=query, tags=params.tags, orderby=~db.posts.rating, limitby=(min_post, max_post)
+        db,
+        query=query,
+        tags=params.tags,
+        orderby=~db.posts.rating,
+        limitby=(min_post, max_post),
     )
-    
+
     data.extend(posts)
 
     if params.search and (len(data) + min_post) < max_post:
@@ -224,7 +232,7 @@ def feed_load():
                 db.posts.id, orderby=~db.posts.rating, limitby=(0, max_post)
             )
         ]
-        
+
         if params.selectedid:
             ids.append(params.selectedid)
 
@@ -233,31 +241,37 @@ def feed_load():
             query2 = db.posts.created_by == params.userid
 
         data.extend(
-            search_posts(db, terms,
-                        tags=params.tags, 
-                        limitby=(len(data) + min_post, max_post), 
-                        exclude=ids, 
-                        conditions=query2
-                        )
+            search_posts(
+                db,
+                terms,
+                tags=params.tags,
+                limitby=(len(data) + min_post, max_post),
+                exclude=ids,
+                conditions=query2,
+            )
         )
 
     return dict(data=data, selectedid=params.selectedid, missing=missing)
 
 
 @action("map")
-@action.uses("map.html", url_signer, auth.user)
+@action.uses(db, "map.html", url_signer, auth.user)
 def map():
     print("You are viewing the map page")
     # redirect(URL("index"))
-    return dict()
+    rows = db().select(db.posts.ALL).as_list()
+    print(rows)
+    return dict(posts=rows, map_url=URL("map"),)
 
 
-@action('profile/<uid:int>')
-@action.uses('profile.html', auth, db)
+@action("profile/<uid:int>")
+@action.uses("profile.html", auth, db)
 def profile(uid=None):
     assert uid is not None
     #  assert(db(db.auth_user.id == uid).select().first() is not None), "There exists no User with this uid."
-    if db(db.auth_user.id == uid).select().first() is None:  # There is no existing user with this uid
+    if (
+        db(db.auth_user.id == uid).select().first() is None
+    ):  # There is no existing user with this uid
         person = False  # Consider making this redirect to another page instead
     else:  # This is a user that does exist
         person = db(db.auth_user.id == uid).select().first()
@@ -270,9 +284,11 @@ def profile(uid=None):
     }  # exludes string types
     params = ParamParser(request.params, expected_param_types)
 
-    return dict(person=person,
-                base_load_posts_url=URL('feed', 'load'),
-                params=json.dumps(params.dict_of(['selectedid', 'search', 'tags'])))
+    return dict(
+        person=person,
+        base_load_posts_url=URL("feed", "load"),
+        params=json.dumps(params.dict_of(["selectedid", "search", "tags"])),
+    )
     # If, for some reason globals().get('user') is not longer working in profile.html, use: auth.get_user())
 
 
