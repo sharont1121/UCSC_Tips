@@ -1,0 +1,79 @@
+[[extend 'layout.html']]
+
+<div class="section">
+    [[if not person:]]
+        <!-- Consider making this redirect to another page instead -->
+        <span class="has-text-white">This User does not exist.</span>
+    [[else:]]
+
+        <div class="columns">
+            <div class="column is-two-fifths mt-5">
+                <!-- Contains: Profile Picture, Name, # of Followers, rating?, Follow Button, and Edit Button -->
+                <div class="container has-text-centered p-2">  <!-- Profile Picture -->
+                    <figure class="image is-128x128 is-inline-block">
+                        <img class="is-rounded" src="../static/img/profile-silhouette.jpg">  <!-- Placeholder -->
+                    </figure>
+                </div>
+                <div class="container has-text-centered p-1">  <!-- Name -->
+                    <span class="title has-text-white">[[=person.first_name]] [[=person.last_name]]</span>
+                </div>
+                <div class="container has-text-centered p-1">  <!-- Username/email? -->
+                    <span class="subtitle has-text-white">[[=person.email]]</span>
+                </div>
+                <div class="container has-text-centered p-1">  <!-- # followers -->
+                    <span class="subtitle has-text-white"># of Followers</span>
+                </div>
+                <div class="container has-text-centered p-1">  <!-- rating -->
+                    <span class="subtitle has-text-white">Rating</span>
+                </div>
+                [[if not person['id'] == globals().get('user').get('id'):]]
+                    <div class="container has-text-centered p-2">  <!-- Follow Button (On other user's profile) -->
+                        <a class="button is-purple-blue">
+                            <span class="subtitle has-text-white">Follow</span>
+                        </a>
+                    </div>
+                [[pass]]
+                [[if person['id'] == globals().get('user').get('id'):]]
+                <div class="container has-text-centered p-2">  <!-- Edit Button (On the user's own profile) -->
+                    <a class="button is-purple-blue">
+                        <span class="subtitle has-text-white">Edit</span>
+                    </a>
+                </div>
+                [[pass]]
+            </div>
+
+            <div class="column is-three-fifths">  <!-- Contains: The User's posts -->
+                <div id="vue-target" style="height: 100%;">
+                    <div style="height: 100%;">
+                        <div style="    height: calc(100% - 60px)">
+                            <feed
+                                    @newpostactive="newpostactive($event)"
+                                    @newfeedloaded="newfeedloaded($event)"
+                                    :loadurl="LOAD_URL"
+                                    :params="PARAMS"
+                                    :isone="false"
+                            ></feed>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    [[pass]]
+</div>
+
+<!-- Note: using "user" as a variable name (where "person" is now used) creates an issue where going to a user's
+profile page would log you into that user. -->
+
+[[block page_scripts]]
+<script>
+    const PARAMS = '[[=XML(params)]]'
+</script>
+<script src="js/components/tag.js"></script>
+<script src="js/components/post.js"></script>
+<script src="js/components/searchbar.js"></script>
+<script src="js/components/feed.js"></script>
+<script src="js/pages/feed.js"></script>
+[[end]]
+
+

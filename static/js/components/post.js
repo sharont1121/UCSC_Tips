@@ -12,16 +12,6 @@ Vue.component(
         methods: {
             handleClick: function(id) {
                 if (this.isActive === false) {
-                    // ---- this chunk of code replaces
-                    let vars = window.location.search.replaceAll(/[&]?selectedid=[\d]+/g, "");
-                    console.log(vars);
-                    if(vars && vars !== '?'){
-                        vars = vars + '&';
-                    }
-                    else{
-                        vars = '?';
-                    }
-                    window.history.replaceState({},"", `${window.location.pathname}${vars}selectedid=${id}`)
                     this.$emit('postActive', id);
                 }
             },
@@ -47,16 +37,22 @@ Vue.component(
                 return this.post.body.slice(0,space) + "...";
             }
         },
+        updated: function() {
+            console.log("updated");
+        },
         template: `
         <div class="feed-post" v-bind:class="{active: isActive}" v-bind:id="post.id">
             <div class="box has-background-grey-dark" style="height: 100%" v-on:click="handleClick(post.id)">
                 <div class="columns is-vcentered">
+                    <div vlas="column" v-if="tags == false"></div>
                     <div class="column" v-for="t in tags">
                         <tag :name="t.tag_name" :color="t.color"></tag>
                     </div>
                     <div class="column is-6 columns is-vcentered is-mobile" v-if="isActive">
                         <div class="column is-flex-centered">
-                            <a :href="mapurl" class="button is-round has-background-purple-blue has-text-white is-purple-blue  has-text-weight-semibold" >map</a>
+                            <a :href="mapurl" 
+                            class="button is-round has-background-purple-blue has-text-white is-purple-blue  has-text-weight-semibold" 
+                            >map</a>
                         </div>
                         <div class="column is-flex-centered">
                             <a :href="profileurl" class="has-text-white">
