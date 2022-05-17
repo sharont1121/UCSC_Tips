@@ -20,6 +20,7 @@ def generate_garbage_word(num_chars: int):
     for _ in range(num_chars):
         res += choice(LETTERS)
     return res
+
 def generate_garbage_text(num_words: int, max_chars = None):
     WORD_LEN_FREQ = [1,2,3,3,4,4,4,5,5,5,5,6,6,7,7,8,9]
     res = ""
@@ -75,6 +76,7 @@ def add_fake_data(db, num:int):
             tag3= tags[2],
             rating= randint(1,1000),
         )
+
     return
 
 # 0<=h<360, 0<=s,v<=1.0
