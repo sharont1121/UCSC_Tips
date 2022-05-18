@@ -221,6 +221,7 @@ def profile(uid):
 def create_post():
     return dict(
         add_tip_url=URL('add_tip', signer=url_signer),
+        base_load_posts_url=URL('feed', 'load'),
     )
 
 @action("add_tip", method="POST")
