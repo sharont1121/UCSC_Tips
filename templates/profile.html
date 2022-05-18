@@ -1,5 +1,24 @@
 [[extend 'layout.html']]
 
+[[block page_brand_items]]
+    <div class="navbar-item">
+        <a class="button is-primary navbar-item" href="[[=URL('feed')]]">
+            <span class="icon">
+                <i class="fa fa-eye"></i>
+            </span>
+            <span>View Feed</span>
+        </a>
+    </div>
+    <div class="navbar-item">
+        <a class="button is-info navbar-item" href="[[=URL('map')]]">
+            <span class="icon">
+                <i class="fa fa-map"></i>
+            </span>
+            <span>View Map</span>
+        </a>
+    </div>
+[[end]]
+
 <div class="section">
     [[if not person:]]
         <!-- Consider making this redirect to another page instead -->
@@ -45,7 +64,7 @@
             <div class="column is-three-fifths">  <!-- Contains: The User's posts -->
                 <div id="vue-target" style="height: 100%;">
                     <div style="height: 100%;">
-                        <div style="    height: calc(100% - 60px)">
+                        <div style="height: calc(100% - 60px)">
                             <feed
                                     @newpostactive="newpostactive($event)"
                                     @newfeedloaded="newfeedloaded($event)"
