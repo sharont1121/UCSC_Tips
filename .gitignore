@@ -1,3 +1,4 @@
 .vscode/
 static/css/bulma/*
+private/*
 .sass-cache/

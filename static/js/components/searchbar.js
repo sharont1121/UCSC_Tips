@@ -1,18 +1,18 @@
 Vue.component('searchbar',{
-    props: ["search"],
+    props: ["searchstr", "tagslist"],
     data: function() {
         return {
-            search_text: STARTING_SEARCH || "",
-            focus: false,
+            search_text: this.searchstr || "",
             tag_text: "",
-            selected_tags: [],
+            focus: false,
+            selected_tags: this.tagslist || [],
         }
     },
     methods: {
         submit: function() {
             this.focus = false;
             search = this.search_text.trim();
-            this.$emit('search', {text: search});
+            this.$emit('search', {text: search, tags: this.selected_tags});
         },
         reset: function() {
             this.focus = false;
