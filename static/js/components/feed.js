@@ -1,7 +1,16 @@
-// how to get this to scroll without a fixed height
 
 const POSTS_PER_LOAD = 10;
-
+/*
+* --PROPS-- propname: object to pass in structure
+* loadurl: a url str, probably to feed/load
+* params: {selctedid?: int, search?:str, tags?: [str], userid: int}
+* isone: boolean, or the string equivilant
+*
+* --EMITS-- name: $event's type
+* (on post click) newpostactive:  int (id of post)
+* (on new search) newfeedloaded: {search_text: str, tags: [str]}
+* 
+*/
 Vue.component( 'feed', {
     props: ['loadurl', 'params', 'isone'],
 
