@@ -46,11 +46,13 @@ let init = (app) => {
         }
 
         // The marker, positioned at UCSC
+        let ucsc_icon = "http://maps.google.com/mapfiles/kml/paddle/ylw-stars.png"
         const ucsc_marker = new google.maps.Marker({
             // color: 'yellow',
             position: ucsc_coord,
             map: map,
-            title: "UCSC is here!"
+            title: "UCSC is here!",
+            icon: ucsc_icon,
         });
     }
 
