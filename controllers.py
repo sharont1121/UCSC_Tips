@@ -287,7 +287,7 @@ def profile(uid=None):
 @action("create_post")
 @action.uses("create_post.html", url_signer, auth.user)
 def create_post():
-    return dict(add_tip_url=URL("add_tip", signer=url_signer),)
+    return dict(add_tip_url=URL("add_tip", signer=url_signer), map_url=URL("map"))
 
 
 @action("add_tip", method="POST")

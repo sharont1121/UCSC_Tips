@@ -24,6 +24,21 @@ let init = (app) => {
         return a;
     };
 
+    app.init_map = function () {
+        const coord = { lat: 36.9927, lng: -122.0593 };
+        // The map, centered at UCSC
+        const map = new google.maps.Map(document.getElementById("map"), {
+            zoom: 15,
+            center: coord,
+        });
+        // The marker, positioned at UCSC
+        const marker = new google.maps.Marker({
+            position: coord,
+            map: map,
+        });
+    }
+
+
     app.add_tip = function () {
         if (app.vue.add_title != "" && app.vue.add_body != "") {
             axios.post(add_tip_url,
@@ -68,7 +83,7 @@ let init = (app) => {
     // load the data.
     // For the moment, we 'load' the data from a string.
     app.init = () => {
-
+        app.init_map();
     };
 
     // Call to the initializer.
