@@ -25,6 +25,7 @@ Vue.component( 'feed', {
             tags: parsed_params["tags"],
             userid: parsed_params["userid"],
             locked: false,
+            is_one: this.isone
         }
     },
     created: function () {
@@ -138,7 +139,7 @@ Vue.component( 'feed', {
             <div v-if="this.missing" class="box has-background-danger">
                 <p class="content">could not find post!</p>
             </div>
-            <div class="feed-grid" v-bind:class="{'is-one': isone == true}">
+            <div class="feed-grid" v-bind:class="{'is-one': is_one == true}">
                 <post 
                     v-for="p in this.data" 
                     :data="p" 

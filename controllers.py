@@ -29,6 +29,9 @@ from json import loads as JSON
 import json
 from py4web import action, request, abort, redirect, URL
 from yatl.helpers import A
+import uuid
+
+from .settings import APP_FOLDER
 from .common import (
     db,
     session,
@@ -44,9 +47,21 @@ from py4web.utils.url_signer import URLSigner
 from .models import get_user_email, get_user_id, get_terms_from_str
 from .param_parser import ParamParser, BoolParam
 from .random_data import add_fake_data, int_to_color, generate_random_coord
+from .gcs_url import gcs_url, GCS_API_ENDPOINT
+import os
+
+from nqgcs import NQGCS
 
 url_signer = URLSigner(session)
 
+BUCKET = 'ucsc-tips-post-images'
+GCS_KEY_PATH = os.path.join(APP_FOLDER, 'private/ucsc-tips-350117-eb56ef891d43.json')
+
+
+with open(GCS_KEY_PATH) as gcs_key_file:
+    GCS_KEYS = json.load(gcs_key_file)
+
+gcs = NQGCS(json_key_path=GCS_KEY_PATH)
 
 def user_profile_url():
     return URL("profile", get_user_id())
@@ -295,7 +310,12 @@ def profile(uid=None):
 @action("create_post")
 @action.uses("create_post.html", url_signer, auth.user)
 def create_post():
-    return dict(add_tip_url=URL("add_tip", signer=url_signer),)
+    return dict(
+        add_tip_url=URL("add_tip", signer=url_signer),
+        obtain_gcs_upload_url=URL("obtain_gcs_upload", signer=url_signer),
+        upload_complete_url=URL("notify_post_image_upload", signer=url_signer),
+        api_endpoint = GCS_API_ENDPOINT,
+        )
 
 
 @action("add_tip", method="POST")
@@ -350,3 +370,30 @@ def add_tip():
 
     print("ID of the post created: ", id)
     return dict(id=id)
+
+#this code is from prof Luca De Alpharo 
+@action('obtain_gcs_upload', method="POST")
+@action.uses(db, url_signer.verify())
+def obtain_gcs():
+    """Returns the URL to upload for GCS."""
+    mimetype = request.json.get("mimetype", "")
+    file_name = request.json.get("file_name")
+    extension = os.path.splitext(file_name)[1]
+    # Use + and not join for Windows, thanks Blayke Larue
+    file_path = BUCKET + "/" + str(uuid.uuid1()) + extension
+    # Marks that the path may be used to upload a file.
+    upload_url = gcs_url(GCS_KEYS, file_path, verb='PUT',
+                         content_type=mimetype)
+    return dict(
+        signed_url=upload_url,
+        file_path=file_path,
+    )
+
+@action('notify_post_image_upload', method="POST")
+@action.uses(db, url_signer.verify())
+def confirm_upload():
+    post_id = request.json.get("post_id")
+    image_url = request.json.get("image_url")
+    print(post_id, image_url)
+    db(db.posts.id == post_id).update(image_url=image_url)
+    return dict()
