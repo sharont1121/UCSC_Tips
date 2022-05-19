@@ -47,7 +47,7 @@ let init = (app) => {
                 position: mapsMouseEvent.latLng,
                 map: map,
             });
-            
+
         coordinate = mapsMouseEvent.latLng.toJSON()
 
         // Set coordinate Vue variables with the clicked location's coordinate
@@ -55,6 +55,21 @@ let init = (app) => {
         app.vue.lng = coordinate.lng;
         });
     }
+
+    app.load_created_post = function(id) {
+                let vars = window.location.search.replaceAll(/[&]?selectedid=[\d]+/g, "");
+                console.log(vars);
+                if(vars && vars !== '?'){
+                    vars = vars + '&';
+                }
+                else{
+                    vars = '?';
+                }
+
+                let url = window.location.toString();
+                let add_path = "feed" + vars + "selectedid=" + id;
+                window.location = url.replace(/create_post/, add_path);
+            };
 
 
     app.add_tip = function () {
@@ -71,6 +86,7 @@ let init = (app) => {
             }).then(function (response) {
             // console.log(response.data.id);
             app.reset_form();
+            app.load_created_post(response.data.id);
         });
         } else {
             alert("Please enter a title and description for your post before submitting.");
@@ -87,6 +103,8 @@ let init = (app) => {
         app.vue.lng = -122.0593;
 
     };
+
+
 
     // We form the dictionary of all methods, so we can assign them
     // to the Vue app in a single blow.
