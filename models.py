@@ -56,8 +56,8 @@ db.define_table(
     Field("tag1", "reference tags"),
     Field("tag2", "reference tags"),
     Field("tag3", "reference tags"),
-    Field("lat_coord"),
-    Field("lon_coord"),
+    Field("lat", "double"),
+    Field("lng", "double"),
     Field("inverse_max_freq", "double", default=1.0),
 )
 

@@ -338,6 +338,8 @@ def add_tip():
         tag1=tag1_id,
         tag2=tag2_id,
         tag3=tag3_id,
+        lat=request.json.get("lat"),
+        lng=request.json.get("lng"),
     )
 
     print("ID of the post created: ", id)
