@@ -1,26 +1,18 @@
 """
 This file defines actions, i.e. functions the URLs are mapped into
 The @action(path) decorator exposed the function at URL:
-
     http://127.0.0.1:8000/{app_name}/{path}
-
 If app_name == '_default' then simply
-
     http://127.0.0.1:8000/{path}
-
 If path == 'index' it can be omitted:
-
     http://127.0.0.1:8000/
-
 The path follows the bottlepy syntax.
-
 @action.uses('generic.html')  indicates that the action uses the generic.html template
 @action.uses(session)         indicates that the action uses the session
 @action.uses(db)              indicates that the action uses the db
 @action.uses(T)               indicates that the action uses the i18n & pluralization
 @action.uses(auth.user)       indicates that the action requires a logged in user
 @action.uses(auth)            indicates that the action requires the auth object
-
 session, db, T, auth, and tempates are examples of Fixtures.
 Warning: Fixtures MUST be declared with @action.uses({fixtures}) else your app will result in undefined behavior
 """
@@ -270,13 +262,17 @@ def feed_load():
 
 
 @action("map")
-@action.uses(db, "map.html", url_signer, auth.user)
+@action.uses(db, "map.html", auth.user, url_signer)
 def map():
-    print("You are viewing the map page")
-    # redirect(URL("index"))
-    rows = db().select(db.posts.ALL).as_list()
-    print(rows)
-    return dict(posts=rows, map_url=URL("map"),)
+    return dict(map_load_url=URL("map_load", signer=url_signer))
+
+
+@action("map_load")
+@action.uses(url_signer.verify(), db)
+def load_post():
+    rows = db(db.posts).select().as_list()
+    # print(rows[0])
+    return dict(posts=rows)
 
 
 @action("profile/<uid:int>")
@@ -315,6 +311,7 @@ def create_post():
         obtain_gcs_upload_url=URL("obtain_gcs_upload", signer=url_signer),
         upload_complete_url=URL("notify_post_image_upload", signer=url_signer),
         api_endpoint = GCS_API_ENDPOINT,
+        map_url=URL("map"),
         )
 
 
@@ -366,6 +363,8 @@ def add_tip():
         tag1=tag1_id,
         tag2=tag2_id,
         tag3=tag3_id,
+        lat=request.json.get("lat"),
+        lng=request.json.get("lng"),
     )
 
     print("ID of the post created: ", id)
