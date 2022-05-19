@@ -25,7 +25,8 @@ let init = (app) => {
     };
 
     app.add_tip = function () {
-        axios.post(add_tip_url,
+        if (app.vue.add_title != "" && app.vue.add_body != "") {
+            axios.post(add_tip_url,
             {
                 title: app.vue.add_title,
                 body: app.vue.add_body,
@@ -36,7 +37,9 @@ let init = (app) => {
             // console.log(response.data.id);
             app.reset_form();
         });
-
+        } else {
+            alert("Please enter a title and description for your post before submitting.");
+        }
     };
 
     app.reset_form = function () {
