@@ -13,9 +13,40 @@ let init = (app) => {
     app.enumerate = (a) => {
         // This adds an _idx field to each element of the array.
         let k = 0;
-        a.map((e) => { e._idx = k++; });
+        // a.map((e) => { e._idx = k++; });
+        for (e in a) {
+            e._idx = k;
+            k++
+        }
         return a;
     };
+
+
+    app.decorate = (a) => {
+        // This adds an _idx field to each element of the array.
+        let k = 0;
+        // a.map((e) => { e._idx = k++; });
+        for (e in a) {
+            e._state = { posts: "clean" };
+            e._server_vals = { posts: e.posts };
+        }
+        return a;
+    };
+
+    app.init_markers = (map) => {
+        let markers = []
+        for (p in app.vue.posts) {
+            let lng = p.lon_coord
+            let lat = p.lat_coord
+            let coord = { lat: lat, lng: lng };
+            const marker = new google.maps.Marker({
+                position: coord,
+                map: map,
+            })
+            markers.push(marker);
+        }
+        return markers
+    }
 
     app.init_map = function () {
         const coord = { lat: 36.9927, lng: -122.0593 };
@@ -25,10 +56,11 @@ let init = (app) => {
             center: coord,
         });
         // The marker, positioned at UCSC
-        const marker = new google.maps.Marker({
-            position: coord,
-            map: map,
-        });
+        // const marker = new google.maps.Marker({
+        //     position: coord,
+        //     map: map,
+        // });
+        let markers = app.init_markers(map)
     }
 
     app.methods = {
@@ -37,7 +69,7 @@ let init = (app) => {
 
     // This creates the Vue instance.
     app.vue = new Vue({
-        el: "#map",
+        el: "#vue-target",
         data: app.data,
         methods: app.methods
     });
@@ -47,8 +79,8 @@ let init = (app) => {
         // Put here any initialization code.
         // Typically this is a server GET call to load the data.
         // Now we do an actual server call, using axios.
-        axios.get(MAP_PAGE_BASE_URL).then(function (response) {
-            app.vue.posts = response.data.posts;
+        axios.get(map_load_url).then(function (response) {
+            app.vue.posts = app.decorate(app.enumerate(response.data.posts));
             // app.enumerate(app.vue.posts);
         })
         app.init_map();

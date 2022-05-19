@@ -247,13 +247,17 @@ def feed_load():
 
 
 @action("map")
-@action.uses(db, "map.html", url_signer, auth.user)
+@action.uses(db, "map.html", auth.user, url_signer)
 def map():
-    print("You are viewing the map page")
-    # redirect(URL("index"))
-    rows = db().select(db.posts.ALL).as_list()
-    print(rows)
-    return dict(posts=rows, map_url=URL("map"),)
+    return dict(map_load_url=URL("map_load", signer=url_signer))
+
+
+@action("map_load")
+@action.uses(url_signer.verify(), db)
+def load_post():
+    rows = db(db.posts).select().as_list()
+    print(rows[0])
+    return dict(posts=rows)
 
 
 @action("profile/<uid:int>")
