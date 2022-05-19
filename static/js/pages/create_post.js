@@ -1,6 +1,8 @@
 // This will be the object that will contain the Vue attributes
 // and be used to initialize it.
 const app = {};
+const default_lat = 36.9927;
+const default_lng = -122.0593;
 
 
 // Given an empty app object, initializes it filling its attributes,
@@ -14,8 +16,8 @@ let init = (app) => {
         add_tag1: '',
         add_tag2: '',
         add_tag3: '',
-        lat: 36.9927,
-        lng: -122.0593,
+        lat: default_lat,
+        lng: default_lng,
 
     };
 
@@ -27,16 +29,16 @@ let init = (app) => {
     };
 
     app.init_map = function () {
-        const coord = { lat: 36.9927, lng: -122.0593 };
+        const ucsc_default_coord = { lat: default_lat, lng: default_lng };
         // The map, centered at UCSC
         const map = new google.maps.Map(document.getElementById("map"), {
             zoom: 15,
-            center: coord,
+            center: ucsc_default_coord,
         });
 
         // Add default center marker
         let marker = new google.maps.Marker({
-                position: coord,
+                position: ucsc_default_coord,
                 map: map,
             });
 
@@ -48,11 +50,11 @@ let init = (app) => {
                 map: map,
             });
 
-        coordinate = mapsMouseEvent.latLng.toJSON()
+        set_coordinate = mapsMouseEvent.latLng.toJSON()
 
         // Set coordinate Vue variables with the clicked location's coordinate
-        app.vue.lat = coordinate.lat;
-        app.vue.lng = coordinate.lng;
+        app.vue.lat = set_coordinate.lat;
+        app.vue.lng = set_coordinate.lng;
         });
     }
 
