@@ -14,6 +14,8 @@ let init = (app) => {
         add_tag1: '',
         add_tag2: '',
         add_tag3: '',
+        lat: 36.9927,
+        lng: -122.0593,
 
     };
 
@@ -31,10 +33,26 @@ let init = (app) => {
             zoom: 15,
             center: coord,
         });
-        // The marker, positioned at UCSC
-        const marker = new google.maps.Marker({
-            position: coord,
-            map: map,
+
+        // Add default center marker
+        let marker = new google.maps.Marker({
+                position: coord,
+                map: map,
+            });
+
+        // Configure the click listener.
+        map.addListener("click", (mapsMouseEvent) => {
+        marker.setMap(null);
+        marker =  new google.maps.Marker({
+                position: mapsMouseEvent.latLng,
+                map: map,
+            });
+            
+        coordinate = mapsMouseEvent.latLng.toJSON()
+
+        // Set coordinate Vue variables with the clicked location's coordinate
+        app.vue.lat = coordinate.lat;
+        app.vue.lng = coordinate.lng;
         });
     }
 
@@ -48,6 +66,8 @@ let init = (app) => {
                 tag1_name: app.vue.add_tag1,
                 tag2_name: app.vue.add_tag2,
                 tag3_name: app.vue.add_tag3,
+                lat: app.vue.lat,
+                lng: app.vue.lng,
             }).then(function (response) {
             // console.log(response.data.id);
             app.reset_form();
@@ -63,6 +83,9 @@ let init = (app) => {
         app.vue.add_tag1 = "";
         app.vue.add_tag2 = "";
         app.vue.add_tag3 = "";
+        app.vue.lat = 36.9927;
+        app.vue.lng = -122.0593;
+
     };
 
     // We form the dictionary of all methods, so we can assign them
