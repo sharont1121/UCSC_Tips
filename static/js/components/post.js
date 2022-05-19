@@ -1,4 +1,10 @@
-
+/*
+* --PROPS--
+* data: {posts: {db.posts.ALL}, auth_user: {db.auth_user.[first_name, id]}, tag1-3: {db.tags.ALL}}
+* 
+* --EMITS--
+* (on click) postActive: post_id
+*/
 Vue.component(
     'post', {
         props: ['data', 'isActive'],

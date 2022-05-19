@@ -60,8 +60,16 @@
           <input type="text" v-model="add_tag3" class="input" required>
         </div>
       </div>
-
-
+      
+      <div class="field">
+        <div class="control">
+          <input 
+            type="file"
+            accept="image/png, image/jpeg"
+            @change="fileSelected($event)"
+            />
+        </div>
+      </div>
 
     <button @click="add_tip" class="button is-success mt-4">
       <i class="fa fa-plus fa-fw"></i> Create

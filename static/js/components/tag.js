@@ -1,3 +1,7 @@
+/*
+* name: str
+* color: css color str
+*/
 Vue.component('tag', {
     props: ['name', 'color'],
     template: `
