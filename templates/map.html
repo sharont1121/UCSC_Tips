@@ -5,8 +5,6 @@
 
 <head>
    <title>Map</title>
-   <script src="https://polyfill.io/v3/polyfill.min.js?features=default"></script>
-
    <link rel="stylesheet" type="text/css" href="css/map.css" />
    <!-- <script type="module" src="js/components/map.js"></script> -->
 </head>
@@ -30,15 +28,21 @@
 </div>
 [[end]]
 
-<div class="section has-text-white">
-   <p>A map should be here</p>
-</div>
-<div id="map"></div>
+<span id="vue-target" v-cloak>
+   <div class="section has-text-white">
+      <p>A map should be here</p>
+   </div>
+   <div id="map"></div>
+</span>
+
+
+
 [[block page_scripts]]
+<script src="https://polyfill.io/v3/polyfill.min.js?features=default"></script>
 <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBlu2BP4tVpaDbjYUHOS9EZDEpnjk5Qipc">
 </script>
 <script>
-   const MAP_PAGE_BASE_URL = '[[=XML(map_url)]]'
+   let map_load_url = '[[=XML(map_load_url)]]'
 </script>
 <script src="js/components/map.js"></script>
 [[end]]

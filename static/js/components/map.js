@@ -17,17 +17,42 @@ let init = (app) => {
         return a;
     };
 
-    app.init_map = function () {
-        const coord = { lat: 36.9927, lng: -122.0593 };
+    app.decorate = (a) => {
+        a.map((e) => {
+            e._state = { posts: "clean" };
+            e._server_vals = { posts: e.posts };
+        });
+        return a;
+    };
+
+    app.init_map = function (posts) {
+        const ucsc_coord = { lat: 36.9927, lng: -122.0593 };
+        // const ucsc_coord = { lat: posts[0].lat, lng: posts[0].lng };
         // The map, centered at UCSC
         const map = new google.maps.Map(document.getElementById("map"), {
             zoom: 15,
-            center: coord,
+            center: ucsc_coord,
         });
+
+        for (var i = 0; i < app.vue.posts.length; i++) {
+            let lng = posts[i].lng
+            let lat = posts[i].lat
+            const c = { lat: lat, lng: lng };
+            const marker = new google.maps.Marker({
+                position: c,
+                map: map,
+                title: posts[i].title,
+            });
+        }
+
         // The marker, positioned at UCSC
-        const marker = new google.maps.Marker({
-            position: coord,
+        let ucsc_icon = "http://maps.google.com/mapfiles/kml/paddle/ylw-stars.png"
+        const ucsc_marker = new google.maps.Marker({
+            // color: 'yellow',
+            position: ucsc_coord,
             map: map,
+            title: "UCSC is here!",
+            icon: ucsc_icon,
         });
     }
 
@@ -37,7 +62,7 @@ let init = (app) => {
 
     // This creates the Vue instance.
     app.vue = new Vue({
-        el: "#map",
+        el: "#vue-target",
         data: app.data,
         methods: app.methods
     });
@@ -47,11 +72,14 @@ let init = (app) => {
         // Put here any initialization code.
         // Typically this is a server GET call to load the data.
         // Now we do an actual server call, using axios.
-        axios.get(MAP_PAGE_BASE_URL).then(function (response) {
-            app.vue.posts = response.data.posts;
+        axios.get(map_load_url).then(function (response) {
+            app.vue.posts = app.decorate(app.enumerate(response.data.posts));
             // app.enumerate(app.vue.posts);
+            let posts = app.decorate(app.enumerate(response.data.posts));
+            app.vue.posts = posts
+            app.init_map(posts);
         })
-        app.init_map();
+
     };
 
     // Call to the initializer.
