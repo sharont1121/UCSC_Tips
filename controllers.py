@@ -19,6 +19,8 @@ Warning: Fixtures MUST be declared with @action.uses({fixtures}) else your app w
 
 from json import loads as JSON
 import json
+
+from sqlalchemy import true
 from py4web import action, request, abort, redirect, URL
 from yatl.helpers import A
 from .common import (
@@ -249,15 +251,27 @@ def feed_load():
 @action("map")
 @action.uses(db, "map.html", auth.user, url_signer)
 def map():
-    return dict(map_load_url=URL("map_load", signer=url_signer))
+    return dict(
+        map_load_url=URL("map_load", signer=url_signer),
+        map_load_single_url=URL("map_load_single_url", signer=url_signer),
+    )
 
 
 @action("map_load")
 @action.uses(url_signer.verify(), db)
-def load_post():
+def map_load():
     rows = db(db.posts).select().as_list()
     # print(rows[0])
     return dict(posts=rows)
+
+
+@action("map_load_single")
+@action.uses(url_signer.verify(), db)
+def map_load_single(post_id=None):
+    assert post_id is not None
+    p = db(db.posts.id == post_id).select().first()
+    print(p)
+    return dict(post=p)
 
 
 @action("profile/<uid:int>")
