@@ -256,7 +256,7 @@ def map():
 @action.uses(url_signer.verify(), db)
 def load_post():
     rows = db(db.posts).select().as_list()
-    print(rows[0])
+    # print(rows[0])
     return dict(posts=rows)
 
 

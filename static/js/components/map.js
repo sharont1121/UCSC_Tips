@@ -13,54 +13,45 @@ let init = (app) => {
     app.enumerate = (a) => {
         // This adds an _idx field to each element of the array.
         let k = 0;
-        // a.map((e) => { e._idx = k++; });
-        for (e in a) {
-            e._idx = k;
-            k++
-        }
+        a.map((e) => { e._idx = k++; });
         return a;
     };
-
 
     app.decorate = (a) => {
-        // This adds an _idx field to each element of the array.
-        let k = 0;
-        // a.map((e) => { e._idx = k++; });
-        for (e in a) {
+        a.map((e) => {
             e._state = { posts: "clean" };
             e._server_vals = { posts: e.posts };
-        }
+        });
         return a;
     };
 
-    app.init_markers = (map) => {
-        let markers = []
-        for (p in app.vue.posts) {
-            let lng = p.lon_coord
-            let lat = p.lat_coord
-            let coord = { lat: lat, lng: lng };
-            const marker = new google.maps.Marker({
-                position: coord,
-                map: map,
-            })
-            markers.push(marker);
-        }
-        return markers
-    }
-
-    app.init_map = function () {
-        const coord = { lat: 36.9927, lng: -122.0593 };
+    app.init_map = function (posts) {
+        const ucsc_coord = { lat: 36.9927, lng: -122.0593 };
+        // const ucsc_coord = { lat: posts[0].lat, lng: posts[0].lng };
         // The map, centered at UCSC
         const map = new google.maps.Map(document.getElementById("map"), {
             zoom: 15,
-            center: coord,
+            center: ucsc_coord,
         });
+
+        for (var i = 0; i < app.vue.posts.length; i++) {
+            let lng = posts[i].lng
+            let lat = posts[i].lat
+            const c = { lat: lat, lng: lng };
+            const marker = new google.maps.Marker({
+                position: c,
+                map: map,
+                title: posts[i].title,
+            });
+        }
+
         // The marker, positioned at UCSC
-        // const marker = new google.maps.Marker({
-        //     position: coord,
-        //     map: map,
-        // });
-        let markers = app.init_markers(map)
+        const ucsc_marker = new google.maps.Marker({
+            // color: 'yellow',
+            position: ucsc_coord,
+            map: map,
+            title: "UCSC is here!"
+        });
     }
 
     app.methods = {
@@ -82,8 +73,11 @@ let init = (app) => {
         axios.get(map_load_url).then(function (response) {
             app.vue.posts = app.decorate(app.enumerate(response.data.posts));
             // app.enumerate(app.vue.posts);
+            let posts = app.decorate(app.enumerate(response.data.posts));
+            app.vue.posts = posts
+            app.init_map(posts);
         })
-        app.init_map();
+
     };
 
     // Call to the initializer.

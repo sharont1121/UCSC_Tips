@@ -94,8 +94,8 @@ def add_fake_data(db, num: int):
             tag1=tags[0],
             tag2=tags[1],
             tag3=tags[2],
-            lat_coord=coord[0],
-            lon_coord=coord[1],
+            lat=coord[0],
+            lng=coord[1],
             rating=randint(1, 1000),
         )
     return
