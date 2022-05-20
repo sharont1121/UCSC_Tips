@@ -1,6 +1,7 @@
 // This will be the object that will contain the Vue attributes
 // and be used to initialize it.
 const app = {};
+
 const default_lat = 36.9927;
 const default_lng = -122.0593;
 
@@ -159,8 +160,14 @@ let init = (app) => {
         app.vue.add_tag1 = "";
         app.vue.add_tag2 = "";
         app.vue.add_tag3 = "";
-        app.vue.lat = 36.9927;
-        app.vue.lng = -122.0593;
+        app.vue.upload_url = null,
+        app.vue.fetching_url = false,
+        app.vue.uploading_image = false,
+        app.vue.file_url = null,
+        app.vue.file_path = null,
+        app.vue.file = null,
+        app.vue.lat = default_lat;
+        app.vue.lng = default_lng;
 
     };
 
