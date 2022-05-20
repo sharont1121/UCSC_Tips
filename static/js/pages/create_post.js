@@ -43,11 +43,11 @@ let init = (app) => {
                 tag2_name: this.add_tag2,
                 tag3_name: this.add_tag3,
                 lat: this.lat,
-                lon: this.lon,
+                lng: this.lng,
             });
     }
 
-   
+
     app.init_map = function () {
         const ucsc_default_coord = { lat: default_lat, lng: default_lng };
         // The map, centered at UCSC
@@ -95,26 +95,23 @@ let init = (app) => {
 
 
     app.add_tip = function () {
-        if (app.vue.add_title != "" && app.vue.add_body != "") {
-            if (!this.file){
-                console.log("ping");
-                this.upload_text().then(()=>{
-                    app.reset_form();
-                })
-                return;
-            }
+        if (app.vue.add_title != "" && app.vue.add_body != "" && this.file ) {
+
             // Uploads the file, using the low-level interface.
             let req = new XMLHttpRequest();
             // We listen to the load event = the file is uploaded, and we call upload_complete.
             // That function will notify the server `of the location of the image.
+            let post_id;
             req.addEventListener("load", () => {
                 this.upload_text().then( (response) => {
+                        post_id = response.data.id;
                         axios.post(upload_complete_url, {
     
                             post_id: response.data.id,
                             image_url: this.file_url
                         }).then(()=>{
                             app.reset_form();
+                            app.load_created_post(post_id);
                         })
                 });
             });
@@ -122,8 +119,9 @@ let init = (app) => {
             req.open("PUT", this.upload_url, true);
             req.send(this.file);
         } else {
-            alert("Please enter a title and description for your post before submitting.");
+            alert("Please enter a title, description and image for your post before submitting.");
         }
+
     };
 
     app.get_upload_url = function (event) {
