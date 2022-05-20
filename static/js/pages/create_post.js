@@ -47,10 +47,7 @@ let init = (app) => {
             });
     }
 
-    app.add_tip = function () {
-
-        
-    }
+   
     app.init_map = function () {
         const ucsc_default_coord = { lat: default_lat, lng: default_lng };
         // The map, centered at UCSC
