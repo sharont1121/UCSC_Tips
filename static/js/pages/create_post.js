@@ -124,10 +124,8 @@ let init = (app) => {
 
     };
 
-    app.get_upload_url = function (event) {
-        this.upload_url = null;
-        const input = event.target;
-        this.file = input.files[0];
+    app.get_upload_url = function (file) {
+        this.file = file;
         if (this.file) {
             this.fetching_url = true;
             let file_type = this.file.type;
@@ -148,6 +146,13 @@ let init = (app) => {
             }) 
         }
     }
+    app.reset_image = function() {
+        this.fetching_url = false;
+        this.uploading_image = false;
+        this.file_url = null;
+        this.file_path = null;
+        this.file = null;
+    }
     app.reset_form = function () {
         app.vue.add_title = "";
         app.vue.add_body = "";
@@ -155,11 +160,7 @@ let init = (app) => {
         app.vue.add_tag2 = "";
         app.vue.add_tag3 = "";
         app.vue.upload_url = null,
-        app.vue.fetching_url = false,
-        app.vue.uploading_image = false,
-        app.vue.file_url = null,
-        app.vue.file_path = null,
-        app.vue.file = null,
+        this.reset_image();
         app.vue.lat = default_lat;
         app.vue.lng = default_lng;
 
@@ -173,6 +174,7 @@ let init = (app) => {
         add_tip: app.add_tip,
         get_upload_url: app.get_upload_url,
         upload_text: app.upload_text,
+        reset_image: app.reset_image,
     };
 
     // This creates the Vue instance.

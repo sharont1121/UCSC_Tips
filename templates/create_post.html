@@ -80,16 +80,15 @@
 
           <div class="field">
             <div class="control">
-              <input 
-                type="file"
-                accept="image/png, image/jpeg"
-                @change="get_upload_url($event)"
-                />
+              <imageselector 
+                @selected="get_upload_url($event)"
+                @cancel="reset_image()"
+                ></imageselector>
             </div>
           </div>
 
             <button @click="add_tip" class="button is-success mt-4">
-              <i class="fa fa-plus fa-fw"  ></i> Create
+              <i class="fa fa-plus fa-fw"></i> Create
             </button>
 
       </div>
@@ -108,6 +107,7 @@
 
 <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBlu2BP4tVpaDbjYUHOS9EZDEpnjk5Qipc">
 </script>
+<script src="js/components/imageselector.js"></script>
 <script src="js/pages/create_post.js"></script>
 
 

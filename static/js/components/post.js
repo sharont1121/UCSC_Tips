@@ -13,7 +13,7 @@ Vue.component(
                 post: this.data.posts,
                 tags: [this.data.tag1, this.data.tag2, this.data.tag3].filter(e=>Boolean(e.id)),
                 user: this.data.auth_user,
-        }
+            }
         },
         methods: {
             handleClick: function(id) {
