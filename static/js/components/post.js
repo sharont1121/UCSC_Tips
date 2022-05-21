@@ -23,7 +23,6 @@ Vue.component(
             },
             postRated: function() {
                 console.log("how do we do this!!!");
-                //axios.post()
             },
         },
         computed: {

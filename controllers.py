@@ -319,50 +319,70 @@ def create_post():
 @action.uses(url_signer.verify(), db)
 def add_tip():
 
-    # If tag1 doesnt exist in the db, insert it and set uses to 1
-    t1 = db(db.tags.tag_name == request.json.get("tag1_name")).select().as_list()
-    if request.json.get("tag1_name") == "":
-        tag1_id = None
-    elif len(t1) == 0:
-        tag1_id = db.tags.insert(tag_name=request.json.get("tag1_name"), uses=1)
-    # Otherwise increment its 'uses' field
-    else:
-        tag1_id = t1[0]["id"]
-        tag1 = db.tags[tag1_id]
-        db(db.tags.id == tag1_id).update(uses=tag1.uses + 1)
+    tag_names = []
+    for request_tag_name in ["tag1_name", "tag2_name", "tag3_name"]:
+        t = request.json.get(request_tag_name).lower()
+        if t:
+            tag_names.append(t)
+    tags_in_db = db(db.tags.tag_name.belongs(tag_names)).select(db.tags.ALL).as_list()
+    tags_dict = {t.tag_name: t.id for t in tags_in_db}
 
-    # If tag2 doesn't exist in the db, insert it and set uses to 1
-    t2 = db(db.tags.tag_name == request.json.get("tag2_name")).select().as_list()
-    if request.json.get("tag2_name") == "":
-        tag2_id = None
-    elif len(t2) == 0:
-        tag2_id = db.tags.insert(tag_name=request.json.get("tag2_name"), uses=1)
-    # Otherwise increment its 'uses' field
-    else:
-        tag2_id = t2[0]["id"]
-        tag2 = db.tags[tag2_id]
-        db(db.tags.id == tag2_id).update(uses=tag2.uses + 1)
+    tag_ids = []
+    for tn in tag_names:
+        if tn in tags_dict:
+            id = tags_dict[tn]
+            tag_ids.append(id)
+        else:
+            new_id = db.tags.insert(tag_name=tn)
+            tag_ids.append(new_id)
+    db(db.tags.tag_name.belongs(tag_names)).update( uses=(db.tags.uses + 1) )
+    while len(tag_ids) < 3:
+        tag_ids.append(None)
+    
+    # # If tag1 doesnt exist in the db, insert it and set uses to 1
+    # t1 = db(db.tags.tag_name == request.json.get("tag1_name")).select().as_list()
+    # if request.json.get("tag1_name") == "":
+    #     tag1_id = None
+    # elif len(t1) == 0:
+    #     tag1_id = db.tags.insert(tag_name=request.json.get("tag1_name"), uses=1)
+    # # Otherwise increment its 'uses' field
+    # else:
+    #     tag1_id = t1[0]["id"]
+    #     tag1 = db.tags[tag1_id]
+    #     db(db.tags.id == tag1_id).update(uses=tag1.uses + 1)
 
-    # If tag3 doesn't exist in the db, insert it and set uses to 1
-    t3 = db(db.tags.tag_name == request.json.get("tag3_name")).select().as_list()
-    if request.json.get("tag3_name") == "":
-        tag3_id = None
-    elif len(t3) == 0:
-        tag3_id = db.tags.insert(tag_name=request.json.get("tag3_name"), uses=1)
-    # Otherwise increment its 'uses' field
-    else:
-        tag3_id = t3[0]["id"]
-        tag3 = db.tags[tag3_id]
-        db(db.tags.id == tag3_id).update(uses=tag3.uses + 1)
+    # # If tag2 doesn't exist in the db, insert it and set uses to 1
+    # t2 = db(db.tags.tag_name == request.json.get("tag2_name")).select().as_list()
+    # if request.json.get("tag2_name") == "":
+    #     tag2_id = None
+    # elif len(t2) == 0:
+    #     tag2_id = db.tags.insert(tag_name=request.json.get("tag2_name"), uses=1)
+    # # Otherwise increment its 'uses' field
+    # else:
+    #     tag2_id = t2[0]["id"]
+    #     tag2 = db.tags[tag2_id]
+    #     db(db.tags.id == tag2_id).update(uses=tag2.uses + 1)
+
+    # # If tag3 doesn't exist in the db, insert it and set uses to 1
+    # t3 = db(db.tags.tag_name == request.json.get("tag3_name")).select().as_list()
+    # if request.json.get("tag3_name") == "":
+    #     tag3_id = None
+    # elif len(t3) == 0:
+    #     tag3_id = db.tags.insert(tag_name=request.json.get("tag3_name"), uses=1)
+    # # Otherwise increment its 'uses' field
+    # else:
+    #     tag3_id = t3[0]["id"]
+    #     tag3 = db.tags[tag3_id]
+    #     db(db.tags.id == tag3_id).update(uses=tag3.uses + 1)
 
     # Using the ids of the tags, now insert the post into the db
     id = db.posts.insert(
         title=request.json.get("title"),
         body=request.json.get("body"),
         created_by=get_user_id(),
-        tag1=tag1_id,
-        tag2=tag2_id,
-        tag3=tag3_id,
+        tag1=tag_ids[0],
+        tag2=tag_ids[1],
+        tag3=tag_ids[2],
         lat=request.json.get("lat"),
         lng=request.json.get("lng"),
     )
