@@ -218,9 +218,10 @@ def feed_load():
     assert max_post - min_post < 100
     data = []
 
+    # get the post that equals the selected id
     tinyquery = db.posts.id == params.selectedid
     if params.userid:
-        tinyquery = db.posts.created_by == params.userid
+        tinyquery = tinyquery & (db.posts.created_by == params.userid)
     post = get_posts(db, query=tinyquery, limitby=(0, 1), user_id=current_user_id)
     missing = False
     if post:
@@ -228,6 +229,7 @@ def feed_load():
     elif bool(params.selectedid):
         missing = True
 
+    # get posts with title like search, or just the highest rated posts
     query = db.posts.id != params.selectedid
     if params.search:
         query = query & db.posts.title.ilike(f"%{params.search}%")
@@ -245,15 +247,13 @@ def feed_load():
 
     data.extend(posts)
 
+    # get posts that match search well, only if there is a search, and 
+    # the number of perfect matches are less than the max_post - min_post.
     if params.search and (len(data) + min_post) < max_post:
+
         terms = [k for k in get_terms_from_str(params.search)]
 
-        ids = [
-            r.id
-            for r in db(query).select(
-                db.posts.id, orderby=~db.posts.rating, limitby=(0, max_post)
-            )
-        ]
+        ids = [d['posts']['id'] for d in data]
 
         if params.selectedid:
             ids.append(params.selectedid)
@@ -273,7 +273,6 @@ def feed_load():
                 user_id=current_user_id
             )
         )
-    print(data)
     return dict(data=data, selectedid=params.selectedid, missing=missing)
 
 
@@ -292,7 +291,7 @@ def load_post():
 
 
 @action("profile/<uid:int>")
-@action.uses("profile.html", auth, db)
+@action.uses("profile.html", auth, db, url_signer)
 def profile(uid=None):
     assert uid is not None
     #  assert(db(db.auth_user.id == uid).select().first() is not None), "There exists no User with this uid."
@@ -301,20 +300,34 @@ def profile(uid=None):
     ):  # There is no existing user with this uid
         person = False  # Consider making this redirect to another page instead
     else:  # This is a user that does exist
-        person = db(db.auth_user.id == uid).select().first()
-
-    # Stuff for the feed
+        person = db(db.auth_user.id == uid).select(
+            db.auth_user.id, 
+            db.auth_user.first_name, 
+            db.auth_user.last_name,
+            db.auth_user.email,
+        ).first()
     expected_param_types = {
         "selectedid": int,
         "search": str,
         "tags": JSON,
     }  # exludes string types
     params = ParamParser(request.params, expected_param_types)
-
     return dict(
-        person=person,
-        base_load_posts_url=URL("feed", "load"),
-        params=json.dumps(params.dict_of(["selectedid", "search", "tags"])),
+        person= person,
+        base_load_posts_url= URL("feed", "load"),
+        rate_url= URL("rate", signer=url_signer),
+        map_url=URL("map"),
+        profile_url=URL("profile"),
+        params= json.dumps( 
+            dict(
+                userid=uid,
+                **params.dict_of( [
+                    "selectedid",
+                    "search",
+                    "tags"
+                ] ),
+            )
+        ),
     )
     # If, for some reason globals().get('user') is not longer working in profile.html, use: auth.get_user())
 

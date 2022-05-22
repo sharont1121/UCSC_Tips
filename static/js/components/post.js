@@ -1,4 +1,8 @@
 /*
+* --GLOBAL VAR REQUIREMENTS--
+* MAP_PAGE_BASE_URL: str (probably link to map)
+* PROFILE_PAGE_BASE_URL: str (probably to profile, but missing the id)
+*
 * --PROPS--
 * data: {posts: {db.posts.ALL}, auth_user: {db.auth_user.[first_name, id]}, tag1-3: {db.tags.ALL}}
 * 

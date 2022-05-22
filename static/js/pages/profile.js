@@ -9,10 +9,9 @@ const app = {};
 function init(app) {
     // This is the Vue data.
     app.data = {
-        LOAD_URL: LOAD_POSTS_BASE_URL,
+        LOAD_URL: LOAD_URL,
         RATE_URL: RATE_URL,
         PARAMS: PARAMS,
-        
     };
 
     // We form the dictionary of all methods, so we can assign them
@@ -32,7 +31,7 @@ function init(app) {
                 window.history.replaceState({},"", url);
             },
             newfeedloaded: function( {search_text: search_text, tags: tags} ){
-                new_url = new URL(`${window.location.origin}${window.location.pathname}`) //construct url without any params
+                let new_url = new URL(`${window.location.origin}${window.location.pathname}`) //construct url without any params
                 if(search_text){
                     new_url.searchParams.append("search", search_text);
                 }
