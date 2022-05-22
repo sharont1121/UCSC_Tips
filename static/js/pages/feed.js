@@ -13,7 +13,9 @@ function init(app) {
         min: 0,
         max: 10,
         LOAD_URL: LOAD_POSTS_BASE_URL,
+        RATE_URL: RATE_URL,
         PARAMS: PARAMS,
+        
     };
 
     // We form the dictionary of all methods, so we can assign them

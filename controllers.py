@@ -67,7 +67,7 @@ def index():
 
 
 @action("feed")
-@action.uses("feed.html", auth)
+@action.uses("feed.html", auth, url_signer)
 def feed():
     expected_param_types = {
         "selectedid": int,
@@ -78,6 +78,7 @@ def feed():
     # print(generate_random_coord())
     return dict(
         base_load_posts_url=URL("feed", "load"),
+        rate_url=URL("rate", signer=url_signer),
         create_post_url=URL("create_post"),
         map_url=URL("map"),
         profile_url=URL("profile"),
@@ -101,7 +102,7 @@ def add_data():
     redirect(URL("feed"))
 
 
-def get_posts(db, query, tags=None, **kwargs):
+def get_posts(db, query, tags=None, user_id=-1, **kwargs):
     tag1 = db.tags.with_alias("tag1")
     tag2 = db.tags.with_alias("tag2")
     tag3 = db.tags.with_alias("tag3")
@@ -112,6 +113,9 @@ def get_posts(db, query, tags=None, **kwargs):
             | tag2.tag_name.belongs(tags)
             | tag3.tag_name.belongs(tags)
         )
+    rating = db.rating.user.count()
+    rated_condition = (db.rating.user == user_id)
+    rated = rated_condition.case(1,0).sum()
     res = db(query).select(
         db.posts.ALL,
         tag1.ALL,
@@ -119,19 +123,24 @@ def get_posts(db, query, tags=None, **kwargs):
         tag3.ALL,
         user.id,
         user.first_name,
+        rating.with_alias("rating"),
+        rated.with_alias("rated"),
+        orderby=~rating,
+        groupby=db.posts.id,
         **kwargs,
         left=[
             tag1.on(db.posts.tag1 == tag1.id),
             tag2.on(db.posts.tag2 == tag2.id),
             tag3.on(db.posts.tag3 == tag3.id),
             user.on(db.posts.created_by == user.id),
+            db.rating.on(db.rating.post == db.posts.id),
         ],
     )
     return res
 
 
 def search_posts(
-    db, search_terms, tags=None, limitby=None, exclude=[], conditions=None
+    db, search_terms, tags=None, limitby=None, exclude=[], conditions=None, user_id=-1
 ):
 
     tag1 = db.tags.with_alias("tag1")
@@ -157,6 +166,9 @@ def search_posts(
             | tag2.tag_name.belongs(tags)
             | tag3.tag_name.belongs(tags)
         )
+    rating = db.rating.user.count()
+    rated_condition = db.rating.user.equals(user_id)
+    rated = rated_condition.case(1,0).sum()
     relevent_terms = db(query).select(
         div,
         db.posts.ALL,
@@ -165,9 +177,11 @@ def search_posts(
         tag3.ALL,
         user.id,
         user.first_name,
+        rating.with_alias("rating"),
+        rated.with_alias("rated"),
         orderby=~div,
         groupby=db.posts.id,
-        having=(div > 0.0),
+        having= (div > 0.0),
         limitby=limitby,
         left=[
             db.terms.on(db.term_freq.term == db.terms.id),
@@ -176,6 +190,7 @@ def search_posts(
             tag2.on(db.posts.tag2 == tag2.id),
             tag3.on(db.posts.tag3 == tag3.id),
             user.on(db.posts.created_by == user.id),
+            db.rating.on(db.rating.post == db.posts.id),
         ],
     )
     return relevent_terms
@@ -195,7 +210,7 @@ def feed_load():
         "tags": JSON,
         "userid": int,
     }
-
+    current_user_id = get_user_id()
     params = ParamParser(request.params, expected_param_types)
 
     min_post = params.min or 0
@@ -206,7 +221,7 @@ def feed_load():
     tinyquery = db.posts.id == params.selectedid
     if params.userid:
         tinyquery = db.posts.created_by == params.userid
-    post = get_posts(db, query=tinyquery, limitby=(0, 1))
+    post = get_posts(db, query=tinyquery, limitby=(0, 1), user_id=current_user_id)
     missing = False
     if post:
         data.extend(post)
@@ -224,8 +239,8 @@ def feed_load():
         db,
         query=query,
         tags=params.tags,
-        orderby=~db.posts.rating,
         limitby=(min_post, max_post),
+        user_id=current_user_id,
     )
 
     data.extend(posts)
@@ -255,9 +270,10 @@ def feed_load():
                 limitby=(len(data) + min_post, max_post),
                 exclude=ids,
                 conditions=query2,
+                user_id=current_user_id
             )
         )
-
+    print(data)
     return dict(data=data, selectedid=params.selectedid, missing=missing)
 
 
@@ -319,12 +335,13 @@ def create_post():
 @action.uses(url_signer.verify(), db)
 def add_tip():
 
+    #get the tags from the database
     tag_names = []
     for request_tag_name in ["tag1_name", "tag2_name", "tag3_name"]:
         t = request.json.get(request_tag_name).lower()
         if t:
             tag_names.append(t)
-    tags_in_db = db(db.tags.tag_name.belongs(tag_names)).select(db.tags.ALL).as_list()
+    tags_in_db = db(db.tags.tag_name.belongs(tag_names)).select(db.tags.id, db.tags.tag_name)
     tags_dict = {t.tag_name: t.id for t in tags_in_db}
 
     tag_ids = []
@@ -416,3 +433,25 @@ def confirm_upload():
     print(post_id, image_url)
     db(db.posts.id == post_id).update(image_url=image_url)
     return dict()
+
+@action('rate', method="POST")
+@action.uses(db, url_signer.verify(), auth.user)
+def rate():
+
+    post_id = request.json.get('post_id')
+    user_id = get_user_id()
+
+    if not post_id or not user_id:
+        return "error"
+    
+    if request.json.get("delete"):
+        db(
+            (db.rating.post == post_id) & (db.rating.user == user_id)
+        ).delete()
+    else:
+        db.rating.update_or_insert(
+            (db.rating.post == post_id) & (db.rating.user == user_id),
+            post= post_id,
+            user= user_id,
+            )
+        return "ok"

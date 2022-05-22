@@ -4,6 +4,8 @@
 * 
 * --EMITS--
 * (on click) postActive: post_id
+* (on rate) postRated: post_id
+* (on unrate) postUnrated: post_id
 */
 Vue.component(
     'post', {
@@ -13,6 +15,8 @@ Vue.component(
                 post: this.data.posts,
                 tags: [this.data.tag1, this.data.tag2, this.data.tag3].filter(e=>Boolean(e.id)),
                 user: this.data.auth_user,
+                rating: this.data.rating,
+                rated: this.data.rated === 1,
             }
         },
         methods: {
@@ -22,7 +26,17 @@ Vue.component(
                 }
             },
             postRated: function() {
-                console.log("how do we do this!!!");
+                if(this.rated){
+                    this.rating -= 1;
+                    this.rated = false;
+                    this.$emit("postUnrated", this.post.id);
+                }
+                else{
+                    this.rating += 1;
+                    this.rated = true;
+                    this.$emit("postRated", this.post.id)
+                }
+                
             },
         },
         computed: {
@@ -33,7 +47,9 @@ Vue.component(
                 return PROFILE_PAGE_BASE_URL + "/" + this.user.id;
             },
             trimbodytext: function() {
-                
+                if(!this.post.body){
+                    return "";
+                }
                 if(this.isActive || this.post.body.length <= 247){
                     return this.post.body;
                 }
@@ -72,10 +88,10 @@ Vue.component(
                         </div>
                         <div class="column is-flex-centered">
                             <div class="icon-text">
-                                <span class="has-text-white has-text-right" v-on:click="postRated()">
+                                <span :class="rated ? 'has-text-primary' : 'has-text-white'" v-on:click="postRated()">
                                     <i class="fa fa-lg fa-star"></i>
                                 </span>
-                                <span class="has-text-white has-text-right">&times {{post.rating}}</span>
+                                <span class="has-text-white">&times {{rating}}</span>
                             </div>
                         </div>
                     </div>
