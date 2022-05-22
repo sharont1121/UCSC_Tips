@@ -62,9 +62,6 @@ Vue.component(
                 return this.post.body.slice(0,space) + "...";
             }
         },
-        updated: function() {
-            console.log("updated");
-        },
         template: `
         <div class="feed-post" v-bind:class="{active: isActive}" v-bind:id="post.id">
             <div class="box has-background-grey-dark" style="height: 100%" v-on:click="handleClick(post.id)">

@@ -86,7 +86,6 @@ Vue.component( 'feed', {
             }
             this.missing = false;
             this.activeid = id;
-            console.log(this.activeid);
             this.$emit('newpostactive', id);
             setTimeout( () => {
                 const e = document.getElementById(id);
@@ -120,7 +119,7 @@ Vue.component( 'feed', {
                 this.missing = res.data.missing;
                 this.min_post += res.data.data.length;
                 this.$emit('newfeedloaded', {search_text: this.search, tags: this.tags})
-            })
+            }).catch(console.log)
         },
         handleScroll: function({target: {scrollTop, scrollTopMax}}) {
             if (scrollTop + 300 > scrollTopMax){
