@@ -99,33 +99,29 @@ let init = (app) => {
         if (this.add_title == "" || this.add_body == "" || !this.file ) {
             alert("Please enter a title, description and image for your post before submitting.");
         }
-        // Uploads the file, using the low-level interface.
-        let req = new XMLHttpRequest();
-        // We listen to the load event = the file is uploaded, and we call upload_complete.
-        // That function will notify the server `of the location of the image.
-        let post_id;
-        req.addEventListener("load", () => {
-            this.upload_text().then( (response) => {
-                    post_id = response.data.id;
-                    axios.post(upload_complete_url, {
+        else {
+            // Uploads the file, using the low-level interface.
+            let req = new XMLHttpRequest();
+            // We listen to the load event = the file is uploaded, and we call upload_complete.
+            // That function will notify the server `of the location of the image.
+            let post_id;
+            req.addEventListener("load", () => {
+                this.upload_text().then( (response) => {
+                        post_id = response.data.id;
+                        axios.post(upload_complete_url, {
 
-                        post_id: response.data.id,
-                        image_url: this.file_url
-                    }).then(()=>{
-                        app.reset_form();
-                        app.load_created_post(post_id);
-                    })
+                            post_id: response.data.id,
+                            image_url: this.file_url
+                        }).then(()=>{
+                            app.reset_form();
+                            app.load_created_post(post_id);
+                        })
+                });
             });
-        });
-        // TODO: if you like, add a listener for "error" to detect failure.
-        req.open("PUT", this.upload_url, true);
-        req.send(this.file);
-<<<<<<< HEAD
-
-=======
-        
->>>>>>> d5eb3f006c0dde2aa6df72247b8acf0856e90e0f
-
+            // TODO: if you like, add a listener for "error" to detect failure.
+            req.open("PUT", this.upload_url, true);
+            req.send(this.file);
+        }
     };
 
     app.get_upload_url = function (file) {
