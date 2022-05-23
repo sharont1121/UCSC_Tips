@@ -120,7 +120,11 @@ let init = (app) => {
         // TODO: if you like, add a listener for "error" to detect failure.
         req.open("PUT", this.upload_url, true);
         req.send(this.file);
+<<<<<<< HEAD
 
+=======
+        
+>>>>>>> d5eb3f006c0dde2aa6df72247b8acf0856e90e0f
 
     };
 

@@ -36,6 +36,7 @@
                 @newpostactive="newpostactive($event)" 
                 @newfeedloaded="newfeedloaded($event)" 
                 :loadurl="LOAD_URL" 
+                :rateurl="RATE_URL"
                 :params="PARAMS" 
                 :isone="false"
             ></feed>
@@ -47,10 +48,11 @@
 
 [[block page_scripts]]
 <script>
-    const LOAD_POSTS_BASE_URL = '[[=XML(base_load_posts_url)]]'
-    const MAP_PAGE_BASE_URL = '[[=XML(map_url)]]'
-    const PROFILE_PAGE_BASE_URL = '[[=XML(profile_url)]]'
-    const PARAMS = '[[=XML(params)]]'
+    const LOAD_POSTS_BASE_URL = '[[=XML(base_load_posts_url)]]';
+    const RATE_URL = '[[=XML(rate_url)]]';
+    const MAP_PAGE_BASE_URL = '[[=XML(map_url)]]';
+    const PROFILE_PAGE_BASE_URL = '[[=XML(profile_url)]]';
+    const PARAMS = '[[=XML(params)]]';
 </script>
 <script src="js/components/tag.js"></script>
 <script src="js/components/post.js"></script>

@@ -2,9 +2,9 @@
     display: grid;
     grid-template-columns: 47.5% 47.5%;
     overflow-x: hidden;
-    grid-auto-rows: minmax(50vh, max-content);
+    grid-auto-rows: minmax(40vh, min-content);
     align-items: stretch;
-    column-gap: 5%;
+    column-gap: 5vh;
     row-gap: 30px;
     grid-auto-flow: dense;
     height: 100%; 
