@@ -25,6 +25,15 @@ let init = (app) => {
         return a;
     };
 
+    app.reset_center = function (map, center) {
+        map.addListener("center_changed", () => {
+            // 3 seconds after the center of the map has changed, pan back to Center Marker UCSC.
+            window.setTimeout(() => {
+                map.panTo(center.getPosition());
+            }, 3000);
+        });
+    }
+
     app.init_map = function (posts) {
         const ucsc_coord = { lat: 36.9927, lng: -122.0593 };
         // const ucsc_coord = { lat: posts[0].lat, lng: posts[0].lng };
@@ -54,7 +63,10 @@ let init = (app) => {
             title: "UCSC is here!",
             icon: ucsc_icon,
         });
+
+        app.reset_center(map, ucsc_marker)
     }
+
 
     app.methods = {
         // TODO
