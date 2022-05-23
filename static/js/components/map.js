@@ -40,6 +40,44 @@ let init = (app) => {
             map.setCenter(center.getPosition());
         });
     }
+    app.load_post = function (id) {
+        let vars = window.location.search.replaceAll(/[&]?selectedid=[\d]+/g, "");
+        console.log(vars);
+        if (vars && vars !== '?') {
+            vars = vars + '&';
+        }
+        else {
+            vars = '?';
+        }
+
+        let url = window.location.toString();
+        let add_path = "feed" + vars + "selectedid=" + id;
+        return url.replace(/map/, add_path);
+    };
+
+    app.get_pop_up_string = function (post) {
+        let href = app.load_post(post.id)
+        let view_details = "View Details"
+        let title = post.title
+        let body = ""
+        if (post.body.length > 300) {
+            body = post.body.slice(0, 300) + "... "
+        }
+        const contentString =
+            '<div class="content has-text-black">' +
+            '<div id="siteNotice">' +
+            "</div>" +
+            '<h1 id="firstHeading" class="firstHeading">' + title + '</h1>' +
+            '<div id="bodyContent">' +
+            "<p>" +
+            body +
+            "</p>" +
+            '<a href=\"' + href + '\"> <b>' + view_details +
+            "</b></a> " +
+            "</div>" +
+            "</div>";
+        return contentString
+    }
 
     app.init_map = function (posts) {
         const ucsc_coord = { lat: 36.9927, lng: -122.0593 };
@@ -50,19 +88,8 @@ let init = (app) => {
             center: ucsc_coord,
         });
 
-        for (var i = 0; i < app.vue.posts.length; i++) {
-            let lng = posts[i].lng
-            let lat = posts[i].lat
-            const c = { lat: lat, lng: lng };
-            const marker = new google.maps.Marker({
-                position: c,
-                map: map,
-                title: posts[i].title,
-            });
-        }
-
-        // The marker, positioned at UCSC
         let ucsc_icon = "http://maps.google.com/mapfiles/kml/paddle/ylw-stars.png"
+        // The center marker, positioned at UCSC
         const ucsc_marker = new google.maps.Marker({
             // color: 'yellow',
             position: ucsc_coord,
@@ -70,6 +97,31 @@ let init = (app) => {
             title: "UCSC is here!",
             icon: ucsc_icon,
         });
+
+        for (var i = 0; i < app.vue.posts.length; i++) {
+            let p = posts[i]
+            let lng = p.lng
+            let lat = p.lat
+            const c = { lat: lat, lng: lng };
+            const marker = new google.maps.Marker({
+                position: c,
+                map: map,
+                title: p.title,
+            });
+            const infowindow = new google.maps.InfoWindow({
+                content: app.get_pop_up_string(p),
+            });
+            marker.addListener("click", () => {
+                infowindow.open({
+                    anchor: marker,
+                    map,
+                    shouldFocus: false,
+                });
+            });
+
+        }
+
+
 
         // app.reset_center(map, ucsc_marker)   // Use this if you want the map focus on UCSC
         app.reset_zoom(map, ucsc_marker)
