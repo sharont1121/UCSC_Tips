@@ -1,6 +1,7 @@
 // This will be the object that will contain the Vue attributes
 // and be used to initialize it.
 const app = {};
+
 const default_lat = 36.9927;
 const default_lng = -122.0593;
 
@@ -95,39 +96,36 @@ let init = (app) => {
 
 
     app.add_tip = function () {
-        if (app.vue.add_title != "" && app.vue.add_body != "" && this.file ) {
-
-            // Uploads the file, using the low-level interface.
-            let req = new XMLHttpRequest();
-            // We listen to the load event = the file is uploaded, and we call upload_complete.
-            // That function will notify the server `of the location of the image.
-            let post_id;
-            req.addEventListener("load", () => {
-                this.upload_text().then( (response) => {
-                        post_id = response.data.id;
-                        axios.post(upload_complete_url, {
-    
-                            post_id: response.data.id,
-                            image_url: this.file_url
-                        }).then(()=>{
-                            app.reset_form();
-                            app.load_created_post(post_id);
-                        })
-                });
-            });
-            // TODO: if you like, add a listener for "error" to detect failure.
-            req.open("PUT", this.upload_url, true);
-            req.send(this.file);
-        } else {
+        if (this.add_title == "" || this.add_body == "" || !this.file ) {
             alert("Please enter a title, description and image for your post before submitting.");
         }
+        // Uploads the file, using the low-level interface.
+        let req = new XMLHttpRequest();
+        // We listen to the load event = the file is uploaded, and we call upload_complete.
+        // That function will notify the server `of the location of the image.
+        let post_id;
+        req.addEventListener("load", () => {
+            this.upload_text().then( (response) => {
+                    post_id = response.data.id;
+                    axios.post(upload_complete_url, {
+
+                        post_id: response.data.id,
+                        image_url: this.file_url
+                    }).then(()=>{
+                        app.reset_form();
+                        app.load_created_post(post_id);
+                    })
+            });
+        });
+        // TODO: if you like, add a listener for "error" to detect failure.
+        req.open("PUT", this.upload_url, true);
+        req.send(this.file);
+
 
     };
 
-    app.get_upload_url = function (event) {
-        this.upload_url = null;
-        const input = event.target;
-        this.file = input.files[0];
+    app.get_upload_url = function (file) {
+        this.file = file;
         if (this.file) {
             this.fetching_url = true;
             let file_type = this.file.type;
@@ -144,9 +142,16 @@ let init = (app) => {
                 this.fetching_url = false;
                 this.file_url = api_endpoint + '/' + this.file_path;
                 console.log(this);
-                
-            }) 
+
+            })
         }
+    }
+    app.reset_image = function() {
+        this.fetching_url = false;
+        this.uploading_image = false;
+        this.file_url = null;
+        this.file_path = null;
+        this.file = null;
     }
     app.reset_form = function () {
         app.vue.add_title = "";
@@ -154,8 +159,10 @@ let init = (app) => {
         app.vue.add_tag1 = "";
         app.vue.add_tag2 = "";
         app.vue.add_tag3 = "";
-        app.vue.lat = 36.9927;
-        app.vue.lng = -122.0593;
+        app.vue.upload_url = null,
+        this.reset_image();
+        app.vue.lat = default_lat;
+        app.vue.lng = default_lng;
 
     };
 
@@ -167,6 +174,7 @@ let init = (app) => {
         add_tip: app.add_tip,
         get_upload_url: app.get_upload_url,
         upload_text: app.upload_text,
+        reset_image: app.reset_image,
     };
 
     // This creates the Vue instance.
