@@ -34,6 +34,13 @@ let init = (app) => {
         });
     }
 
+    app.reset_zoom = function (map, center) {
+        center.addListener("click", () => {
+            map.setZoom(15);
+            map.setCenter(center.getPosition());
+        });
+    }
+
     app.init_map = function (posts) {
         const ucsc_coord = { lat: 36.9927, lng: -122.0593 };
         // const ucsc_coord = { lat: posts[0].lat, lng: posts[0].lng };
@@ -64,7 +71,8 @@ let init = (app) => {
             icon: ucsc_icon,
         });
 
-        app.reset_center(map, ucsc_marker)
+        // app.reset_center(map, ucsc_marker)   // Use this if you want the map focus on UCSC
+        app.reset_zoom(map, ucsc_marker)
     }
 
 
