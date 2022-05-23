@@ -1,6 +1,7 @@
 // This will be the object that will contain the Vue attributes
 // and be used to initialize it.
 const app = {};
+
 const default_lat = 36.9927;
 const default_lng = -122.0593;
 
@@ -16,6 +17,12 @@ let init = (app) => {
         add_tag1: '',
         add_tag2: '',
         add_tag3: '',
+        upload_url: null,
+        fetching_url: false,
+        uploading_image: false,
+        file_url: null,
+        file_path: null,
+        file: null,
         lat: default_lat,
         lng: default_lng,
 
@@ -27,6 +34,20 @@ let init = (app) => {
         a.map((e) => {e._idx = k++;});
         return a;
     };
+
+    app.upload_text = function () {
+        return axios.post(add_tip_url,
+            {
+                title: this.add_title,
+                body: this.add_body,
+                tag1_name: this.add_tag1,
+                tag2_name: this.add_tag2,
+                tag3_name: this.add_tag3,
+                lat: this.lat,
+                lng: this.lng,
+            });
+    }
+
 
     app.init_map = function () {
         const ucsc_default_coord = { lat: default_lat, lng: default_lng };
@@ -59,50 +80,89 @@ let init = (app) => {
     }
 
     app.load_created_post = function(id) {
-                let vars = window.location.search.replaceAll(/[&]?selectedid=[\d]+/g, "");
-                console.log(vars);
-                if(vars && vars !== '?'){
-                    vars = vars + '&';
-                }
-                else{
-                    vars = '?';
-                }
+        let vars = window.location.search.replaceAll(/[&]?selectedid=[\d]+/g, "");
+        console.log(vars);
+        if(vars && vars !== '?'){
+            vars = vars + '&';
+        }
+        else{
+            vars = '?';
+        }
 
-                let url = window.location.toString();
-                let add_path = "feed" + vars + "selectedid=" + id;
-                window.location = url.replace(/create_post/, add_path);
-            };
+        let url = window.location.toString();
+        let add_path = "feed" + vars + "selectedid=" + id;
+        window.location = url.replace(/create_post/, add_path);
+    };
 
 
     app.add_tip = function () {
-        if (app.vue.add_title != "" && app.vue.add_body != "") {
-            axios.post(add_tip_url,
-            {
-                title: app.vue.add_title,
-                body: app.vue.add_body,
-                tag1_name: app.vue.add_tag1,
-                tag2_name: app.vue.add_tag2,
-                tag3_name: app.vue.add_tag3,
-                lat: app.vue.lat,
-                lng: app.vue.lng,
-            }).then(function (response) {
-            // console.log(response.data.id);
-            app.reset_form();
-            app.load_created_post(response.data.id);
-        });
-        } else {
-            alert("Please enter a title and description for your post before submitting.");
+        if (this.add_title == "" || this.add_body == "" || !this.file ) {
+            alert("Please enter a title, description and image for your post before submitting.");
         }
+        // Uploads the file, using the low-level interface.
+        let req = new XMLHttpRequest();
+        // We listen to the load event = the file is uploaded, and we call upload_complete.
+        // That function will notify the server `of the location of the image.
+        let post_id;
+        req.addEventListener("load", () => {
+            this.upload_text().then( (response) => {
+                    post_id = response.data.id;
+                    axios.post(upload_complete_url, {
+
+                        post_id: response.data.id,
+                        image_url: this.file_url
+                    }).then(()=>{
+                        app.reset_form();
+                        app.load_created_post(post_id);
+                    })
+            });
+        });
+        // TODO: if you like, add a listener for "error" to detect failure.
+        req.open("PUT", this.upload_url, true);
+        req.send(this.file);
+        
+
     };
 
+    app.get_upload_url = function (file) {
+        this.file = file;
+        if (this.file) {
+            this.fetching_url = true;
+            let file_type = this.file.type;
+            let file_name = this.file.name;
+            // Requests the upload URL.
+            axios.post(obtain_gcs_upload_url, {
+                action: "PUT",
+                mimetype: file_type,
+                file_name: file_name
+            }).then((res)=>{
+                this.get_gcs_res = res
+                this.upload_url = res.data.signed_url;
+                this.file_path = res.data.file_path;
+                this.fetching_url = false;
+                this.file_url = api_endpoint + '/' + this.file_path;
+                console.log(this);
+                
+            }) 
+        }
+    }
+    app.reset_image = function() {
+        this.fetching_url = false;
+        this.uploading_image = false;
+        this.file_url = null;
+        this.file_path = null;
+        this.file = null;
+    }
     app.reset_form = function () {
         app.vue.add_title = "";
         app.vue.add_body = "";
         app.vue.add_tag1 = "";
         app.vue.add_tag2 = "";
         app.vue.add_tag3 = "";
-        app.vue.lat = 36.9927;
-        app.vue.lng = -122.0593;
+        app.vue.upload_url = null,
+        this.reset_image();
+        app.vue.lat = default_lat;
+        app.vue.lng = default_lng;
 
     };
 
@@ -112,6 +172,9 @@ let init = (app) => {
     // to the Vue app in a single blow.
     app.methods = {
         add_tip: app.add_tip,
+        get_upload_url: app.get_upload_url,
+        upload_text: app.upload_text,
+        reset_image: app.reset_image,
     };
 
     // This creates the Vue instance.

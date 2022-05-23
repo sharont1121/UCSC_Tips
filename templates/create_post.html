@@ -80,16 +80,15 @@
 
           <div class="field">
             <div class="control">
-              <input
-                type="file"
-                accept="image/png, image/jpeg"
-                @change="fileSelected($event)"
-                />
+              <imageselector 
+                @selected="get_upload_url($event)"
+                @cancel="reset_image()"
+                ></imageselector>
             </div>
           </div>
 
             <button @click="add_tip" class="button is-success mt-4">
-              <i class="fa fa-plus fa-fw"  ></i> Create
+              <i class="fa fa-plus fa-fw"></i> Create
             </button>
 
       </div>
@@ -100,12 +99,15 @@
 [[block page_scripts]]
 <!-- Loads the index-specific js for Vue -->
 <script>
-  let add_tip_url = "[[=XML(add_tip_url)]]";
-
+  const add_tip_url = "[[=XML(add_tip_url)]]";
+  const obtain_gcs_upload_url = "[[=XML(obtain_gcs_upload_url)]]";
+  const api_endpoint = "[[=XML(api_endpoint)]]";
+  const upload_complete_url = "[[=XML(upload_complete_url)]]"
 </script>
 
 <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBlu2BP4tVpaDbjYUHOS9EZDEpnjk5Qipc">
 </script>
+<script src="js/components/imageselector.js"></script>
 <script src="js/pages/create_post.js"></script>
 
 

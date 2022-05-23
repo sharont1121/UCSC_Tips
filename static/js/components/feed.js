@@ -2,7 +2,8 @@
 const POSTS_PER_LOAD = 10;
 /*
 * --PROPS-- propname: object to pass in structure
-* loadurl: a url str, probably to feed/load
+* loadurl: a url str, probably to /feed/load
+* rateurl: a url str, probably to /rate
 * params: {selctedid?: int, search?:str, tags?: [str], userid: int}
 * isone: boolean, or the string equivilant
 *
@@ -12,7 +13,7 @@ const POSTS_PER_LOAD = 10;
 * 
 */
 Vue.component( 'feed', {
-    props: ['loadurl', 'params', 'isone'],
+    props: ['loadurl', 'rateurl', 'params', 'isone'],
 
     data: function() {
         const parsed_params = JSON.parse(this.params);
@@ -25,6 +26,7 @@ Vue.component( 'feed', {
             tags: parsed_params["tags"],
             userid: parsed_params["userid"],
             locked: false,
+            is_one: this.isone
         }
     },
     created: function () {
@@ -84,7 +86,6 @@ Vue.component( 'feed', {
             }
             this.missing = false;
             this.activeid = id;
-            console.log(this.activeid);
             this.$emit('newpostactive', id);
             setTimeout( () => {
                 const e = document.getElementById(id);
@@ -118,7 +119,7 @@ Vue.component( 'feed', {
                 this.missing = res.data.missing;
                 this.min_post += res.data.data.length;
                 this.$emit('newfeedloaded', {search_text: this.search, tags: this.tags})
-            })
+            }).catch(console.log)
         },
         handleScroll: function({target: {scrollTop, scrollTopMax}}) {
             if (scrollTop + 300 > scrollTopMax){
@@ -127,6 +128,29 @@ Vue.component( 'feed', {
                     this.load_more_posts();
                 }
             }
+        },
+        postRated: function(id) {
+            axios.post(this.rateurl, {post_id: id})
+                .catch((err)=>{
+                    if (err.response && err.response.status === 403){
+                        alert("log in to actually rate posts");
+                    }
+                    else {
+                        console.log(err);
+                    }
+                })
+        },
+        postUnrated: function(id) {
+            axios.post(this.rateurl, {post_id: id, delete: true})
+                .catch((err)=>{
+                    if (err.response && err.response.status === 403){
+                        alert("log in to actually rate posts");
+                    }
+                    else {
+                        console.log(err);
+                    }
+                })
+
         }
     },
     template: `
@@ -138,13 +162,15 @@ Vue.component( 'feed', {
             <div v-if="this.missing" class="box has-background-danger">
                 <p class="content">could not find post!</p>
             </div>
-            <div class="feed-grid" v-bind:class="{'is-one': isone == true}">
+            <div class="feed-grid" v-bind:class="{'is-one': is_one == true}">
                 <post 
                     v-for="p in this.data" 
                     :data="p" 
                     :isActive="p.posts.id === activeid" 
                     :key="p.posts.id"
-                    @postActive="handlePostClick($event)" 
+                    @postActive="handlePostClick($event)"
+                    @postRated="postRated($event)"
+                    @postUnrated="postUnrated($event)"
                     >
                 </post>
             </div>

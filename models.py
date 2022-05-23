@@ -15,8 +15,9 @@ def get_user_email():
     return auth.current_user.get("email") if auth.current_user else None
 
 
+# NOW RETURNS -1!!!! this is truthy!!!!
 def get_user_id():
-    return auth.current_user.get("id") if auth.current_user else None
+    return auth.current_user.get("id") if auth.current_user else -1
 
 
 def get_time():
@@ -52,7 +53,7 @@ db.define_table(
     Field("created_on", "datetime", default=get_time),
     # Figure out what to store for images later, for now string
     Field("image_url"),
-    Field("rating", "integer", default=0),
+    #Field("rating", "integer", default=0), #not how it works sadly :(
     Field("tag1", "reference tags"),
     Field("tag2", "reference tags"),
     Field("tag3", "reference tags"),
@@ -78,7 +79,8 @@ def after_post_insert(post, i):
     freq = get_terms_from_str(post.body)
     if not freq:
         return
-    db(db.posts.id == i).update(inverse_max_freq=(1.0 / (freq.most_common(1)[0][1])))
+    most_common_freq = freq.most_common(1)[0][1]
+    db(db.posts.id == i).update(inverse_max_freq=(1.0 / most_common_freq))
     for term, count in freq.items():
         t = db(db.terms.term == term).select(db.terms.id).first()
         id = None
@@ -114,6 +116,12 @@ db.define_table(
     Field("post_freq", "double"),  # frequency of the term in the post
 )
 
-db.executesql("CREATE INDEX IF NOT EXISTS byterm ON term_freq (term, post);")  # sketchy
+db.define_table(
+    "rating",
+    Field("post", "reference posts", notnull=True),
+    Field("user", "reference auth_user", notnull=True),
+)
+
+db.executesql("CREATE INDEX IF NOT EXISTS byterm ON term_freq (term, post);")  # sketchy!
 
 db.commit()
