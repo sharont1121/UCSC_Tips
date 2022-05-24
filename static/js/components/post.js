@@ -121,7 +121,7 @@ Vue.component(
                                     <img 
                                         class="has-fit-cover has-background-grey-dark" 
                                         :data-src="post.image_url"
-                                        data-err="img/error.png" 
+                                        data-err="img/error.jpg" 
                                         src="img/loading.jpg">
                                 </div>
                             </div>
