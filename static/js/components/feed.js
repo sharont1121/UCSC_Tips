@@ -29,6 +29,34 @@ Vue.component( 'feed', {
             is_one: this.isone
         }
     },
+    provide: function() {
+        options = {
+            root: this.$el,
+        }
+        let callback = function(entries, observer) {
+            for (let event of entries) {
+                if (event.isIntersecting) {
+                    let src = null;
+                    if (event.target.dataset) {
+                        src = event.target.dataset.src;
+                    }
+                    if(src) {
+                        event.target.addEventListener("error", (err)=>{
+                            if( event.target.dataset && event.target.dataset.err ) {
+                                event.target.src = event.target.dataset.err;
+                            }
+                        }, {once: true})
+                        event.target.src = src;
+                    }
+                    observer.unobserve(event.target);
+                }
+            }
+        }
+        let obs = new IntersectionObserver(callback, options);
+        return {
+            obs,
+        }
+    },
     created: function () {
         this._get().then((res) => {
             this.$el.scroll({top:0, left: 0})

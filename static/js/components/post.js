@@ -14,6 +14,7 @@
 Vue.component(
     'post', {
         props: ['data', 'isActive'],
+        inject: ['obs'],
         data: function() {
             return {
                 post: this.data.posts,
@@ -21,6 +22,12 @@ Vue.component(
                 user: this.data.auth_user,
                 rating: this.data.rating,
                 rated: this.data.rated === 1,
+            }
+        },
+        mounted: function() {
+            let imgs = this.$el.querySelectorAll('img');
+            for(let img of imgs){
+                this.obs.observe(img);
             }
         },
         methods: {
@@ -74,7 +81,7 @@ Vue.component(
                     <div class="column is-6 columns is-vcentered is-mobile" v-if="isActive">
                         <div class="column is-flex-centered">
                             <a :href="mapurl" 
-                            class="button is-round has-background-purple-blue has-text-white is-purple-blue  has-text-weight-semibold" 
+                            class="button is-round has-background-purple-blue has-text-white is-purple-blue has-text-weight-semibold" 
                             >map</a>
                         </div>
                         <div class="column is-flex-centered">
@@ -111,7 +118,11 @@ Vue.component(
                         <div v-if="post.image_url" class="column is-6-mobile is-offset-3-mobile p-0">
                             <div class="box is-shadowless is-clipped p-0 m-2">
                                 <div class="image is-square">
-                                    <img class="has-fit-cover has-background-grey-dark" :src="post.image_url">
+                                    <img 
+                                        class="has-fit-cover has-background-grey-dark" 
+                                        :data-src="post.image_url"
+                                        data-err="img/error.png" 
+                                        src="img/loading.jpg">
                                 </div>
                             </div>
                         </div>
