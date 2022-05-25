@@ -1,3 +1,4 @@
+const UCSC_COORD = { lat: 36.9927, lng: -122.0593 };
 let app = {};
 
 
@@ -8,6 +9,7 @@ let init = (app) => {
     app.data = {
         // Complete as you see fit.
         posts: [],
+        pid: -1,
     };
 
     app.enumerate = (a) => {
@@ -80,20 +82,27 @@ let init = (app) => {
         return contentString
     }
 
-    app.init_map = function (posts) {
-        const ucsc_coord = { lat: 36.9927, lng: -122.0593 };
+    app.init_map = function (posts, p_idx = -1) {
+
+        let zoom = 15
+        let center_coord = { lat: 36.9927, lng: -122.0593 };
+
+        if (p_idx >= 0 && p_idx < posts.length) {
+            center_coord = { lat: posts[p_idx].lat, lng: posts[p_idx].lng };
+            zoom = 17
+        }
         // const ucsc_coord = { lat: posts[0].lat, lng: posts[0].lng };
         // The map, centered at UCSC
         const map = new google.maps.Map(document.getElementById("map"), {
-            zoom: 15,
-            center: ucsc_coord,
+            zoom: zoom,
+            center: center_coord,
         });
 
         let ucsc_icon = "http://maps.google.com/mapfiles/kml/paddle/ylw-stars.png"
         // The center marker, positioned at UCSC
         const ucsc_marker = new google.maps.Marker({
             // color: 'yellow',
-            position: ucsc_coord,
+            position: UCSC_COORD,
             map: map,
             title: "UCSC is here!",
             icon: ucsc_icon,
@@ -117,6 +126,7 @@ let init = (app) => {
                     anchor: marker,
                     map,
                     shouldFocus: false,
+                    zoom: 15
                 });
             });
 
@@ -142,12 +152,27 @@ let init = (app) => {
         // Put here any initialization code.
         // Typically this is a server GET call to load the data.
         // Now we do an actual server call, using axios.
-        axios.get(map_load_url).then(function (response) {
+        // axios.get(MAP_PAGE_BASE_URL).then(function (response) {
+        //     
+        // })
+        app.vue.pid = parseInt(PID)
+        axios.get(MAP_LOAD_URL).then(function (response) {
             app.vue.posts = app.decorate(app.enumerate(response.data.posts));
+
             // app.enumerate(app.vue.posts);
             let posts = app.decorate(app.enumerate(response.data.posts));
             app.vue.posts = posts
-            app.init_map(posts);
+
+
+
+            let p_idx = -1
+            for (var i = 0; i < posts.length; i++) {
+                if (posts[i].id == app.vue.pid) {
+                    p_idx = posts[i]._idx
+                }
+            }
+            // app.vue.p_idx = p_idx
+            app.init_map(posts, p_idx);
         })
 
     };

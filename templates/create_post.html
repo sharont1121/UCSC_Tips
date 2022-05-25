@@ -6,90 +6,87 @@
 <!-- individual pages can customize header here -->
 
 <head>
-   <title>Create Post</title>
-   <script src="https://polyfill.io/v3/polyfill.min.js?features=default"></script>
+  <title>Create Post</title>
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=default"></script>
 
-   <link rel="stylesheet" type="text/css" href="css/map.css" />
+  <link rel="stylesheet" type="text/css" href="css/map.css" />
 </head>
 [[end]]
 
 <style>
-[v-cloak] {
-     display: none;
-}
+  [v-cloak] {
+    display: none;
+  }
 </style>
 
 [[block page_brand_items]]
 <div class="navbar-item">
-    <a class="button is-info navbar-item" href="[[=URL('map')]]">
-        <span class="icon">
-            <i class="fa fa-map"></i>
-        </span>
-        <span>View Map</span>
-    </a>
+  <a class="button is-info navbar-item" href="[[=URL('map', -1)]]">
+    <span class="icon">
+      <i class="fa fa-map"></i>
+    </span>
+    <span>View Map</span>
+  </a>
 </div>
 <div class="navbar-item">
-   <div class="buttons">
-      <a class="button is-primary navbar-item" href="[[=URL('feed')]]">
-         <span class="icon"><i class="fa fa-eye"></i></span><span>View Feed</span>
-      </a>
-   </div>
+  <div class="buttons">
+    <a class="button is-primary navbar-item" href="[[=URL('feed')]]">
+      <span class="icon"><i class="fa fa-eye"></i></span><span>View Feed</span>
+    </a>
+  </div>
 </div>
 [[end]]
 
 
 <div style="height: 100%; overflow: auto; padding-bottom: 15%;" class="section" id="vue-target">
-    <div class="title has-text-white ">Add a Campus Tip</div>
-    <div class="label has-text-white has-text-centered">Click on the map to select a location:</div>
-    <div id="map"></div>
+  <div class="title has-text-white ">Add a Campus Tip</div>
+  <div class="label has-text-white has-text-centered">Click on the map to select a location:</div>
+  <div id="map"></div>
 
-    <div class="container block">
-        <div class="form">
-          <div class="field">
-            <label class="label has-text-white">Title:</label>
-            <div class="control">
-              <input type="text" v-model="add_title"  class="input" required>
-            </div>
-          </div>
-          <div class="field">
-            <label class="label has-text-white">Description:</label>
-            <div class="control">
-              <input type="text" v-model="add_body" class="input" required>
-            </div>
-          </div>
-          <div class="field">
-            <label class="label has-text-white">Tag 1:</label>
-            <div class="control">
-              <input type="text" v-model="add_tag1" class="input" required>
-            </div>
-          </div>
-          <div class="field">
-            <label class="label has-text-white">Tag 2:</label>
-            <div class="control">
-              <input type="text" v-model="add_tag2" class="input" required>
-            </div>
-          </div>
-          <div class="field">
-            <label class="label has-text-white">Tag 3:</label>
-            <div class="control">
-              <input type="text" v-model="add_tag3" class="input" required>
-            </div>
-          </div>
-
-          <div class="field">
-            <div class="control">
-              <imageselector 
-                @selected="get_upload_url($event)"
-                @cancel="reset_image()"
-                ></imageselector>
-            </div>
-          </div>
-
-            <button @click="add_tip" class="button is-success mt-4">
-              <i class="fa fa-plus fa-fw"></i> Create
-            </button>
-
+  <div class="container block">
+    <div class="form">
+      <div class="field">
+        <label class="label has-text-white">Title:</label>
+        <div class="control">
+          <input type="text" v-model="add_title" class="input" required>
+        </div>
       </div>
+      <div class="field">
+        <label class="label has-text-white">Description:</label>
+        <div class="control">
+          <input type="text" v-model="add_body" class="input" required>
+        </div>
+      </div>
+      <div class="field">
+        <label class="label has-text-white">Tag 1:</label>
+        <div class="control">
+          <input type="text" v-model="add_tag1" class="input" required>
+        </div>
+      </div>
+      <div class="field">
+        <label class="label has-text-white">Tag 2:</label>
+        <div class="control">
+          <input type="text" v-model="add_tag2" class="input" required>
+        </div>
+      </div>
+      <div class="field">
+        <label class="label has-text-white">Tag 3:</label>
+        <div class="control">
+          <input type="text" v-model="add_tag3" class="input" required>
+        </div>
+      </div>
+
+      <div class="field">
+        <div class="control">
+          <imageselector @selected="get_upload_url($event)" @cancel="reset_image()"></imageselector>
+        </div>
+      </div>
+
+      <button @click="add_tip" class="button is-success mt-4">
+        <i class="fa fa-plus fa-fw"></i> Create
+      </button>
+
+    </div>
   </div>
 </div>
 
@@ -110,7 +107,7 @@
 
 
 <script>
-   const MAP_PAGE_BASE_URL = '[[=XML(map_url)]]'
+  const MAP_PAGE_BASE_URL = '[[=XML(map_url)]]'
 </script>
 
 

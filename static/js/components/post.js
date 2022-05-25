@@ -13,63 +13,63 @@
 */
 Vue.component(
     'post', {
-        props: ['data', 'isActive'],
-        inject: ['obs'],
-        data: function() {
-            return {
-                post: this.data.posts,
-                tags: [this.data.tag1, this.data.tag2, this.data.tag3].filter(e=>Boolean(e.id)),
-                user: this.data.auth_user,
-                rating: this.data.rating,
-                rated: this.data.rated === 1,
+    props: ['data', 'isActive'],
+    inject: ['obs'],
+    data: function () {
+        return {
+            post: this.data.posts,
+            tags: [this.data.tag1, this.data.tag2, this.data.tag3].filter(e => Boolean(e.id)),
+            user: this.data.auth_user,
+            rating: this.data.rating,
+            rated: this.data.rated === 1,
+        }
+    },
+    mounted: function () {
+        let imgs = this.$el.querySelectorAll('img');
+        for (let img of imgs) {
+            this.obs.observe(img);
+        }
+    },
+    methods: {
+        handleClick: function (id) {
+            if (this.isActive === false) {
+                this.$emit('postActive', id);
             }
         },
-        mounted: function() {
-            let imgs = this.$el.querySelectorAll('img');
-            for(let img of imgs){
-                this.obs.observe(img);
+        postRated: function () {
+            if (this.rated) {
+                this.rating -= 1;
+                this.rated = false;
+                this.$emit("postUnrated", this.post.id);
             }
-        },
-        methods: {
-            handleClick: function(id) {
-                if (this.isActive === false) {
-                    this.$emit('postActive', id);
-                }
-            },
-            postRated: function() {
-                if(this.rated){
-                    this.rating -= 1;
-                    this.rated = false;
-                    this.$emit("postUnrated", this.post.id);
-                }
-                else{
-                    this.rating += 1;
-                    this.rated = true;
-                    this.$emit("postRated", this.post.id)
-                }
-                
-            },
-        },
-        computed: {
-            mapurl: function() {
-                return MAP_PAGE_BASE_URL;
-            },
-            profileurl: function() {
-                return PROFILE_PAGE_BASE_URL + "/" + this.user.id;
-            },
-            trimbodytext: function() {
-                if(!this.post.body){
-                    return "";
-                }
-                if(this.isActive || this.post.body.length <= 247){
-                    return this.post.body;
-                }
-                space = this.post.body.lastIndexOf(' ', 247);
-                space = Math.max(0,space);
-                return this.post.body.slice(0,space) + "...";
+            else {
+                this.rating += 1;
+                this.rated = true;
+                this.$emit("postRated", this.post.id)
             }
+
         },
-        template: `
+    },
+    computed: {
+        mapurl: function () {
+            return MAP_PAGE_BASE_URL + "/" + this.post.id;
+        },
+        profileurl: function () {
+            return PROFILE_PAGE_BASE_URL + "/" + this.user.id;
+        },
+        trimbodytext: function () {
+            if (!this.post.body) {
+                return "";
+            }
+            if (this.isActive || this.post.body.length <= 247) {
+                return this.post.body;
+            }
+            space = this.post.body.lastIndexOf(' ', 247);
+            space = Math.max(0, space);
+            return this.post.body.slice(0, space) + "...";
+        }
+    },
+    template: `
         <div class="feed-post" v-bind:class="{active: isActive}" v-bind:id="post.id">
             <div class="box has-background-grey-dark" style="height: 100%" v-on:click="handleClick(post.id)">
                 <div class="columns is-vcentered">
@@ -131,5 +131,5 @@ Vue.component(
             </div>
         </div>
         `
-    }
+}
 );
