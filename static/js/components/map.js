@@ -54,8 +54,8 @@ let init = (app) => {
         }
 
         let url = window.location.toString();
-        let add_path = "feed" + vars + "selectedid=" + id;
-        return url.replace(/map/, add_path);
+        let add_path = "/feed" + vars + "selectedid=" + id;
+        return url.replace(/map/ + app.vue.pid.toString(), add_path);
     };
 
     app.get_pop_up_string = function (post) {
@@ -68,8 +68,6 @@ let init = (app) => {
         }
         const contentString =
             '<div class="content has-text-black">' +
-            // '<div id="siteNotice">' +
-            // "</div>" +
             '<h1 id="firstHeading" class="firstHeading">' + title + '</h1>' +
             '<div id="bodyContent">' +
             "<p class=\"has-text-justified\">" +
@@ -131,7 +129,7 @@ let init = (app) => {
             });
 
         }
-        // app.reset_center(map, ucsc_marker)   // Use this if you want the map focus on UCSC
+        // app.reset_center(map, ucsc_marker)   // Uncomment this line if you want the map to focus on UCSC
         app.reset_zoom(map, ucsc_marker)
     }
 
@@ -152,14 +150,9 @@ let init = (app) => {
         // Put here any initialization code.
         // Typically this is a server GET call to load the data.
         // Now we do an actual server call, using axios.
-        // axios.get(MAP_PAGE_BASE_URL).then(function (response) {
-        //     
-        // })
         app.vue.pid = parseInt(PID)
         axios.get(MAP_LOAD_URL).then(function (response) {
             app.vue.posts = app.decorate(app.enumerate(response.data.posts));
-
-            // app.enumerate(app.vue.posts);
             let posts = app.decorate(app.enumerate(response.data.posts));
             app.vue.posts = posts
 
