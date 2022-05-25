@@ -27,6 +27,7 @@ let init = (app) => {
 
     app.reset_center = function (map, center) {
         map.addListener("center_changed", () => {
+
             // 3 seconds after the center of the map has changed, pan back to Center Marker UCSC.
             window.setTimeout(() => {
                 map.panTo(center.getPosition());
@@ -57,7 +58,7 @@ let init = (app) => {
 
     app.get_pop_up_string = function (post) {
         let href = app.load_post(post.id)
-        let view_details = "View Details"
+        let view_details = "See More Details..."
         let title = post.title
         let body = ""
         if (post.body.length > 300) {
@@ -65,11 +66,11 @@ let init = (app) => {
         }
         const contentString =
             '<div class="content has-text-black">' +
-            '<div id="siteNotice">' +
-            "</div>" +
+            // '<div id="siteNotice">' +
+            // "</div>" +
             '<h1 id="firstHeading" class="firstHeading">' + title + '</h1>' +
             '<div id="bodyContent">' +
-            "<p>" +
+            "<p class=\"has-text-justified\">" +
             body +
             "</p>" +
             '<a href=\"' + href + '\"> <b>' + view_details +
@@ -120,9 +121,6 @@ let init = (app) => {
             });
 
         }
-
-
-
         // app.reset_center(map, ucsc_marker)   // Use this if you want the map focus on UCSC
         app.reset_zoom(map, ucsc_marker)
     }
