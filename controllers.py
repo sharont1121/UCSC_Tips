@@ -279,7 +279,7 @@ def feed_load():
 
 
 @action("map/<pid:int>")
-@action.uses(db, "map.html", auth.user, url_signer)
+@action.uses(db, "map.html", url_signer)
 def map(pid=-1):
     return dict(
         map_url=URL("map/" + str(pid)),
@@ -383,7 +383,7 @@ def add_tip():
     db(db.tags.tag_name.belongs(tag_names)).update(uses=(db.tags.uses + 1))
     while len(tag_ids) < 3:
         tag_ids.append(None)
-        
+
     id = db.posts.insert(
         title=request.json.get("title"),
         body=request.json.get("body"),
