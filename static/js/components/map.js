@@ -1,4 +1,9 @@
+// Define some CONST vars here
 const UCSC_COORD = { lat: 36.9927, lng: -122.0593 };
+const DEFAULT_ZOOM = 15
+const CLOSE_ZOOM = 17
+
+
 let app = {};
 
 
@@ -39,7 +44,7 @@ let init = (app) => {
 
     app.reset_zoom = function (map, center) {
         center.addListener("click", () => {
-            map.setZoom(15);
+            map.setZoom(DEFAULT_ZOOM);
             map.setCenter(center.getPosition());
         });
     }
@@ -82,12 +87,12 @@ let init = (app) => {
 
     app.init_map = function (posts, p_idx = -1) {
 
-        let zoom = 15
-        let center_coord = { lat: 36.9927, lng: -122.0593 };
+        let zoom = DEFAULT_ZOOM
+        let center_coord = UCSC_COORD;
 
         if (p_idx >= 0 && p_idx < posts.length) {
             center_coord = { lat: posts[p_idx].lat, lng: posts[p_idx].lng };
-            zoom = 17
+            zoom = CLOSE_ZOOM
         }
         // const ucsc_coord = { lat: posts[0].lat, lng: posts[0].lng };
         // The map, centered at UCSC
