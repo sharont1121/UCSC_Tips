@@ -289,11 +289,12 @@ def map():
 @action("map_load")
 @action.uses(url_signer.verify(), db)
 def map_load():
-    rows = db(db.posts).select().as_list()
+    rows = db(db.posts).select().as_list() #does map need all post data?
     # print(rows[0])
     return dict(posts=rows)
 
 
+#this doesnt work, map_load_signle/<post_id:int> is probably what is wanted
 @action("map_load_single")
 @action.uses(url_signer.verify(), db)
 def map_load_single(post_id=None):
