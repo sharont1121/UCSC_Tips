@@ -2719,18 +2719,18 @@ a.tag:hover {
     border-color: #5d5fef;
     box-shadow: 0 0 0 0.125em rgba(72, 95, 199, 0.25); }
   [disabled].input, [disabled].textarea, .select select[disabled], fieldset[disabled] .input, fieldset[disabled] .textarea, fieldset[disabled] .select select, .select fieldset[disabled] select {
-    background-color: #4a2c2c;
+    background-color: #3c2b2b;
     border-color: #313131;
     box-shadow: none;
-    color: #6c6c6c; }
+    color: #c1c1c1; }
     [disabled].input::-moz-placeholder, [disabled].textarea::-moz-placeholder, .select select[disabled]::-moz-placeholder, fieldset[disabled] .input::-moz-placeholder, fieldset[disabled] .textarea::-moz-placeholder, fieldset[disabled] .select select::-moz-placeholder, .select fieldset[disabled] select::-moz-placeholder {
-      color: rgba(108, 108, 108, 0.3); }
+      color: rgba(193, 193, 193, 0.3); }
     [disabled].input::-webkit-input-placeholder, [disabled].textarea::-webkit-input-placeholder, .select select[disabled]::-webkit-input-placeholder, fieldset[disabled] .input::-webkit-input-placeholder, fieldset[disabled] .textarea::-webkit-input-placeholder, fieldset[disabled] .select select::-webkit-input-placeholder, .select fieldset[disabled] select::-webkit-input-placeholder {
-      color: rgba(108, 108, 108, 0.3); }
+      color: rgba(193, 193, 193, 0.3); }
     [disabled].input:-moz-placeholder, [disabled].textarea:-moz-placeholder, .select select[disabled]:-moz-placeholder, fieldset[disabled] .input:-moz-placeholder, fieldset[disabled] .textarea:-moz-placeholder, fieldset[disabled] .select select:-moz-placeholder, .select fieldset[disabled] select:-moz-placeholder {
-      color: rgba(108, 108, 108, 0.3); }
+      color: rgba(193, 193, 193, 0.3); }
     [disabled].input:-ms-input-placeholder, [disabled].textarea:-ms-input-placeholder, .select select[disabled]:-ms-input-placeholder, fieldset[disabled] .input:-ms-input-placeholder, fieldset[disabled] .textarea:-ms-input-placeholder, fieldset[disabled] .select select:-ms-input-placeholder, .select fieldset[disabled] select:-ms-input-placeholder {
-      color: rgba(108, 108, 108, 0.3); }
+      color: rgba(193, 193, 193, 0.3); }
 
 .input, .textarea {
   box-shadow: inset 0 0.0625em 0.125em rgba(0, 0, 0, 0.05);
@@ -2853,7 +2853,7 @@ a.tag:hover {
   [disabled].checkbox, [disabled].radio, fieldset[disabled] .checkbox, fieldset[disabled] .radio,
   .checkbox input[disabled],
   .radio input[disabled] {
-    color: #6c6c6c;
+    color: #c1c1c1;
     cursor: not-allowed; }
 
 .radio + .radio {
@@ -3028,7 +3028,7 @@ a.tag:hover {
   .select.is-large {
     font-size: 1.5rem; }
   .select.is-disabled::after {
-    border-color: #6c6c6c; }
+    border-color: #c1c1c1; }
   .select.is-fullwidth {
     width: 100%; }
     .select.is-fullwidth select {
@@ -4009,7 +4009,7 @@ button.dropdown-item {
     margin-bottom: 1em; }
 
 .message {
-  background-color: whitesmoke;
+  background-color: #313131;
   border-radius: 4px;
   font-size: 1rem; }
   .message strong {
@@ -4150,9 +4150,9 @@ button.dropdown-item {
 
 .message-header {
   align-items: center;
-  background-color: #ffffff;
+  background-color: #5d5fef;
   border-radius: 4px 4px 0 0;
-  color: rgba(0, 0, 0, 0.7);
+  color: #ffffff;
   display: flex;
   font-weight: 700;
   justify-content: space-between;

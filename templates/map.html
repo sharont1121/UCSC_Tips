@@ -5,10 +5,7 @@
 
 <head>
    <title>Map</title>
-   <script src="https://polyfill.io/v3/polyfill.min.js?features=default"></script>
-
    <link rel="stylesheet" type="text/css" href="css/map.css" />
-   <script type="module" src="js/components/map.js"></script>
 </head>
 [[end]]
 
@@ -30,15 +27,22 @@
 </div>
 [[end]]
 
-<div class="section has-text-white">
-   <p>A map should be here</p>
-</div>
+<span id="vue-target" v-cloak>
+   <div class="section py-3 has-text-white">
+      <h1 class="has-text-centered"> Click on a marker to view more details</h1>
+   </div>
+   <div id="map"></div>
+</span>
 
-<div id="map"></div>
+
 
 [[block page_scripts]]
-<!-- <script src="js/components/map.js"></script> -->
-<script async
-   src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBlu2BP4tVpaDbjYUHOS9EZDEpnjk5Qipc&callback=initMap">
-   </script>
+<script src="https://polyfill.io/v3/polyfill.min.js?features=default"></script>
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBlu2BP4tVpaDbjYUHOS9EZDEpnjk5Qipc">
+</script>
+<script>
+   const MAP_LOAD_URL = '[[=XML(map_load_url)]]'
+   const PID = '[[=XML(pid)]]'
+</script>
+<script src="js/components/map.js"></script>
 [[end]]

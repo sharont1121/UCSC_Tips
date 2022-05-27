@@ -47,10 +47,11 @@ def generate_garbage_text(num_words: int, max_chars=None):
         return res[0:max_chars]
     return res
 
+
 # please pass in more than 3 tags
 def pick_random_tags(tag_ids):
     post_tags = [None, None, None]
-    assert(len(tag_ids) > 3)
+    assert len(tag_ids) > 3
     ntags = 0
     while ntags < len(post_tags):
         tag = choice(tag_ids)
@@ -66,11 +67,12 @@ def pick_random_tags(tag_ids):
 
 def add_fake_tags(db, num):
     for _ in range(num):
-        db.tags.insert(tag_name=generate_shelly_text(1))
+        db.tags.update_or_insert(tag_name=generate_shelly_text(1))
 
-def add_fake_data(db, num:int):
+
+def add_fake_data(db, num: int):
     if db(db.tags).count() < 3:
-        add_fake_tags(db, num//2)
+        add_fake_tags(db, num // 2)
 
     max_id = db().select(db.posts.id, orderby=~db.posts.id).first()
     if not max_id:
@@ -92,8 +94,8 @@ def add_fake_data(db, num:int):
             tag1=tags[0],
             tag2=tags[1],
             tag3=tags[2],
-            lat_coord=coord[0],
-            lon_coord=coord[1],
+            lat=coord[0],
+            lng=coord[1],
             rating=randint(1, 1000),
         )
     return

@@ -1,63 +1,82 @@
 [[extend 'layout.html']]
 
-<div class="section">
+[[block page_head]]
+<link rel="stylesheet" href="css/posts.css">
+[[end]]
+
+[[block page_brand_items]]
+<div class="navbar-item">
+    <a class="button is-primary navbar-item" href="[[=URL('feed')]]">
+        <span class="icon">
+            <i class="fa fa-eye"></i>
+        </span>
+        <span>View Feed</span>
+    </a>
+</div>
+<div class="navbar-item">
+    <a class="button is-info navbar-item" href="[[=URL('map', -1)]]">
+        <span class="icon">
+            <i class="fa fa-map"></i>
+        </span>
+        <span>View Map</span>
+    </a>
+</div>
+[[end]]
+
+<div id="vue-target" class="section" style="height: calc(100% - 60px); overflow-y: scroll; box-sizing: border-box;">
     [[if not person:]]
-        <!-- Consider making this redirect to another page instead -->
-        <span class="has-text-white">This User does not exist.</span>
+    <!-- Consider making this redirect to another page instead -->
+    <span class="has-text-white">This User does not exist.</span>
     [[else:]]
 
-        <div class="columns">
-            <div class="column is-two-fifths mt-5">
-                <!-- Contains: Profile Picture, Name, # of Followers, rating?, Follow Button, and Edit Button -->
-                <div class="container has-text-centered p-2">  <!-- Profile Picture -->
-                    <figure class="image is-128x128 is-inline-block">
-                        <img class="is-rounded" src="../static/img/profile-silhouette.jpg">  <!-- Placeholder -->
-                    </figure>
-                </div>
-                <div class="container has-text-centered p-1">  <!-- Name -->
-                    <span class="title has-text-white">[[=person.first_name]] [[=person.last_name]]</span>
-                </div>
-                <div class="container has-text-centered p-1">  <!-- Username/email? -->
-                    <span class="subtitle has-text-white">[[=person.email]]</span>
-                </div>
-                <div class="container has-text-centered p-1">  <!-- # followers -->
-                    <span class="subtitle has-text-white"># of Followers</span>
-                </div>
-                <div class="container has-text-centered p-1">  <!-- rating -->
+    <div class="columns is-desktop">
+        <div class="column is-3-desktop mt-5">
+            <!-- Contains: Profile Picture, Name, # of Followers, rating?, Follow Button, and Edit Button -->
+            <div class="container has-text-centered p-2">
+                <!-- Profile Picture -->
+                <figure class="image is-128x128 is-inline-block">
+                    <img class="is-rounded" src="img/profile-silhouette.jpg"> <!-- Placeholder -->
+                </figure>
+            </div>
+            <div class="container has-text-centered p-1">
+                <!-- Name -->
+                <span class="title has-text-white">[[=person.first_name]] [[=person.last_name]]</span>
+            </div>
+            <div class="container has-text-centered p-1">
+                <!-- Username/email? -->
+                <span class="subtitle has-text-white">[[=person.email]]</span>
+            </div>
+            <!--
+                <div class="container has-text-centered p-1"> 
                     <span class="subtitle has-text-white">Rating</span>
                 </div>
-                [[if not person['id'] == globals().get('user').get('id'):]]
-                    <div class="container has-text-centered p-2">  <!-- Follow Button (On other user's profile) -->
-                        <a class="button is-purple-blue">
-                            <span class="subtitle has-text-white">Follow</span>
-                        </a>
-                    </div>
-                [[pass]]
-                [[if person['id'] == globals().get('user').get('id'):]]
-                <div class="container has-text-centered p-2">  <!-- Edit Button (On the user's own profile) -->
-                    <a class="button is-purple-blue">
-                        <span class="subtitle has-text-white">Edit</span>
-                    </a>
-                </div>
-                [[pass]]
+                 -->
+            [[if not person['id'] == globals().get('user').get('id'):]]
+            <div class="container has-text-centered p-2">
+                <!-- Follow Button (On other user's profile) -->
+                <a class="button is-purple-blue">
+                    <span class="subtitle has-text-white">Follow</span>
+                </a>
             </div>
+            [[pass]]
+            [[if person['id'] == globals().get('user').get('id'):]]
+            <div class="container has-text-centered p-2">
+                <!-- Edit Button (On the user's own profile) -->
+                <a class="button is-purple-blue">
+                    <span class="subtitle has-text-white">Edit</span>
+                </a>
+            </div>
+            [[pass]]
+        </div>
 
-            <div class="column is-three-fifths">  <!-- Contains: The User's posts -->
-                <div id="vue-target" style="height: 100%;">
-                    <div style="height: 100%;">
-                        <div style="    height: calc(100% - 60px)">
-                            <feed
-                                    @newpostactive="newpostactive($event)"
-                                    @newfeedloaded="newfeedloaded($event)"
-                                    :loadurl="LOAD_URL"
-                                    :params="PARAMS"
-                                    :isone="false"
-                            ></feed>
-                        </div>
-                    </div>
-                </div>
+        <div class="column is-9-desktop">
+            <!-- Contains: The User's posts -->
+            <div style="height: 70vh;">
+                <feed @newpostactive="newpostactive($event)" @newfeedloaded="newfeedloaded($event)" :loadurl="LOAD_URL"
+                    :rateurl="RATE_URL" :params="PARAMS" :isone="true"></feed>
             </div>
         </div>
+    </div>
 
     [[pass]]
 </div>
@@ -67,13 +86,15 @@ profile page would log you into that user. -->
 
 [[block page_scripts]]
 <script>
-    const PARAMS = '[[=XML(params)]]'
+    const LOAD_URL = '[[=XML(base_load_posts_url)]]';
+    const RATE_URL = '[[=XML(rate_url)]]';
+    const PARAMS = '[[=XML(params)]]';
+    const MAP_PAGE_BASE_URL = '[[=XML(map_url)]]';
+    const PROFILE_PAGE_BASE_URL = '[[=XML(profile_url)]]';
 </script>
 <script src="js/components/tag.js"></script>
 <script src="js/components/post.js"></script>
 <script src="js/components/searchbar.js"></script>
 <script src="js/components/feed.js"></script>
-<script src="js/pages/feed.js"></script>
+<script src="js/pages/profile.js"></script>
 [[end]]
-
-

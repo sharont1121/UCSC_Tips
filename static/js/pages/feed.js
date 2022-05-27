@@ -9,11 +9,10 @@ const app = {};
 function init(app) {
     // This is the Vue data.
     app.data = {
-        data: [],
-        min: 0,
-        max: 10,
         LOAD_URL: LOAD_POSTS_BASE_URL,
+        RATE_URL: RATE_URL,
         PARAMS: PARAMS,
+        
     };
 
     // We form the dictionary of all methods, so we can assign them
@@ -25,14 +24,12 @@ function init(app) {
         data: app.data,
         methods:  {
             newpostactive: function(id) {
-                let vars = window.location.search.replaceAll(/[&]?selectedid=[\d]+/g, "");
-                if(vars && vars !== '?'){
-                    vars = vars + '&';
+                let url = new URL(window.location.href);
+                if(url.searchParams.has("selectedid")){
+                    url.searchParams.delete("selectedid");
                 }
-                else{
-                    vars = '?';
-                }
-                window.history.replaceState({},"", `${window.location.pathname}${vars}selectedid=${id}`)
+                url.searchParams.append("selectedid", id);
+                window.history.replaceState({},"", url);
             },
             newfeedloaded: function( {search_text: search_text, tags: tags} ){
                 new_url = new URL(`${window.location.origin}${window.location.pathname}`) //construct url without any params
