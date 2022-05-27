@@ -1,3 +1,9 @@
+// Define some CONST vars here
+const UCSC_COORD = { lat: 36.9927, lng: -122.0593 };
+const DEFAULT_ZOOM = 15
+const CLOSE_ZOOM = 17
+
+
 let app = {};
 
 
@@ -8,6 +14,7 @@ let init = (app) => {
     app.data = {
         // Complete as you see fit.
         posts: [],
+        pid: -1,
     };
 
     app.enumerate = (a) => {
@@ -27,6 +34,7 @@ let init = (app) => {
 
     app.reset_center = function (map, center) {
         map.addListener("center_changed", () => {
+
             // 3 seconds after the center of the map has changed, pan back to Center Marker UCSC.
             window.setTimeout(() => {
                 map.panTo(center.getPosition());
@@ -36,7 +44,7 @@ let init = (app) => {
 
     app.reset_zoom = function (map, center) {
         center.addListener("click", () => {
-            map.setZoom(15);
+            map.setZoom(DEFAULT_ZOOM);
             map.setCenter(center.getPosition());
         });
     }
@@ -51,13 +59,13 @@ let init = (app) => {
         }
 
         let url = window.location.toString();
-        let add_path = "feed" + vars + "selectedid=" + id;
-        return url.replace(/map/, add_path);
+        let add_path = "/feed" + vars + "selectedid=" + id;
+        return url.replace(/map/ + app.vue.pid.toString(), add_path);
     };
 
     app.get_pop_up_string = function (post) {
         let href = app.load_post(post.id)
-        let view_details = "View Details"
+        let view_details = "See More Details..."
         let title = post.title
         let body = ""
         if (post.body.length > 300) {
@@ -65,11 +73,9 @@ let init = (app) => {
         }
         const contentString =
             '<div class="content has-text-black">' +
-            '<div id="siteNotice">' +
-            "</div>" +
             '<h1 id="firstHeading" class="firstHeading">' + title + '</h1>' +
             '<div id="bodyContent">' +
-            "<p>" +
+            "<p class=\"has-text-justified\">" +
             body +
             "</p>" +
             '<a href=\"' + href + '\"> <b>' + view_details +
@@ -79,20 +85,27 @@ let init = (app) => {
         return contentString
     }
 
-    app.init_map = function (posts) {
-        const ucsc_coord = { lat: 36.9927, lng: -122.0593 };
+    app.init_map = function (posts, p_idx = -1) {
+
+        let zoom = DEFAULT_ZOOM
+        let center_coord = UCSC_COORD;
+
+        if (p_idx >= 0 && p_idx < posts.length) {
+            center_coord = { lat: posts[p_idx].lat, lng: posts[p_idx].lng };
+            zoom = CLOSE_ZOOM
+        }
         // const ucsc_coord = { lat: posts[0].lat, lng: posts[0].lng };
         // The map, centered at UCSC
         const map = new google.maps.Map(document.getElementById("map"), {
-            zoom: 15,
-            center: ucsc_coord,
+            zoom: zoom,
+            center: center_coord,
         });
 
         let ucsc_icon = "http://maps.google.com/mapfiles/kml/paddle/ylw-stars.png"
         // The center marker, positioned at UCSC
         const ucsc_marker = new google.maps.Marker({
             // color: 'yellow',
-            position: ucsc_coord,
+            position: UCSC_COORD,
             map: map,
             title: "UCSC is here!",
             icon: ucsc_icon,
@@ -116,14 +129,12 @@ let init = (app) => {
                     anchor: marker,
                     map,
                     shouldFocus: false,
+                    zoom: 15
                 });
             });
 
         }
-
-
-
-        // app.reset_center(map, ucsc_marker)   // Use this if you want the map focus on UCSC
+        // app.reset_center(map, ucsc_marker)   // Uncomment this line if you want the map to focus on UCSC
         app.reset_zoom(map, ucsc_marker)
     }
 
@@ -144,12 +155,22 @@ let init = (app) => {
         // Put here any initialization code.
         // Typically this is a server GET call to load the data.
         // Now we do an actual server call, using axios.
-        axios.get(map_load_url).then(function (response) {
+        app.vue.pid = parseInt(PID)
+        axios.get(MAP_LOAD_URL).then(function (response) {
             app.vue.posts = app.decorate(app.enumerate(response.data.posts));
-            // app.enumerate(app.vue.posts);
             let posts = app.decorate(app.enumerate(response.data.posts));
             app.vue.posts = posts
-            app.init_map(posts);
+
+
+
+            let p_idx = -1
+            for (var i = 0; i < posts.length; i++) {
+                if (posts[i].id == app.vue.pid) {
+                    p_idx = posts[i]._idx
+                }
+            }
+            // app.vue.p_idx = p_idx
+            app.init_map(posts, p_idx);
         })
 
     };

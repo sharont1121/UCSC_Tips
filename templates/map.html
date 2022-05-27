@@ -6,7 +6,6 @@
 <head>
    <title>Map</title>
    <link rel="stylesheet" type="text/css" href="css/map.css" />
-   <!-- <script type="module" src="js/components/map.js"></script> -->
 </head>
 [[end]]
 
@@ -29,7 +28,7 @@
 [[end]]
 
 <span id="vue-target" v-cloak>
-   <div class="section has-text-white">
+   <div class="section py-3 has-text-white">
       <h1 class="has-text-centered"> Click on a marker to view more details</h1>
    </div>
    <div id="map"></div>
@@ -42,7 +41,8 @@
 <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBlu2BP4tVpaDbjYUHOS9EZDEpnjk5Qipc">
 </script>
 <script>
-   let map_load_url = '[[=XML(map_load_url)]]'
+   const MAP_LOAD_URL = '[[=XML(map_load_url)]]'
+   const PID = '[[=XML(pid)]]'
 </script>
 <script src="js/components/map.js"></script>
 [[end]]
