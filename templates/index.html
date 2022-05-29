@@ -1,5 +1,27 @@
 [[extend 'layout.html']]
 
+[[block page_brand_items]]
+
+
+<div class="navbar-item">
+   <div class="buttons">
+      <a class="button is-primary navbar-item" href="[[=URL('feed')]]">
+         <span class="icon"><i class="fa fa-eye"></i></span><span>View Feed</span>
+      </a>
+   </div>
+</div>
+
+<div class="navbar-item">
+   <a class="button is-info navbar-item" href="[[=URL('map', -1)]]">
+       <span class="icon">
+           <i class="fa fa-map"></i>
+       </span>
+       <span>View Map</span>
+   </a>
+</div>
+
+[[end]]
+
 <div class="section">
    Hellooo.
 </div>
