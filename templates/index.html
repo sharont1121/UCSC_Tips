@@ -1,5 +1,47 @@
 [[extend 'layout.html']]
 
-<div class="section">
-   Hello.
+[[block page_head]]
+<link rel="stylesheet" href="css/index.css">
+<meta name="viewport" content="width=device-width">
+[[end]]
+
+[[block page_brand_items]]
+
+
+<div class="navbar-item">
+   <div class="buttons">
+      <a class="button is-primary navbar-item" href="[[=URL('feed')]]">
+         <span class="icon"><i class="fa fa-eye"></i></span><span>View Feed</span>
+      </a>
+   </div>
 </div>
+
+<div class="navbar-item">
+   <a class="button is-info navbar-item" href="[[=URL('map', -1)]]">
+       <span class="icon">
+           <i class="fa fa-map"></i>
+       </span>
+       <span>View Map</span>
+   </a>
+</div>
+
+[[end]]
+<body >
+   <div class="section is-large bodyOne">
+      <img class="bodyOneImage" src="https://media.giphy.com/media/PhNFE08VrhCfqYr0sO/giphy.gif" alt="hope this work">
+      <div class="content has-text-centered bodyOneContent">
+         
+         <p class="Title">Welcome to UCSC Tips</p>
+   
+      </div>
+   </div>
+   <div class="section is-large bodyOne">
+      <img class="bodyOneImage" src="https://media.giphy.com/media/PhNFE08VrhCfqYr0sO/giphy.gif" alt="hope this work">
+      <div class="content has-text-centered bodyOneContent">
+         
+         <p class="Title">Welcome to UCSC Tips</p>
+   
+      </div>
+   </div>
+
+</body>
