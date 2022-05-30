@@ -341,7 +341,8 @@ def profile(uid=None):
         params=json.dumps(
             dict(userid=uid, **params.dict_of(["selectedid", "search", "tags"]),)
         ),
-        load_profile_url=URL('load_profile', uid, signer=url_signer)
+        load_profile_url=URL('load_profile', uid, signer=url_signer),
+        edit_profile_url=URL('edit_profile', uid, signer=url_signer),
     )
     # If, for some reason globals().get('user') is not longer working in profile.html, use: auth.get_user())
 
@@ -350,18 +351,33 @@ def profile(uid=None):
 @action.uses(db, auth, url_signer.verify())
 def load_profile(uid=None):
     # Anyone, even non-users, can look at a user's profile
-    # It should return the user's information to fill the profile page: First Name, Last Name
+    # It should return the user's information to fill the profile page: First Name, Last Name, Email
     assert uid is not None
     user_info = db(db.auth_user.id == uid).select().first()  # Retrieve user information from database
     return dict(first_name=user_info.first_name, last_name=user_info.last_name, user_email=user_info.email,)
 
 
-@action("edit_profile")
+@action("edit_profile/<uid:int>", method=['POST'])
 @action.uses(db, auth.user, url_signer.verify())
-def edit_profile():
+def edit_profile(uid=None):
     # You should only be able to edit a given profile if that user is logged in
     # So check that the request user == the current user.
-    return
+    assert uid is not None
+    if auth.get_user()['id'] == uid:  # if current user is the same as selected user to edit
+        edit_user = db(db.auth_user.id == auth.get_user()['id']).select().first()
+        print("User", edit_user.id, "changed:", edit_user.first_name, edit_user.last_name, edit_user.email)
+        first_name = request.json.get('first_name')
+        last_name = request.json.get('last_name')
+        email = request.json.get('email')
+        edit_user.update_record(
+            first_name=first_name,
+            lasy_name=last_name,
+            email=email
+        )  # What happens if you change the email to an email already in use? Thankfully it fails to edit.
+        print("to:", edit_user.first_name, edit_user.last_name, edit_user.email)
+    else:
+        print('Failed to edit user', uid)
+    return dict()
 
 
 @action("create_post")

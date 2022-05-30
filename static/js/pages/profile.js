@@ -55,6 +55,10 @@ function init(app) {
     };
 
     app.edit_profile = function () {
+        axios.post(edit_profile_url, {first_name: app.vue.first_name, last_name: app.vue.last_name,
+                                      email: app.vue.email}).then(function (response) {
+            app.load_profile();
+        });
     };
 
     app.methods ={
