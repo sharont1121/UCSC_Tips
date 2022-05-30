@@ -1,5 +1,11 @@
 [[extend 'layout.html']]
 
+<style>
+[v-cloak] {
+     display: none;
+}
+</style>
+
 [[block page_head]]
 <link rel="stylesheet" href="css/posts.css">
 [[end]]
@@ -23,7 +29,8 @@
 </div>
 [[end]]
 
-<div id="vue-target" class="section" style="height: calc(100% - 60px); overflow-y: scroll; box-sizing: border-box;">
+<div id="vue-target" class="section" style="height: calc(100% - 60px); overflow-y: scroll; box-sizing: border-box;"
+     v-cloak>
     [[if not person:]]
     <!-- Consider making this redirect to another page instead -->
     <span class="has-text-white">This User does not exist.</span>
@@ -38,34 +45,68 @@
                     <img class="is-rounded" src="img/profile-silhouette.jpg"> <!-- Placeholder -->
                 </figure>
             </div>
-            <div class="container has-text-centered p-1">
-                <!-- Name -->
-                <span class="title has-text-white">[[=person.first_name]] [[=person.last_name]]</span>
+
+            <!-- Name -->
+            <div v-if="!edit_status" class="container has-text-centered p-1">
+                <span class="title has-text-white">{{first_name}} {{last_name}}</span>
             </div>
-            <div class="container has-text-centered p-1">
-                <!-- Username/email? -->
-                <span class="subtitle has-text-white">[[=person.email]]</span>
-            </div>
-            <!--
-                <div class="container has-text-centered p-1"> 
-                    <span class="subtitle has-text-white">Rating</span>
+            <div v-if="edit_status" class="container has-text-centered p-1">
+                <div class="form">
+                    <div class="field">
+                        <p class="control">
+                            <div class="columns">
+                                <div class="column">
+                                    <input class="input" type="text" v-model="first_name" />
+                                </div>
+                                <div class="column">
+                                    <input class="input" type="text" v-model="last_name" />
+                                </div>
+                            </div>
+                        </p>
+                    </div>
                 </div>
-                 -->
+            </div>
+
+            <!-- Username/email? -->
+            <div v-if="!edit_status" class="container has-text-centered p-1">
+                <span class="subtitle has-text-white">{{email}}</span>
+            </div>
+            <div v-if="edit_status" class="container has-text-centered p-1">
+                <div class="form">
+                    <div class="field">
+                        <p class="control">
+                            <input class="input" type="text" v-model="email" />
+                        </p>
+                    </div>
+                </div>
+            </div>
+
             [[if not person['id'] == globals().get('user').get('id'):]]
-            <div class="container has-text-centered p-2">
-                <!-- Follow Button (On other user's profile) -->
-                <a class="button is-purple-blue">
-                    <span class="subtitle has-text-white">Follow</span>
-                </a>
-            </div>
+                <div class="container has-text-centered p-2">
+                    <!-- Follow Button (On other user's profile) -->
+                    <a class="button is-purple-blue">
+                        <span class="subtitle has-text-white">Follow</span>
+                    </a>
+                </div>
             [[pass]]
+
+            <!-- Edit Feature (Only on the user's own profile) -->
             [[if person['id'] == globals().get('user').get('id'):]]
-            <div class="container has-text-centered p-2">
-                <!-- Edit Button (On the user's own profile) -->
-                <a class="button is-purple-blue">
-                    <span class="subtitle has-text-white">Edit</span>
-                </a>
-            </div>
+                <!-- Edit Button (To begin editing) -->
+                <div v-if="!edit_status" class="container block has-text-centered p-2">
+                    <button @click="edit_status = true" class="button is-purple-blue">
+                        <span class="subtitle has-text-white">Edit</span>
+                    </button>
+                </div>
+                <!-- Edit control buttons (for sending edits to server or canceling it) -->
+                <div v-if="edit_status" class="container block has-text-centered p-2">
+                    <button @click="edit_profile(), edit_status = false" class="button is-purple-blue">
+                        <span class="subtitle has-text-white">Submit</span>
+                    </button>
+                    <button @click="load_profile(), edit_status = false" class="button is-success">
+                        <span class="subtitle has-text-white">Cancel</span>
+                    </button>
+                </div>
             [[pass]]
         </div>
 
@@ -91,6 +132,7 @@ profile page would log you into that user. -->
     const PARAMS = '[[=XML(params)]]';
     const MAP_PAGE_BASE_URL = '[[=XML(map_url)]]';
     const PROFILE_PAGE_BASE_URL = '[[=XML(profile_url)]]';
+    const load_profile_url = '[[=XML(load_profile_url)]]'
 </script>
 <script src="js/components/tag.js"></script>
 <script src="js/components/post.js"></script>

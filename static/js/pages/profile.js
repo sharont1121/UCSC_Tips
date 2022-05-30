@@ -19,7 +19,12 @@ function init(app) {
         file_url: null,
         file_path: null,
         file: null,
-    };
+
+        edit_status: false, // True when editing profile, false when viewing
+        first_name: "",
+        last_name: "",
+        email: "",
+        };
 
      app.newfeedloaded = function( {search_text: search_text, tags: tags} ) {
            let new_url = new URL(`${window.location.origin}${window.location.pathname}`) //construct url without any params
@@ -41,9 +46,22 @@ function init(app) {
         window.history.replaceState({},"", url);
     };
 
+    app.load_profile = function () {
+        axios.get(load_profile_url).then(function (response) {
+            app.vue.first_name = response.data.first_name;
+            app.vue.last_name = response.data.last_name;
+            app.vue.email = response.data.user_email;
+        });
+    };
+
+    app.edit_profile = function () {
+    };
+
     app.methods ={
         newfeedloaded: app.newfeedloaded,
         newpostactive: app.newpostactive,
+        load_profile: app.load_profile,
+        edit_profile: app.edit_profile,
     };
 
 
@@ -59,7 +77,7 @@ function init(app) {
     // load the data.
     // For the moment, we 'load' the data from a string.
     app.init = () => {
-        
+        app.load_profile();
     };
 
     // Call to the initializer.
