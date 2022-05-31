@@ -20,44 +20,143 @@
 
 }
 
-h1 {
-    position: relative;
-} */
-
-@viewport {
+/* @viewport {
     width: device-width;
     zoom: 1.1;
     min-zoom: 0.4;
     max-zoom: 2;
     user-zoom: fixed;
-}
+} */
 
-body {
+
+.body {
+
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
     overflow-y: scroll;
+    scroll-behavior: smooth;
 
 }
 
-.bodyOne {
-    /* overflow-y: auto; */
+
+section {
+
     position: relative;
+    min-height: 100vh;
+    width: 100%;
+    display: flex;
+
+    color: black;
+
 }
 
-.bodyOneImage {
-    opacity: 0.25;
+
+.sectionImage {
+    opacity: 0.2;
     position: absolute;
     left: 0;
     top: 0;
     width: 100%;
-    height: auto;
+    height: 100%;
 }
 
-.bodyOneContent {
-    position: relative;
+.Content {
+    color: rgba(255, 255, 255, 1);
+    font-size: 3vw;
 }
 
 .Title {
     font-size: 8vw;
-    color: #FFBF00;
-
-   
+    /* color: #FFBF00; */
+    color: rgba(255, 255, 0, 1);
+    margin-top: 5vh; 
 }
+
+#sec-1 {
+    font-family: "Montserrat";
+    align-items: center;
+    /* justify-content: center; */
+    flex-direction: column;
+
+}
+
+#sec-2 {
+    flex-direction: column;
+    background-color: aliceblue;
+
+}
+
+
+#sec2title {
+    font-size: 8vw;
+    font-family: cursive;
+    margin-left: 20px;
+    margin-top: 20px;
+}
+
+
+#sec2content {
+    font-size: 2vw;
+    margin-left: 20px;
+    margin-top: 20px;
+    font-family: serif;
+}
+
+.buttonsMainpage {
+    position: absolute;
+    top: 70%;
+    left: 38%;
+    flex-direction: row;
+}
+
+
+/* .arrows {
+    height: 5px;
+    width: 30px;
+    border: 2px solid white;
+    position: absolute;
+    left: 50%;
+    bottom: 20px;
+    border-radius: 50px;
+    cursor: pointer;
+} */
+
+.arrows {
+  position: absolute;
+  /* top: 40%; */
+  top: 40%;
+
+  left: 45%;
+  height: 40px;
+  width: 40px;
+  transform: rotate(45deg);
+  border: 2px solid white;
+  border-top: transparent;
+  border-left: transparent;
+  animation: arrows 1s ease-in-out infinite;
+}
+
+.arrows::before {
+  content: '';
+  top: 40%;
+  animation-delay: 0.3s;
+}
+
+
+
+@keyframes arrows {
+  0% {
+    opacity: 0;
+  }
+  30% {
+    opacity: 1;
+  }
+  60% {
+    opacity: 1;
+  }
+  100% {
+    top: 60%;
+    opacity: 0;
+  }
+} 
