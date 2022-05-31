@@ -96,8 +96,16 @@ let init = (app) => {
 
 
     app.add_tip = function () {
-        if (this.add_title == "" || this.add_body == "" || !this.file ) {
-            alert("Please enter a title, description and image for your post before submitting.");
+        if (this.add_title == "" || this.add_body == "") {
+            alert("Please enter a title and description for your post before submitting.");
+        }
+        else if (!this.file ) {
+             let post_id;
+             this.upload_text().then( (response) => {
+                   post_id = response.data.id;
+                   app.reset_form();
+                   app.load_created_post(post_id);
+            });
         }
         else {
             // Uploads the file, using the low-level interface.
