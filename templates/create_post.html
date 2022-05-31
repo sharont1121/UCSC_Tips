@@ -17,10 +17,12 @@
   [v-cloak] {
     display: none;
   }
+
 </style>
 
 [[block page_brand_items]]
-<div class="navbar-item">
+
+<!-- <div class="navbar-item">
   <a class="button is-info navbar-item" href="[[=URL('map', -1)]]">
     <span class="icon">
       <i class="fa fa-map"></i>
@@ -34,13 +36,14 @@
       <span class="icon"><i class="fa fa-eye"></i></span><span>View Feed</span>
     </a>
   </div>
-</div>
+</div> -->
+
 [[end]]
 
 
 <div style="height: 100%; overflow: auto; padding-bottom: 15%;" class="section" id="vue-target">
   <div class="title has-text-white ">Add a Campus Tip</div>
-  <div class="label has-text-white has-text-centered">Click on the map to select a location:</div>
+  <div class="label has-text-white has-text-centered ">Click on the map to select a location:</div>
   <div id="map"></div>
 
   <div class="container block">
@@ -82,9 +85,18 @@
         </div>
       </div>
 
-      <button @click="add_tip" class="button is-success mt-4">
+      <button @click="add_tip" class="button is-success mt-6">
         <i class="fa fa-plus fa-fw"></i> Create
       </button>
+
+      <a class="button is-danger is-focused ml-2 mt-6" href="[[=URL('feed')]]">
+        <span>Cancel</span>
+      </a>
+
+
+      <!-- <div class="buttons"> -->
+
+      <!-- </div> -->
 
     </div>
   </div>
