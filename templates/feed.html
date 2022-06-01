@@ -11,7 +11,15 @@
 </style>
 
 [[block page_brand_items]]
-
+<div class="navbar-item">
+    <a class="button is-purple-blue has-background-purple-blue has-text-white navbar-item"
+        href="[[=URL('create_post')]]">
+        <span class="icon">
+            <i class="fa fa-plus"></i>
+        </span>
+        <span>Add Tip</span>
+    </a>
+</div>
 <div class="navbar-item">
     <a class="button is-info navbar-item" href="[[=URL('map', -1)]]">
         <span class="icon">
@@ -23,15 +31,7 @@
 
 [[end]]
 
-<div class="navbar-item">
-    <a class="button is-purple-blue has-background-purple-blue has-text-white navbar-item"
-        href="[[=URL('create_post')]]">
-        <span class="icon">
-            <i class="fa fa-plus"></i>
-        </span>
-        <span>Add Tip</span>
-    </a>
-</div>
+
 
 <div id="vue-target" style="height: 100%;">
     <div style="height: 100%;">

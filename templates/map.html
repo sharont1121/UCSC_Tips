@@ -13,13 +13,19 @@
 
 
 <div class="navbar-item">
-   <div class="buttons">
-      <a class="button is-primary navbar-item" href="[[=URL('feed')]]">
+    <a class="button is-purple-blue has-background-purple-blue has-text-white navbar-item"
+        href="[[=URL('create_post')]]">
+        <span class="icon">
+            <i class="fa fa-plus"></i>
+        </span>
+        <span>Add Tip</span>
+    </a>
+</div>
+<div class="navbar-item">
+    <a class="button is-info navbar-item" href="[[=URL('feed')]]">
          <span class="icon"><i class="fa fa-eye"></i></span><span>View Feed</span>
       </a>
-   </div>
 </div>
-
 [[end]]
 
 <span id="vue-target" v-cloak>
