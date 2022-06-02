@@ -88,7 +88,7 @@ Vue.component(
                             <a :href="profileurl" class="has-text-white">
                                 <div class="columns is-mobile p-0 m-0">
                                     <div class="image is-48x48 p-0">
-                                        <img class="column is-rounded p-0" src="img/gambit.png">
+                                        <img class="column is-rounded p-0" src="img/profile-silhouette.jpg">
                                     </div>
                                     <p class="column content">{{user.first_name}}</p>
                                 </div>
