@@ -81,14 +81,13 @@ section {
 
 }
 
-#sec-2 {
+/* #sec-2 {
     flex-direction: column;
     background-color: aliceblue;
+} */
 
-}
 
-
-#sec2title {
+/* #sec2title {
     font-size: 8vw;
     font-family: cursive;
     margin-left: 20px;
@@ -101,14 +100,26 @@ section {
     margin-left: 20px;
     margin-top: 20px;
     font-family: serif;
-}
+} */
+
+
+
 
 .buttonsMainpage {
     position: absolute;
-    top: 70%;
-    left: 38%;
+    /* top: 70%;
+    left: 38%; */
+
+    top: 70vh;
+    /* left: 40vw; */
     flex-direction: row;
+    align-items: center;
 }
+
+
+
+
+
 
 
 /* .arrows {
@@ -122,12 +133,13 @@ section {
     cursor: pointer;
 } */
 
+
+
 .arrows {
   position: absolute;
-  /* top: 40%; */
   top: 40%;
 
-  left: 45%;
+  align-items: center;
   height: 40px;
   width: 40px;
   transform: rotate(45deg);
@@ -137,12 +149,19 @@ section {
   animation: arrows 1s ease-in-out infinite;
 }
 
-.arrows::before {
+/* .arrows::after {
   content: '';
   top: 40%;
   animation-delay: 0.3s;
+} */
+
+.left-button {
+  margin-right: 1vw;
 }
 
+.right-button {
+  margin-left: 1vw;
+}
 
 
 @keyframes arrows {
