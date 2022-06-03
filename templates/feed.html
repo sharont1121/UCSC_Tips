@@ -1,7 +1,11 @@
 [[extend 'layout.html']]
 
 [[block page_head]]
-<link rel="stylesheet" href="css/posts.css">
+<head>
+    <link rel="stylesheet" href="css/posts.css">
+    <title>Feed</title>
+</head>
+
 [[end]]
 
 <style>
@@ -11,6 +15,7 @@
 </style>
 
 [[block page_brand_items]]
+
 <div class="navbar-item">
     <a class="button is-purple-blue has-background-purple-blue has-text-white navbar-item"
         href="[[=URL('create_post')]]">
@@ -20,9 +25,15 @@
         <span class="is-hidden-mobile">Add Tip</span>
     </a>
 </div>
+
 <div class="navbar-item">
+<<<<<<< HEAD
     <a class="button is-info navbar-item" href="[[=URL('map', -1)]]">
         <span class="icon m-0">
+=======
+    <a class="button is-info has-background-info has-text-white navbar-item" href="[[=URL('map', -1)]]">
+        <span class="icon">
+>>>>>>> b26734990c0ea598bc08fdef56bacf08eba05c05
             <i class="fa fa-map"></i>
         </span>
         <span class="is-hidden-mobile">View Map</span>

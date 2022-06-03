@@ -7,12 +7,16 @@
 </style>
 
 [[block page_head]]
-<link rel="stylesheet" href="css/posts.css">
+<head>
+    <link rel="stylesheet" href="css/posts.css">
+    <title>Profile</title>
+</head>
+
 [[end]]
 
 [[block page_brand_items]]
 <div class="navbar-item">
-    <a class="button is-primary navbar-item" href="[[=URL('feed')]]">
+    <a class="button is-primary has-background-primary has-text-white navbar-item" href="[[=URL('feed')]]">
         <span class="icon">
             <i class="fa fa-eye"></i>
         </span>
@@ -20,7 +24,7 @@
     </a>
 </div>
 <div class="navbar-item">
-    <a class="button is-info navbar-item" href="[[=URL('map', -1)]]">
+    <a class="button is-info has-background-info has-text-white navbar-item" href="[[=URL('map', -1)]]">
         <span class="icon">
             <i class="fa fa-map"></i>
         </span>
