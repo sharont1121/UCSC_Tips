@@ -85,14 +85,6 @@
                 </div>
             </div>
 
-            [[if not person['id'] == globals().get('user').get('id'):]]
-                <div class="container has-text-centered p-2">
-                    <!-- Follow Button (On other user's profile) -->
-                    <a class="button is-purple-blue">
-                        <span class="subtitle has-text-white">Follow</span>
-                    </a>
-                </div>
-            [[pass]]
 
             <!-- Edit Feature (Only on the user's own profile) -->
             [[if person['id'] == globals().get('user').get('id'):]]
