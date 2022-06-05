@@ -366,16 +366,16 @@ def edit_profile(uid=None):
     assert uid is not None
     if auth.get_user()['id'] == uid:  # if current user is the same as selected user to edit
         edit_user = db(db.auth_user.id == auth.get_user()['id']).select().first()
-        print("User", edit_user.id, "changed:", edit_user.first_name, edit_user.last_name, edit_user.email)
+        # print("User", edit_user.id, "changed:", edit_user.first_name, edit_user.last_name, edit_user.email)
         first_name = request.json.get('first_name')
         last_name = request.json.get('last_name')
         email = request.json.get('email')
         edit_user.update_record(
             first_name=first_name,
-            lasy_name=last_name,
+            last_name=last_name,
             email=email
         )  # What happens if you change the email to an email already in use? Thankfully it fails to edit.
-        print("to:", edit_user.first_name, edit_user.last_name, edit_user.email)
+        # print("to:", edit_user.first_name, edit_user.last_name, edit_user.email)
     else:
         print('Failed to edit user', uid)
     return dict()
