@@ -369,11 +369,9 @@ def edit_profile(uid=None):
         # print("User", edit_user.id, "changed:", edit_user.first_name, edit_user.last_name, edit_user.email)
         first_name = request.json.get('first_name')
         last_name = request.json.get('last_name')
-        email = request.json.get('email')
         edit_user.update_record(
             first_name=first_name,
             last_name=last_name,
-            email=email
         )  # What happens if you change the email to an email already in use? Thankfully it fails to edit.
         # print("to:", edit_user.first_name, edit_user.last_name, edit_user.email)
     else:

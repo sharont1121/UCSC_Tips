@@ -72,9 +72,10 @@
             </div>
 
             <!-- Username/email? -->
-            <div v-if="!edit_status" class="container has-text-centered p-1">
+            <div class="container has-text-centered p-1">
                 <span class="subtitle has-text-white">{{email}}</span>
             </div>
+            <!--
             <div v-if="edit_status" class="container has-text-centered p-1">
                 <div class="form">
                     <div class="field">
@@ -84,7 +85,7 @@
                     </div>
                 </div>
             </div>
-
+            -->
 
             <!-- Edit Feature (Only on the user's own profile) -->
             [[if person['id'] == globals().get('user').get('id'):]]
