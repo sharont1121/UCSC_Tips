@@ -122,6 +122,4 @@ db.define_table(
     Field("user", "reference auth_user", notnull=True),
 )
 
-db.executesql("CREATE INDEX IF NOT EXISTS byterm ON term_freq (term, post);")  # sketchy!
-
 db.commit()
