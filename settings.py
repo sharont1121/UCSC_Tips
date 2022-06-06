@@ -8,6 +8,12 @@ This file is provided as an example:
 import os
 from py4web.core import required_folder
 
+# try import private settings
+try:
+    from .private.secret_settings import *
+except (ImportError, ModuleNotFoundError):
+    pass
+
 # db settings
 APP_FOLDER = os.path.dirname(__file__)
 APP_NAME = os.path.split(APP_FOLDER)[-1]
@@ -99,8 +105,4 @@ T_FOLDER = required_folder(APP_FOLDER, "translations")
 USE_CELERY = False
 CELERY_BROKER = "redis://localhost:6379/0"
 
-# try import private settings
-try:
-    from .private.secret_settings import *
-except (ImportError, ModuleNotFoundError):
-    pass
+

@@ -127,6 +127,7 @@ Vue.component( 'feed', {
         },
         handleResize: function () {
             this.is_one = this.$el.offsetWidth < 1024;
+            
         },
         handleSearch: function(search_obj) {
             this.search = search_obj.text;

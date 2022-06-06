@@ -5,6 +5,9 @@
     <base href="[[=URL('static')]]/">
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    
+  
+
     <link rel="stylesheet" href="css/custom-css/bulma.css">
     <link rel="stylesheet" href="font-awesome-4.7.0/css/font-awesome.css">
      <link href="https://www.ucsc.edu/favicon.ico" rel="shortcut icon">
@@ -37,11 +40,29 @@
       <div id="the-navbar-menu" class="navbar-menu p-0">
         <div class="navbar-start">
           [[block page_menu_items]]<!-- individual pages can add menu items here -->[[end]]
-
         </div>
-
         <div class="navbar-end has-background-baby-blue">
+
+
+          <!-- google sign in version -->
+          [[if globals().get('user'):]]
           <div class="navbar-item">
+            <p>[[=globals().get('user').get('email')]]</p>
+          </div>
+          [[pass]]
+          <div class="navbar-item">
+            <div class="buttons">
+              [[if globals().get('user'):]]
+              <a class="button is-light" href="[[=URL('auth/logout')]]">Sign out</a>
+              [[else:]]
+              <a class="button is-link" href="[[=URL('auth/plugin/oauth2google/login', vars=dict(next='../index'))]]">Sign in</a>
+              [[pass]]
+            </div>
+          </div>
+
+
+
+          <!-- <div class="navbar-item">
             <div class="buttons">
               [[if globals().get('user'):]]
                 <div class="navbar-item has-dropdown is-hoverable">
@@ -60,7 +81,8 @@
                 <a class="button has-background-purple-blue has-text-white is-baby-blue" href="[[=URL('auth/register')]]">Sign up</a>
               [[pass]]
             </div>
-          </div>
+          </div> -->
+
         </div>
       </div>
     </nav>
@@ -89,5 +111,6 @@
   <script src="js/axios.min.js"></script>
   <script src="js/vue.js"></script>
   <script src="js/utils.js"></script>
+
   [[block page_scripts]]<!-- individual pages can add scripts here -->[[end]]
 </html>
