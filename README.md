@@ -23,7 +23,7 @@ User has to sign up in order to create the post, but still available to explore 
 
 ### Built With
 
-To build this platform, we mainly utilized the web framework 'py4web' in order to create the following platform on 10 weeks of given time.
+To build this platform, we mainly utilized the web framework [py4web](https://py4web.com/_documentation/static/en/chapter-01.html) in order to create the following platform on 10 weeks of given time.
 We mainly utilized 'py4web' in order to manage the database and server side code. Beside 'py4web', other stack we utilized are:
 - [Vue.js](https://vuejs.org/)
 - [Bulma](https://bulma.io/)
