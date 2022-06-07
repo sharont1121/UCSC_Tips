@@ -1,5 +1,7 @@
 # UCSC-Tips
 
+https://ucsc-tips-350117.wl.r.appspot.com/
+
 ## Project Description
 
 UCSC Tips is the platform for student to provide a better campus life tips on their following campus. Our current version is based on UC Santa Cruz campus, located at Santa Cruz, CA. Any UCSC students can endow their tips of specific location inside of campus, and other people can find the campus tips of following location through feeds. 
