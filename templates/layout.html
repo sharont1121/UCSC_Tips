@@ -43,8 +43,7 @@
         </div>
         <div class="navbar-end has-background-baby-blue">
 
-
-          <!-- google sign in version -->
+          <!-- google sign in version -->  <!--
           [[if globals().get('user'):]]
           <div class="navbar-item">
             <p>[[=globals().get('user').get('email')]]</p>
@@ -59,10 +58,10 @@
               [[pass]]
             </div>
           </div>
+          -->
 
-
-
-          <!-- <div class="navbar-item">
+          <!-- Normal Sign-in method -->
+          <div class="navbar-item">
             <div class="buttons">
               [[if globals().get('user'):]]
                 <div class="navbar-item has-dropdown is-hoverable">
@@ -73,7 +72,6 @@
                     <a class="navbar-item" href="[[=URL('auth/logout')]]">Logout</a>
                     <a class="navbar-item" href="[[=URL('profile', globals().get('user').get('id')) ]]">Profile</a>
                     <a class="navbar-item" href="[[=URL('auth/change_password')]]">Change Password</a></li>
-
                   </div>
                 </div>
               [[else:]]
@@ -81,7 +79,7 @@
                 <a class="button has-background-purple-blue has-text-white is-baby-blue" href="[[=URL('auth/register')]]">Sign up</a>
               [[pass]]
             </div>
-          </div> -->
+          </div>
 
         </div>
       </div>
