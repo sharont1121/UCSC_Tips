@@ -169,7 +169,7 @@ def search_posts(
             | tag3.tag_name.belongs(tags)
         )
     rating = db.rating.user.count()
-    rated_condition = db.rating.user.equals(user_id)
+    rated_condition = db.rating.user == user_id
     rated = rated_condition.case(1, 0).sum()
     relevent_terms = db(query).select(
         div,

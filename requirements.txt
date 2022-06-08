@@ -1,3 +1,2 @@
 nqgcs==0.1.2
-pycryptodome>=3.14
-
+pycryptodome==3.14.1
