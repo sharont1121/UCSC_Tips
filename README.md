@@ -29,6 +29,10 @@ To build this platform, in 10 weeks we utilized:
 - [Bulma](https://bulma.io/)
 - [Google Maps API] (https://developers.google.com/maps)
 
+## Presentation
+
+https://docs.google.com/presentation/d/1FazZuMe56BiZYSiVYV4a00PvvFGS09hlKqeFM-62ko0/edit?usp=sharing
+
 ## Credits
 
 Project created by:
